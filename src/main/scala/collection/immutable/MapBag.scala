@@ -1,10 +1,27 @@
 package scala.collection
 package immutable
 
+import scala.collection
+
 
 class MapBag[A](map: Map[A, Int]) extends Bag[A] {
 
-  override def iterator2: Iterator[Iterator[A]] = map.keysIterator map elemIterator
+  // Added elements
+  def +(elem: A): collection.Bag[A] = new MapBag(map.updated(elem, map.getOrElse(elem, 0) + 1))
+
+
+  // Removed elements
+  def -(elem: A): collection.Bag[A] = {
+    map.get(elem) match {
+      case Some(multiplicity) if multiplicity > 1 => new MapBag(map.updated(elem, map.getOrElse(elem, 0) - 1))
+      case Some(multiplicity) if multiplicity <= 1 => new MapBag(map - elem)
+      case None => this
+    }
+  }
+
+  def empty = new MapBag(Map.empty[A, Int])
+
+  def iterator2: Iterator[Iterator[A]] = map.keysIterator map elemIterator
 
   private def elemIterator(elem: A): Iterator[A] = for (_ <- (1 to map.getOrElse(elem, 0)).iterator) yield elem
 

@@ -10,13 +10,13 @@ trait Bag[A] extends scala.collection.Bag[A] {
   def +=(elem: A): Unit = this += (elem -> 1)
 
   def +=(elemCount: (A, Int)): Unit = elemCount match {
-    case (elem, count) => update(elem, (this count elem) + count)
+    case (elem, count) => update(elem, (this multiplicity elem) + count)
   }
 
   def -=(elem: A): Unit = this -= (elem -> 1)
 
   def -=(elemCount: (A, Int)): Unit = elemCount match {
-    case (elem, count) => update(elem, Math.max((this count elem) - count, 0))
+    case (elem, count) => update(elem, Math.max((this multiplicity elem) - count, 0))
   }
 
 

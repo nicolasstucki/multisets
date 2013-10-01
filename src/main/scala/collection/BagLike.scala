@@ -1,0 +1,43 @@
+package scala.collection
+
+import scala.collection.mutable.{Builder, BagBuilder}
+
+import scala.collection.generic.Subtractable
+
+trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
+  extends IterableLike[A, This]
+  with Subtractable[A, This] {
+  self =>
+
+
+  def empty: This
+
+  override protected[this] def newBuilder: Builder[A, This] = new BagBuilder[A, This](empty)
+
+
+  def multiplicity(elem: A): Int = this count (elem == _)
+
+  def contains(elem: A): Boolean = multiplicity(elem) > 0
+
+
+  // Added elements
+  def +(elem: A): This
+
+  def +(elemCount: (A, Int)): This = elemCount match {
+    case (elem, count) if count > 0 => (this + elem) + (elem -> (count - 1))
+    case _ => repr
+  }
+
+  def ++(elems: GenTraversableOnce[A]): This = (repr /: elems)(_ + _)
+
+  // Removed elements
+  def -(elem: A): This
+
+  def -(elemCount: (A, Int)): This = elemCount match {
+    case (elem, count) if count > 0 => (this - elem) - (elem -> (count - 1))
+    case _ => repr
+  }
+
+  def -*(elem: A): This = this - (elem -> this.multiplicity(elem))
+
+}

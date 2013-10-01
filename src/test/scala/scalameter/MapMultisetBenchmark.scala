@@ -7,7 +7,7 @@ import scala.collection.mutable.MapBag
 
 object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
 
-  val sizes = Gen.range("size")(300, 1500, 300)
+  val sizes = Gen.range("size")(200000, 1000000, 100000)
 
   val bags = for {
     size <- sizes
@@ -19,19 +19,42 @@ object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
     bag
   }
 
+  val sum = (a: Int, b: Int) => a + b
+  val mul = (a: Int, b: Int) => a * b
+
   performance of "MapMultiset" in {
-    measure method "reduce" in {
-      using(bags) in {
-        r => r.reduce(_ + _)
+    measure method "reduce{reference 0 overhead}" in {
+      using(sizes) in {
+        size =>
+          var acc = 0
+          for (n <- 1 to size) {
+            acc = sum(mul(n, n), acc)
+          }
+          acc
       }
     }
   }
 
   performance of "MapMultiset" in {
-    measure method "reduce2" in {
+    measure method "reduce{reference}" in {
       using(bags) in {
-        r => r.reduce(_ + _, _ * _)
+        bag =>
+          var acc = 0
+          for ((elem, count) <- bag.countsIterator) {
+            acc = sum(mul(count, elem), acc)
+          }
+          acc
       }
     }
   }
+
+  performance of "MapMultiset" in {
+    measure method "reduce" in {
+      using(bags) in {
+        bag => bag.reduce(sum, mul)
+      }
+    }
+  }
+
+
 }

@@ -5,15 +5,15 @@ import scala._
 
 
 trait Bag[A] extends (A => Int)
-with Iterable[A] {
+with Iterable[A]
+with BagLike[A, Bag[A]] {
 
 
-  def apply(elem: A): Int = count(elem)
+  def apply(elem: A): Int = multiplicity(elem)
 
 
-  def contains(elem: A): Boolean = count(elem) > 0
-
-  protected def iterator2: Iterator[Iterator[A]]
+  // Iterators
+  def iterator2: Iterator[Iterator[A]]
 
   def iterator: Iterator[A] = iterator2.flatten
 
@@ -24,24 +24,23 @@ with Iterable[A] {
   def distinctSize: Int = iterator2.size
 
   // Counts and Multiplicities
-  def count(elem: A): Int = this count (elem == _)
 
-  def maxCount: Int = maxCount(_ => true)
+  def maxMultiplicity: Int = maxCount(_ => true)
 
-  def maxCount(p: A => Boolean): Int = (0 :: (distinctIterator filter p map count).toList).max
+  def minMultiplicity: Int = minCount(_ => true)
 
-  def minCount: Int = minCount(_ => true)
+  def maxCount(p: A => Boolean): Int = (0 :: (distinctIterator filter p map multiplicity).toList).max
 
-  def minCount(p: A => Boolean): Int = (Int.MaxValue :: (distinctIterator filter p map count).toList).max
+  def minCount(p: A => Boolean): Int = (Int.MaxValue :: (distinctIterator filter p map multiplicity).toList).max
 
   // def mostCommon and leastCommon
   //  def mostCommon: Multiset[A] = mostCommon(_ => true)
 
-  def mostCommon(p: A => Boolean = _ => true): Bag[A] = Bag((this filter p) filter (elem => (this count elem) == maxCount(p)))
+  def mostCommon(p: A => Boolean = _ => true): Bag[A] = Bag((this filter p) filter (elem => (this multiplicity elem) == maxCount(p)))
 
   def leastCommon: Bag[A] = leastCommon(_ => true)
 
-  def leastCommon(p: A => Boolean): Bag[A] = Bag((this filter p) filter (elem => (this count elem) == minCount(p)))
+  def leastCommon(p: A => Boolean): Bag[A] = Bag((this filter p) filter (elem => (this multiplicity elem) == minCount(p)))
 
 
   // Multiset operations
@@ -59,7 +58,8 @@ with Iterable[A] {
 
   def diff(that: Bag[A]): Bag[A] = Bag(this.toList diff that.toList)
 
-  def subsetOf(that: Bag[A]): Boolean = distinctIterator forall (elem => (this count elem) <= (that count elem))
+
+  def subsetOf(that: Bag[A]): Boolean = distinctIterator forall (elem => (this multiplicity elem) <= (that multiplicity elem))
 
   def properSubsetOf(that: Bag[A]): Boolean = (this != that) && (this subsetOf that)
 
@@ -67,44 +67,17 @@ with Iterable[A] {
   def distinct: Bag[A] = Bag(distinctIterator.toList)
 
 
-  //
-
-
-  def +(elem: A): Bag[A] = Bag(elem :: this.toList)
-
-  def +(elemCount: (A, Int)): Bag[A] = this ++ (1 to elemCount._2 map (_ => elemCount._1))
-
-  def ++(elems: Iterable[A]): Bag[A] = Bag(this.toList ++ elems)
-
-  def ++(that: Bag[A]): Bag[A] = this union that
-
-  def removed(elem: A): Bag[A] = Bag(this.toList.takeWhile(elem != _) ::: this.toList.dropWhile(elem != _).drop(1))
-
-  def -(elem: A): Bag[A] = removed(elem)
-
-  def -(elemCount: (A, Int)): Bag[A] = this -- (1 to elemCount._2 map (_ => elemCount._1))
-
-  def --(elems: Iterable[A]): Bag[A] = Bag(this.toList diff elems.toList)
-
-  def removedAll(elem: A): Bag[A] = Bag(this filter (elem != _))
-
-  def -*(elem: A): Bag[A] = removedAll(elem)
-
-  //
+  // Reducing
   def fold[A1 >: A](z: A1)(op: (A1, A1) => A1, op2: (A1, Int) => A1) = (countsIterator map ((tup: (A, Int)) => op2(tup._1, tup._2))).fold(z)(op)
 
   def reduce[A1 >: A](op: (A1, A1) ⇒ A1, op2: (A1, Int) => A1): A1 = (countsIterator map ((tup: (A, Int)) => op2(tup._1, tup._2))).reduce(op)
 
+  // Mapping
 
-  override def forall(p: (A) => Boolean): Boolean = distinctIterator forall p
 
-  override def exists(p: (A) => Boolean): Boolean = distinctIterator exists p
+  // Filtering
 
-  def forall(p: (A, Int) => Boolean): Boolean = countsIterator forall (tup => p(tup._1, tup._2))
-
-  def exists(p: (A, Int) => Boolean): Boolean = countsIterator exists (tup => p(tup._1, tup._2))
-
-  def zipWithCount: Iterable[(A, Int)] = countsIterator.toIterable
+  def zipWithMultiplicities: Iterable[(A, Int)] = countsIterator.toIterable
 
 }
 
@@ -120,6 +93,7 @@ object Bag {
   def apply[T](elem1: (T, Int), elem2: (T, Int), elems: (T, Int)*): Bag[T] = immutable.Bag(elem1, elem2, elems: _*)
 
   def apply[T](elems: Iterable[T]): Bag[T] = immutable.Bag(elems)
+
 
 }
 
