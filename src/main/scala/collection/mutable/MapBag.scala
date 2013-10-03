@@ -1,58 +1,59 @@
 package scala.collection.mutable
 
-import scala.collection.mutable._
+import scala.collection.{mutable, Multiplicities, Group}
 
+class MapBag[A, G <: Group[A, G]](multiplicityMap: mutable.Map[A, G])(implicit protected val m: Multiplicities[A, G]) extends mutable.Bag[A, G] {
 
-class MapBag[A](map: Map[A, Int]) extends Bag[A] {
-
-
-  def empty: Bag[A] = new MapBag(Map.empty[A, Int])
+  def empty: mutable.Bag[A, G] = new mutable.MapBag(mutable.Map.empty[A, G])(m)
 
   // Added elements
-  def +(elem: A): Bag[A] = {
-    val newMap = map.clone()
-    newMap(elem) = newMap.getOrElse(elem, 0)
-    new MapBag(newMap)
+  def +(elem: A): mutable.Bag[A, G] = {
+    val newMap = multiplicityMap.clone()
+    newMap(elem) = newMap.get(elem) match {
+      case Some(group) => group + elem
+      case None => m(elem)
+    }
+    new mutable.MapBag(newMap)(m)
   }
 
   // Removed elements
-  def -(elem: A): Bag[A] = {
-    val newMap = map.clone()
-    if (newMap.getOrElse(elem, 0) > 1) {
-      newMap(elem) = newMap.getOrElse(elem, 0) - 1
-    } else {
-      newMap -= elem
-    }
-    new MapBag(newMap)
+  def -(elem: A): mutable.Bag[A, G] = {
+    val newMap = multiplicityMap.clone()
+    newMap(elem) = newMap.getOrElse(elem, m.empty(elem)) - elem
+    new mutable.MapBag(newMap)(m)
   }
 
-  def iterator2: Iterator[Iterator[A]] = map.keysIterator map elemIterator
+  def iterator2: Iterator[Iterator[A]] = multiplicityMap.keysIterator map elemIterator
 
-  private def elemIterator(elem: A): Iterator[A] = for (_ <- (1 to map.getOrElse(elem, 0)).iterator) yield elem
+  private def elemIterator(elem: A): Iterator[A] = multiplicityMap(elem).iterator
 
-  def update(elem: A, count: Int): Unit = map.update(elem, Math.max(count, 0))
+  def update(elem: A, count: Int): Unit = multiplicityMap.update(elem, multiplicityMap.getOrElse(elem, m.empty(elem)) + elem)
 
-  override def multiplicity(elem: A): Int = map.getOrElse(elem, 0)
+  override def multiplicity(elem: A): Int = multiplicityMap.get(elem) match {
+    case Some(group) => group.multiplicity
+    case None => 0
+  }
 
-  override def distinctIterator = map.keysIterator
+  override def distinctIterator = multiplicityMap.keysIterator
 
-  override def countsIterator = map.iterator
+  override def countsIterator = multiplicityMap.iterator map {
+    case (elem, group) => elem -> group.multiplicity
+  }
 
-  override def iterator =
-    for (elem <- map.keysIterator;
-         _ <- 1 to map(elem)) yield {
-      elem
-    }
+  override def iterator = multiplicityMap.valuesIterator.flatMap(_.iterator)
+
 }
 
 
 object MapBag {
 
-  def apply[T](): Bag[T] = new MapBag[T](Map.empty[T, Int])
+  def apply[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = new mutable.MapBag[A, G](mutable.Map.empty[A, G])(m)
 
-  def apply[T](elem: (T, Int)): Bag[T] = new MapBag[T](Map(elem))
+  def apply[A, G <: Group[A, G]](elemCount: (A, Int))(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = new mutable.MapBag[A, G](mutable.Map[A, G](elemCount._1 -> m(elemCount)))
 
-  def apply[T](elem1: (T, Int), elem2: (T, Int), elems: (T, Int)*): Bag[T] = new MapBag[T](Map() + elem1 + elem2 ++ elems)
+  def apply[A, G <: Group[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = {
+    new mutable.MapBag[A, G](mutable.Map[A, G]() + (elem1._1 -> m(elem1)) + (elem2._1 -> m(elem2)) ++ elems.map((elemCount: (A, Int)) => elemCount._1 -> m(elemCount)))
+  }
 
-  def apply[T](elems: scala.collection.Iterable[T]): Bag[T] = new MapBag[T](Map() ++ (elems map (elem => (elem, elems.count(elem == _)))))
+  def apply[A, G <: Group[A, G]](elems: scala.collection.Iterable[A])(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = new mutable.MapBag[A, G](mutable.Map() ++ (elems map (elem => elem -> m(elem -> elems.count(elem == _)))))
 }

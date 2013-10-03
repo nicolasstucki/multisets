@@ -4,10 +4,11 @@ package collection
 import scala._
 
 
-trait Bag[A] extends (A => Int)
+trait Bag[A, G <: Group[A, G]] extends (A => Int)
 with Iterable[A]
-with BagLike[A, Bag[A]] {
+with BagLike[A, G, Bag[A, G]] {
 
+  implicit protected def m: Multiplicities[A, G]
 
   def apply(elem: A): Int = multiplicity(elem)
 
@@ -16,6 +17,7 @@ with BagLike[A, Bag[A]] {
   def iterator2: Iterator[Iterator[A]]
 
   def iterator: Iterator[A] = iterator2.flatten
+
 
   def countsIterator: Iterator[(A, Int)] = for (it <- iterator2 if !it.isEmpty) yield (it.next(), it.size + 1)
 
@@ -36,35 +38,35 @@ with BagLike[A, Bag[A]] {
   // def mostCommon and leastCommon
   //  def mostCommon: Multiset[A] = mostCommon(_ => true)
 
-  def mostCommon(p: A => Boolean = _ => true): Bag[A] = Bag((this filter p) filter (elem => (this multiplicity elem) == maxCount(p)))
+  def mostCommon(p: A => Boolean = _ => true): Bag[A, G] = Bag[A, G]((this filter p) filter (elem => (this multiplicity elem) == maxCount(p)))
 
-  def leastCommon: Bag[A] = leastCommon(_ => true)
+  def leastCommon: Bag[A, G] = leastCommon(_ => true)
 
-  def leastCommon(p: A => Boolean): Bag[A] = Bag((this filter p) filter (elem => (this multiplicity elem) == minCount(p)))
+  def leastCommon(p: A => Boolean): Bag[A, G] = Bag[A, G]((this filter p) filter (elem => (this multiplicity elem) == minCount(p)))
 
 
   // Multiset operations
-  def union(that: Bag[A]): Bag[A] = Bag(this.toList ++ that.toList)
+  def union(that: Bag[A, G]): Bag[A, G] = Bag[A, G](this.toList ++ that.toList)
 
-  def maxUnion(that: Bag[A]): Bag[A] = {
-    Bag((for (elem <- (this union that).distinctIterator) yield {
+  def maxUnion(that: Bag[A, G]): Bag[A, G] = {
+    Bag[A, G]((for (elem <- (this union that).distinctIterator) yield {
       for (_ <- (1 to Math.max(this(elem), that(elem))).iterator) yield {
         elem
       }
     }).flatten.toIterable)
   }
 
-  def intersect(that: Bag[A]): Bag[A] = Bag(this.toList intersect that.toList)
+  def intersect(that: Bag[A, G]): Bag[A, G] = Bag[A, G](this.toList intersect that.toList)
 
-  def diff(that: Bag[A]): Bag[A] = Bag(this.toList diff that.toList)
-
-
-  def subsetOf(that: Bag[A]): Boolean = distinctIterator forall (elem => (this multiplicity elem) <= (that multiplicity elem))
-
-  def properSubsetOf(that: Bag[A]): Boolean = (this != that) && (this subsetOf that)
+  def diff(that: Bag[A, G]): Bag[A, G] = Bag[A, G](this.toList diff that.toList)
 
 
-  def distinct: Bag[A] = Bag(distinctIterator.toList)
+  def subsetOf(that: Bag[A, G]): Boolean = distinctIterator forall (elem => (this multiplicity elem) <= (that multiplicity elem))
+
+  def properSubsetOf(that: Bag[A, G]): Boolean = (this != that) && (this subsetOf that)
+
+
+  def distinct: Bag[A, G] = Bag[A, G](distinctIterator.toList)(m)
 
 
   // Reducing
@@ -84,15 +86,15 @@ with BagLike[A, Bag[A]] {
 
 object Bag {
 
-  def empty[A]: Bag[A] = immutable.Bag()
+  def empty[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(m)
 
-  def apply[T](): Bag[T] = immutable.Bag()
+  def apply[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): Bag[A, G] = empty(m)
 
-  def apply[T](elem: (T, Int)): Bag[T] = immutable.Bag(elem)
+  def apply[A, G <: Group[A, G]](elem: (A, Int))(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elem)(m)
 
-  def apply[T](elem1: (T, Int), elem2: (T, Int), elems: (T, Int)*): Bag[T] = immutable.Bag(elem1, elem2, elems: _*)
+  def apply[A, G <: Group[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elem1, elem2, elems: _*)(m)
 
-  def apply[T](elems: Iterable[T]): Bag[T] = immutable.Bag(elems)
+  def apply[A, G <: Group[A, G]](elems: Iterable[A])(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elems)(m)
 
 
 }

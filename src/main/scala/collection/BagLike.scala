@@ -4,7 +4,7 @@ import scala.collection.mutable.{Builder, BagBuilder}
 
 import scala.collection.generic.Subtractable
 
-trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
+trait BagLike[A, G <: Group[A, G], +This <: BagLike[A, G, This] with Bag[A, G]]
   extends IterableLike[A, This]
   with Subtractable[A, This] {
   self =>
@@ -12,7 +12,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def empty: This
 
-  override protected[this] def newBuilder: Builder[A, This] = new BagBuilder[A, This](empty)
+  override protected[this] def newBuilder: mutable.Builder[A, This] = new mutable.BagBuilder[A, G, This](empty)
 
 
   def multiplicity(elem: A): Int = this count (elem == _)
