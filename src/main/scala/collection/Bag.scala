@@ -4,32 +4,35 @@ package collection
 import scala._
 
 
-trait Bag[A, G <: Group[A, G]] extends (A => Int)
+trait Bag[A, G <: BagBucket[A, G]] extends (A => Int)
 with Iterable[A]
 with BagLike[A, G, Bag[A, G]] {
 
-  implicit protected def m: Multiplicities[A, G]
+  implicit protected def m: BagBuckets[A, G]
 
   def apply(elem: A): Int = multiplicity(elem)
 
 
   // Iterators
-  def iterator2: Iterator[Iterator[A]]
 
-  def iterator: Iterator[A] = iterator2.flatten
+  def iterator: Iterator[A] = groupIterator.flatMap(_.iterator)
 
+  def countsIterator: Iterator[(A, Int)] = groupIterator.map(g => g.sentinel -> g.multiplicity)
 
-  def countsIterator: Iterator[(A, Int)] = for (it <- iterator2 if !it.isEmpty) yield (it.next(), it.size + 1)
+  def distinctIterator: Iterator[A] = groupIterator.map(_.sentinel)
 
-  def distinctIterator: Iterator[A] = for (it <- iterator2 if !it.isEmpty) yield it.next()
-
-  def distinctSize: Int = iterator2.size
+  def distinctSize: Int = groupIterator.size
 
   // Counts and Multiplicities
 
-  def maxMultiplicity: Int = maxCount(_ => true)
+  def multiplicity(elem: A): Int = groupIterator.find(_.sentinel == elem) match {
+    case Some(group) => group.multiplicity
+    case None => 0
+  }
 
-  def minMultiplicity: Int = minCount(_ => true)
+  def maxMultiplicity: Int = groupIterator.map(_.multiplicity).max
+
+  def minMultiplicity: Int = groupIterator.map(_.multiplicity).min
 
   def maxCount(p: A => Boolean): Int = (0 :: (distinctIterator filter p map multiplicity).toList).max
 
@@ -66,7 +69,7 @@ with BagLike[A, G, Bag[A, G]] {
   def properSubsetOf(that: Bag[A, G]): Boolean = (this != that) && (this subsetOf that)
 
 
-  def distinct: Bag[A, G] = Bag[A, G](distinctIterator.toList)(m)
+  def distinct: Bag[A, G] = Bag[A, G](distinctIterator.toList)
 
 
   // Reducing
@@ -86,15 +89,15 @@ with BagLike[A, G, Bag[A, G]] {
 
 object Bag {
 
-  def empty[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(m)
+  def empty[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): Bag[A, G] = mutable.Bag(m)
 
-  def apply[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): Bag[A, G] = empty(m)
+  def apply[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): Bag[A, G] = empty(m)
 
-  def apply[A, G <: Group[A, G]](elem: (A, Int))(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elem)(m)
+  def apply[A, G <: BagBucket[A, G]](elem: (A, Int))(implicit m: BagBuckets[A, G]): Bag[A, G] = mutable.Bag(elem)(m)
 
-  def apply[A, G <: Group[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elem1, elem2, elems: _*)(m)
+  def apply[A, G <: BagBucket[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBuckets[A, G]): Bag[A, G] = mutable.Bag(elem1, elem2, elems: _*)(m)
 
-  def apply[A, G <: Group[A, G]](elems: Iterable[A])(implicit m: Multiplicities[A, G]): Bag[A, G] = mutable.Bag(elems)(m)
+  def apply[A, G <: BagBucket[A, G]](elems: Iterable[A])(implicit m: BagBuckets[A, G]): Bag[A, G] = mutable.Bag(elems)(m)
 
 
 }

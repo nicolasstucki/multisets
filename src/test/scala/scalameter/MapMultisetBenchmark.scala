@@ -3,7 +3,7 @@ package scala.scalameter
 import org.scalameter.api._
 
 import scala.collection.mutable.MapBag
-import scala.collection.{mutable, CountGroups}
+import scala.collection.{mutable, IntBagBuckets}
 
 object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
 
@@ -12,7 +12,7 @@ object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
   val bags = for {
     size <- sizes
   } yield {
-    val bag = mutable.MapBag(CountGroups.of[Int])
+    val bag = mutable.MapBag(IntBagBuckets.of[Int])
     for (n <- 1 to size) {
       bag += (n -> n)
     }

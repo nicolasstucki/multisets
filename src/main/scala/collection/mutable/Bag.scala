@@ -1,8 +1,8 @@
 package scala.collection.mutable
 
-import scala.collection.{mutable, Multiplicities, Group}
+import scala.collection.{mutable, BagBuckets, BagBucket}
 
-trait Bag[A, G <: Group[A, G]] extends scala.collection.Bag[A, G] {
+trait Bag[A, G <: BagBucket[A, G]] extends scala.collection.Bag[A, G] {
 
 
   def update(elem: A, count: Int): Unit
@@ -26,14 +26,14 @@ trait Bag[A, G <: Group[A, G]] extends scala.collection.Bag[A, G] {
 
 object Bag {
 
-  def empty[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = mutable.MapBag(m)
+  def empty[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(m)
 
-  def apply[A, G <: Group[A, G]](implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = empty(m)
+  def apply[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = empty(m)
 
-  def apply[A, G <: Group[A, G]](elem: (A, Int))(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem)(m)
+  def apply[A, G <: BagBucket[A, G]](elem: (A, Int))(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem)(m)
 
-  def apply[A, G <: Group[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem1, elem2, elems: _*)(m)
+  def apply[A, G <: BagBucket[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem1, elem2, elems: _*)(m)
 
-  def apply[A, G <: Group[A, G]](elems: scala.collection.Iterable[A])(implicit m: Multiplicities[A, G]): mutable.Bag[A, G] = mutable.MapBag(elems)(m)
+  def apply[A, G <: BagBucket[A, G]](elems: scala.collection.Iterable[A])(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elems)(m)
 
 }
