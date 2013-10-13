@@ -1,8 +1,11 @@
-package scala.collection.immutable
+package scala.collection
+package immutable
 
-import scala.collection.{immutable, BagBucketFactory}
+import scala.collection.{BagLike, immutable, BagBucketFactory}
 
-trait Bag[A, Bkt <: immutable.BagBucket[A, Bkt]] extends scala.collection.Bag[A, Bkt] {
+trait Bag[A, Bkt <: immutable.BagBucket[A, Bkt]]
+  extends scala.collection.Bag[A, Bkt]
+  with BagLike[A, Bkt, Bag[A, Bkt]] {
 
 
 }

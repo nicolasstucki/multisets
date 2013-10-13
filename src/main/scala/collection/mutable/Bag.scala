@@ -2,7 +2,9 @@ package scala.collection.mutable
 
 import scala.collection.{BagBucketFactory, mutable}
 
-trait Bag[A, Bkt <: mutable.BagBucket[A]] extends scala.collection.Bag[A, Bkt] {
+trait Bag[A, Bkt <: mutable.BagBucket[A]]
+  extends scala.collection.Bag[A, Bkt]
+  with scala.collection.BagLike[A, Bkt, mutable.Bag[A, Bkt]] {
 
 
   def update(elem: A, count: Int): this.type
