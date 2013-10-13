@@ -8,12 +8,14 @@ class SeqBagBucket[A](val sentinel: A, var sequence: mutable.Seq[A])
   with mutable.BagBucket[A] {
 
 
-  def +=(elem: A): Unit = {
+  def +=(elem: A): this.type = {
     sequence = sequence :+ elem
+    this
   }
 
-  def -=(elem: A): Unit = {
+  def -=(elem: A): this.type = {
     sequence = sequence.tail
+    this
   }
 
 }
@@ -29,9 +31,6 @@ class SeqBagBucketFactory[A] extends scala.collection.BagBucketFactory[A, mutabl
 
   def apply(elem: A): mutable.SeqBagBucket[A] = new mutable.SeqBagBucket(elem, mutable.Seq(elem))
 
-  def apply(elemCount: (A, Int)): mutable.SeqBagBucket[A] = {
-    val (elem, count) = elemCount
-    new mutable.SeqBagBucket(elem, mutable.Seq.fill(count)(elem))
-  }
+  def apply(elem: A, multiplicity: Int): mutable.SeqBagBucket[A] = new mutable.SeqBagBucket(elem, mutable.Seq.fill(multiplicity)(elem))
 
 }

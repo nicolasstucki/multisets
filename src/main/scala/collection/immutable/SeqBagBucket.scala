@@ -21,9 +21,6 @@ class SeqBagBucketFactory[A] extends scala.collection.BagBucketFactory[A, SeqBag
 
   def apply(elem: A): SeqBagBucket[A] = new SeqBagBucket(elem, Seq(elem))
 
-  def apply(elemCount: (A, Int)): SeqBagBucket[A] = {
-    val (elem, count) = elemCount
-    new SeqBagBucket(elem, Seq.fill(count)(elem))
-  }
+  def apply(elem: A, multiplicity: Int): SeqBagBucket[A] = new SeqBagBucket(elem, Seq.fill(multiplicity)(elem))
 
 }

@@ -4,20 +4,21 @@ import scala.collection.{immutable, BagBucketFactory}
 import scala.collection
 
 
-class DummyMapBag[A, Bkt <: immutable.BagBucket[A, Bkt]](multiplicityMap: immutable.Map[A, Bkt])(implicit protected val m: BagBucketFactory[A, Bkt]) extends immutable.Bag[A, Bkt] {
+class DummyMapBag[A, Bkt <: immutable.BagBucket[A, Bkt]](multiplicityMap: immutable.Map[A, Bkt])(implicit protected val m: BagBucketFactory[A, Bkt])
+  extends immutable.Bag[A, Bkt] {
 
   def empty: collection.Bag[A, Bkt] = new DummyMapBag(Map.empty)
 
   def bucketsIterator: Iterator[Bkt] = multiplicityMap.valuesIterator
 
   // Added elements
-  def +(elem: A): collection.Bag[A, Bkt] = {
+  def +(elem: A): DummyMapBag[A, Bkt] = {
     val bkt = multiplicityMap.getOrElse(elem, m.empty(elem)) + elem
     new DummyMapBag(multiplicityMap.updated(elem, bkt))
   }
 
   // Removed elements
-  def -(elem: A): collection.Bag[A, Bkt] = {
+  def -(elem: A): DummyMapBag[A, Bkt] = {
     val bkt = multiplicityMap.getOrElse(elem, m.empty(elem)) - elem
     if (bkt.isEmpty) {
       new DummyMapBag(multiplicityMap - elem)

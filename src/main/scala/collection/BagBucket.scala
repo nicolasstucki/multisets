@@ -12,7 +12,6 @@ trait BagBucket[A]
   extends Iterable[A] {
 
   assert(multiplicity >= 0)
-  assert(sentinel != null)
 
   def sentinel: A
 

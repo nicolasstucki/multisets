@@ -7,6 +7,9 @@ trait BagBucketFactory[A, B <: BagBucket[A]] {
 
   def apply(elem: A): B
 
-  def apply(elemCount: (A, Int)): B
+  def apply(elem: A, multiplicity: Int): B
+
+  def apply(elemMultiplicity: (A, Int)): B = apply(elemMultiplicity._1, elemMultiplicity._2)
+
 
 }
