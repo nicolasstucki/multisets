@@ -1,15 +1,15 @@
 package scala.collection
 
+import scala.collection._
 
-trait BagBucketFactory[A, B <: BagBucket[A]] {
+trait BagBucketFactory[A] {
 
-  def empty(sentinel: A): B
+  def empty(sentinel: A): BagBucket[A]
 
-  def apply(elem: A): B
+  def apply(elem: A): BagBucket[A]
 
-  def apply(elem: A, multiplicity: Int): B
+  def apply(elem: A, multiplicity: Int): BagBucket[A]
 
-  def apply(elemMultiplicity: (A, Int)): B = apply(elemMultiplicity._1, elemMultiplicity._2)
-
+  def apply(elemMultiplicity: (A, Int)): BagBucket[A]
 
 }

@@ -1,46 +1,40 @@
 package scala.collection.mutable
 
-import scala.collection.{BagBucketFactory, mutable}
-import scala.collection
+import scala.collection.{GenTraversable, mutable}
 
-class DummyMapBag[A, Bkt <: mutable.BagBucket[A]](multiplicityMap: mutable.Map[A, Bkt])(implicit protected val m: BagBucketFactory[A, Bkt])
-  extends mutable.Bag[A, Bkt]
-  with mutable.Builder[A, mutable.DummyMapBag[A, Bkt]] {
+class DummyMapBag[A](multiplicityMap: mutable.Map[A, mutable.BagBucket[A]])(protected val bktFactory: mutable.BagBucketFactory[A])
+  extends mutable.Bag[A]
+  with mutable.Builder[A, mutable.DummyMapBag[A]] {
 
-  def empty: mutable.DummyMapBag[A, Bkt] = new mutable.DummyMapBag(mutable.Map.empty[A, Bkt])(m)
+  def empty: mutable.DummyMapBag[A] = mutable.DummyMapBag.empty[A](bktFactory)
 
-  def result(): mutable.DummyMapBag[A, Bkt] = new mutable.DummyMapBag(multiplicityMap.clone())
+  def result(): mutable.DummyMapBag[A] = new mutable.DummyMapBag(multiplicityMap.clone())(bktFactory)
 
   def clear(): Unit = multiplicityMap.clear()
 
-  override protected[this] def newBuilder: mutable.Builder[A, mutable.DummyMapBag[A, Bkt]] = empty
+  override protected[this] def newBuilder: mutable.Builder[A, mutable.DummyMapBag[A]] = empty
 
   // Added elements
-  def +(elem: A): mutable.Bag[A, Bkt] = {
-    val newMap = mutable.DummyMapBag.from(this.toIterable)
-    newMap += elem
-    newMap
+  def +(elem: A): mutable.Bag[A] = {
+    val newBag = mutable.DummyMapBag(this.toIterable)(bktFactory)
+    newBag += elem
+    newBag
   }
 
   // Removed elements
-  def -(elem: A): mutable.Bag[A, Bkt] = {
-    val newMap = mutable.DummyMapBag.from(this.toIterable)
-    newMap -= elem
-    newMap
+  def -(elem: A): mutable.Bag[A] = {
+    val newBag = mutable.DummyMapBag(this.toIterable)(bktFactory)
+    newBag -= elem
+    newBag
   }
 
-  def bucketsIterator: Iterator[Bkt] = multiplicityMap.valuesIterator
+  def bucketsIterator: Iterator[mutable.BagBucket[A]] = multiplicityMap.valuesIterator
 
   def update(elem: A, count: Int): this.type = {
-    val bkt = multiplicityMap.getOrElseUpdate(elem, m.empty(elem))
+    val bkt = multiplicityMap.getOrElseUpdate(elem, bktFactory.empty(elem))
     bkt += elem
     this
   }
-
-  //  override def multiplicity(elem: A): Int = multiplicityMap.get(elem) match {
-  //    case Some(group) => group.multiplicity
-  //    case None => 0
-  //  }
 
   override def distinctIterator = multiplicityMap.keysIterator
 
@@ -55,17 +49,23 @@ class DummyMapBag[A, Bkt <: mutable.BagBucket[A]](multiplicityMap: mutable.Map[A
 
 object DummyMapBag {
 
-  def empty[A, Bkt <: mutable.BagBucket[A]](implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = new mutable.DummyMapBag[A, Bkt](mutable.Map.empty[A, Bkt])
-
-  def apply[A, Bkt <: mutable.BagBucket[A]](elemCount: (A, Int))(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = new mutable.DummyMapBag[A, Bkt](mutable.Map[A, Bkt](elemCount._1 -> m(elemCount)))
-
-  def apply[A, Bkt <: mutable.BagBucket[A]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = {
-    new mutable.DummyMapBag[A, Bkt](mutable.Map[A, Bkt]() + (elem1._1 -> m(elem1)) + (elem2._1 -> m(elem2)) ++ elems.map((elemCount: (A, Int)) => elemCount._1 -> m(elemCount)))
+  def empty[A](implicit bktFactory: mutable.BagBucketFactory[A]): mutable.DummyMapBag[A] = {
+    new mutable.DummyMapBag[A](mutable.Map.empty[A, mutable.BagBucket[A]])(bktFactory)
   }
 
-  def from[A, Bkt <: mutable.BagBucket[A]](elems: mutable.Iterable[(A, Int)])(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = {
-    new mutable.DummyMapBag[A, Bkt](mutable.Map[A, Bkt]() ++ elems.map((elemCount: (A, Int)) => elemCount._1 -> m(elemCount)))
+  def apply[A](elemCount: (A, Int))(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.DummyMapBag[A] = {
+    new mutable.DummyMapBag[A](mutable.Map(elemCount._1 -> bktFactory(elemCount)))(bktFactory)
   }
 
-  def from[A, Bkt <: mutable.BagBucket[A]](elems: scala.collection.Iterable[A])(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = new mutable.DummyMapBag[A, Bkt](mutable.Map() ++ (elems map (elem => elem -> m(elem -> elems.count(elem == _)))))
+  def apply[A](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.DummyMapBag[A] = {
+    val bag = this(elem1) += elem2
+    for (elem <- elems) {
+      bag += elem
+    }
+    bag
+  }
+
+  def apply[A](elems: GenTraversable[A])(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.Bag[A] = {
+    new mutable.DummyMapBag[A](mutable.Map() ++ (elems map (elem => elem -> bktFactory(elem -> elems.count(elem == _)))))(bktFactory)
+  }
 }

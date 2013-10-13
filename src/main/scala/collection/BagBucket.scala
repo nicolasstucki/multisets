@@ -17,6 +17,10 @@ trait BagBucket[A]
 
   def multiplicity: Int
 
+  def +(elem: A): BagBucket[A]
+
+  def -(elem: A): BagBucket[A]
+
 }
 
 

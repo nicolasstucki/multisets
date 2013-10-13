@@ -1,11 +1,12 @@
 package scala.collection.mutable
 
-import scala.collection.{BagBucketFactory, mutable}
+import scala.collection.{GenTraversable, mutable}
 
-trait Bag[A, Bkt <: mutable.BagBucket[A]]
-  extends scala.collection.Bag[A, Bkt]
-  with scala.collection.BagLike[A, Bkt, mutable.Bag[A, Bkt]] {
+trait Bag[A]
+  extends scala.collection.Bag[A]
+  with scala.collection.BagLike[A, mutable.Bag[A]] {
 
+  protected def bktFactory: mutable.BagBucketFactory[A]
 
   def update(elem: A, count: Int): this.type
 
@@ -28,12 +29,20 @@ trait Bag[A, Bkt <: mutable.BagBucket[A]]
 
 object Bag {
 
-  def empty[A, Bkt <: mutable.BagBucket[A]](implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag.empty
+  def empty[A](implicit bktFactory: mutable.BagBucketFactory[A]): mutable.Bag[A] = {
+    mutable.DummyMapBag.empty(bktFactory)
+  }
 
-  def apply[A, Bkt <: mutable.BagBucket[A]](elem: (A, Int))(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag(elem)(m)
+  def apply[A](elem: (A, Int))(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.Bag[A] = {
+    mutable.DummyMapBag(elem)(bktFactory)
+  }
 
-  def apply[A, Bkt <: mutable.BagBucket[A]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag(elem1, elem2, elems: _*)(m)
+  def apply[A](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.Bag[A] = {
+    mutable.DummyMapBag(elem1, elem2, elems: _*)(bktFactory)
+  }
 
-  def from[A, Bkt <: mutable.BagBucket[A]](elems: scala.collection.Iterable[A])(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag.from(elems)(m)
+  def apply[A](elems: GenTraversable[A])(implicit bktFactory: mutable.BagBucketFactory[A]): mutable.Bag[A] = {
+    mutable.DummyMapBag(elems)(bktFactory)
+  }
 
 }

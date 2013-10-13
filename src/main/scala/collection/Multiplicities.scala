@@ -1,7 +1,7 @@
 package scala.collection
 
 
-class Multiplicities[A, G <: BagBucket[A]](bag: Bag[A, G]) extends Map[A, Int] {
+class Multiplicities[A](bag: Bag[A]) extends Map[A, Int] {
 
   def get(key: A): Option[Int] = Some(bag(key).multiplicity)
 
@@ -13,6 +13,6 @@ class Multiplicities[A, G <: BagBucket[A]](bag: Bag[A, G]) extends Map[A, Int] {
   }
 
 
-  def -(key: A): Multiplicities[A, G] = new Multiplicities(bag -* key)
+  def -(key: A): Multiplicities[A] = new Multiplicities(bag -* key)
 
 }
