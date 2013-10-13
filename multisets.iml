@@ -19,6 +19,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="scala-library" level="project" />
     <orderEntry type="library" name="scalameter_2.10-0.3" level="project" />
+    <orderEntry type="library" name="scalautils_2.10-2.0.RC1" level="project" />
+    <orderEntry type="library" name="scalatest_2.10-2.0.RC1" level="project" />
   </component>
 </module>
 

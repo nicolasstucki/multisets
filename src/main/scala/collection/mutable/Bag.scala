@@ -1,23 +1,23 @@
 package scala.collection.mutable
 
-import scala.collection.{mutable, BagBuckets, BagBucket}
+import scala.collection.{BagBucketFactory, mutable}
 
-trait Bag[A, G <: BagBucket[A, G]] extends scala.collection.Bag[A, G] {
+trait Bag[A, Bkt <: mutable.BagBucket[A]] extends scala.collection.Bag[A, Bkt] {
 
 
-  def update(elem: A, count: Int): Unit
+  def update(elem: A, count: Int): this.type
 
-  def +=(elem: A): Unit = this += (elem -> 1)
+  def +=(elem: A): this.type = this += (elem -> 1)
 
-  def +=(elemCount: (A, Int)): Unit = elemCount match {
-    case (elem, count) => update(elem, (this multiplicity elem) + count)
+  def +=(elemCount: (A, Int)): this.type = elemCount match {
+    case (elem, count) => update(elem, this(elem).multiplicity + count)
   }
 
-  def -=(elem: A): Unit = this -= (elem -> 1)
+  def -=(elem: A): this.type = this -= (elem -> 1)
 
-  def -=(elemCount: (A, Int)): Unit = {
+  def -=(elemCount: (A, Int)): this.type = {
     val (elem, count) = elemCount
-    update(elem, Math.max((this multiplicity elem) - count, 0))
+    update(elem, Math.max(this(elem).multiplicity - count, 0))
   }
 
 
@@ -26,14 +26,12 @@ trait Bag[A, G <: BagBucket[A, G]] extends scala.collection.Bag[A, G] {
 
 object Bag {
 
-  def empty[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(m)
+  def empty[A, Bkt <: mutable.BagBucket[A]](implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag.empty
 
-  def apply[A, G <: BagBucket[A, G]](implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = empty(m)
+  def apply[A, Bkt <: mutable.BagBucket[A]](elem: (A, Int))(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag(elem)(m)
 
-  def apply[A, G <: BagBucket[A, G]](elem: (A, Int))(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem)(m)
+  def apply[A, Bkt <: mutable.BagBucket[A]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag(elem1, elem2, elems: _*)(m)
 
-  def apply[A, G <: BagBucket[A, G]](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elem1, elem2, elems: _*)(m)
-
-  def apply[A, G <: BagBucket[A, G]](elems: scala.collection.Iterable[A])(implicit m: BagBuckets[A, G]): mutable.Bag[A, G] = mutable.MapBag(elems)(m)
+  def from[A, Bkt <: mutable.BagBucket[A]](elems: scala.collection.Iterable[A])(implicit m: BagBucketFactory[A, Bkt]): mutable.Bag[A, Bkt] = mutable.DummyMapBag.from(elems)(m)
 
 }

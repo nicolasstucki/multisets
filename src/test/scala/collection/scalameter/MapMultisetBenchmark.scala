@@ -1,18 +1,17 @@
-package scala.scalameter
+package scala.collection.scalameter
 
 import org.scalameter.api._
 
-import scala.collection.mutable.MapBag
-import scala.collection.{mutable, IntBagBuckets}
+import scala.collection.mutable
 
 object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
 
-  val sizes = Gen.range("size")(200000, 1000000, 100000)
+  val sizes = Gen.range("size")(2000, 10000, 1000)
 
   val bags = for {
     size <- sizes
   } yield {
-    val bag = mutable.MapBag(IntBagBuckets.of[Int])
+    val bag = mutable.DummyMapBag.empty(mutable.MultiplicityBagBucketFactory.of[Int])
     for (n <- 1 to size) {
       bag += (n -> n)
     }
@@ -40,8 +39,8 @@ object MapMultisetBenchmark extends PerformanceTest.Quickbenchmark {
       using(bags) in {
         bag =>
           var acc = 0
-          for ((elem, count) <- bag.countsIterator) {
-            acc = sum(mul(count, elem), acc)
+          for (bkt <- bag.bucketsIterator) {
+            acc = sum(mul(bkt.multiplicity, bkt.sentinel), acc)
           }
           acc
       }
