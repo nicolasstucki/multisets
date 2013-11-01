@@ -10,6 +10,11 @@ class BagBuilder[A, Coll <: scala.collection.Bag[A] with scala.collection.BagLik
     this
   }
 
+  def addedBucket(bucket: collection.BagBucket[A]): this.type = {
+    elems = elems addedBucket bucket
+    this
+  }
+
   def clear() {
     elems = empty
   }

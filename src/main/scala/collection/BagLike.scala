@@ -1,7 +1,8 @@
 package scala.collection
 
 
-import scala.collection.generic.Subtractable
+import scala.collection.generic.{CanBuildFrom, Subtractable}
+import scala.annotation.tailrec
 
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
@@ -20,7 +21,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   override def mostCommon(p: A => Boolean = _ => true): Bag[A] = {
     val maxM = maxMultiplicity(p)
     val b = newBuilder
-    for (bkt <- bucketsIterator if maxM == bkt.multiplicity && p(bkt.sentinel); elem <- bkt) {
+    for (bucket <- bucketsIterator if maxM == bucket.multiplicity && p(bucket.sentinel); elem <- bucket) {
       b += elem
     }
     b.result()
@@ -29,7 +30,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   override def leastCommon(p: A => Boolean = _ => true): Bag[A] = {
     val minM = minMultiplicity(p)
     var b = newBuilder
-    for (bkt <- bucketsIterator if minM == bkt.multiplicity && p(bkt.sentinel); elem <- bkt) {
+    for (bucket <- bucketsIterator if minM == bucket.multiplicity && p(bucket.sentinel); elem <- bucket) {
       b += elem
     }
     b.result()
@@ -50,7 +51,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def ++(elems: GenTraversableOnce[A]): This = {
     val b = newBuilder
-    for (bkt <- this.bucketsIterator; elem <- bkt) {
+    for (bucket <- this.bucketsIterator; elem <- bucket) {
       b += elem
     }
     for (elem <- elems) {
@@ -60,6 +61,11 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
 
+  // Added Bucket
+  def addedBucket(bucket: collection.BagBucket[A]): This
+
+
+  // Multiset operations
   override def union(that: GenBag[A]): This = this ++ that
 
   def diff(that: GenBag[A]): This = this -- that
@@ -74,16 +80,15 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override def intersect(that: GenBag[A]): This = {
     val b = newBuilder
-    for (bkt <- bucketsIterator if that(bkt.sentinel).multiplicity > 0) {
-      if (that(bkt.sentinel).multiplicity > bkt.multiplicity) {
-        for (elem <- bkt) b += elem
+    for (bucket <- bucketsIterator if that(bucket.sentinel).multiplicity > 0) {
+      if (that(bucket.sentinel).multiplicity > bucket.multiplicity) {
+        for (elem <- bucket) b += elem
       } else {
-        for (elem <- that(bkt.sentinel)) b += elem
+        for (elem <- that(bucket.sentinel)) b += elem
       }
     }
     b.result()
   }
-
 
   // Removed elements
   def -(elem: A): This
@@ -105,8 +110,74 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   def setMultiplicity(elem: A, count: Int): This = this -* elem + (elem -> count)
 
 
-  def fold[A1 >: A](z: A1)(op: (A1, A1) => A1, op2: (A1, Int) => A1) = (multiplicitiesIterator map ((tup: (A, Int)) => op2(tup._1, tup._2))).fold(z)(op)
+  override def forall(p: (A) => Boolean): Boolean = bucketsIterator.forall(_.forall(p))
 
-  def reduce[A1 >: A](op: (A1, A1) => A1, op2: (A1, Int) => A1): A1 = (multiplicitiesIterator map ((tup: (A, Int)) => op2(tup._1, tup._2))).reduce(op)
+  override def exists(p: (A) => Boolean): Boolean = bucketsIterator.exists(_.exists(p))
 
+
+  override def find(p: (A) => Boolean): Option[A] = {
+    val it = bucketsIterator
+    while (it.hasNext) {
+      it.next().find(p) match {
+        case value@Some(_) => return value
+        case None =>
+      }
+    }
+    None
+  }
+
+
+  override def foldLeft[B](z: B)(op: (B, A) => B): B = {
+    var result = z
+    this.bucketsIterator foreach (bucket => result = bucket.foldLeft[B](result)(op))
+    result
+  }
+
+
+  override def map[B, That](f: (A) => B)(implicit bf: CanBuildFrom[This, B, That]): That = super.map(f)(bf)
+
+  def mapBuckets[B, That](op: (BagBucket) => B)(implicit bf: CanBuildFrom[This, B, That]): That = {
+    def builder = {
+      val b = bf(repr)
+      b.sizeHint(this)
+      b
+    }
+    val b = builder
+    for (bucket <- bucketsIterator) b += op(bucket)
+    b.result
+  }
+
+
+  override def sum[B >: A](implicit num: Numeric[B]): B = bucketsIterator.map(_.sum(num)).foldLeft(num.zero)(num.plus)
+
+  override def product[B >: A](implicit num: Numeric[B]): B = bucketsIterator.map(_.product(num)).foldLeft(num.one)(num.times)
+
+  override def min[B >: A](implicit cmp: Ordering[B]): A = bucketsIterator.map(_.min(cmp)).min(cmp)
+
+  override def max[B >: A](implicit cmp: Ordering[B]): A = bucketsIterator.map(_.max(cmp)).max(cmp)
+
+
+  override def reduceLeft[B >: A](op: (B, A) => B): B = {
+    if (isEmpty)
+      throw new UnsupportedOperationException("empty.reduceLeft")
+
+    var first = true
+    var acc: B = 0.asInstanceOf[B]
+
+    for (bucket <- bucketsIterator if !bucket.isEmpty) {
+      if (first) {
+        acc = bucket.reduceLeft(op)
+        first = false
+      }
+      else acc = bucket.foldLeft(acc)(op)
+    }
+    acc
+  }
+
+  override def count(p: (A) => Boolean): Int = {
+    var cnt = 0
+    for (bucket <- bucketsIterator)
+      cnt += bucket.count(p)
+    cnt
+  }
 }

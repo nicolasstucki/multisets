@@ -6,7 +6,11 @@ trait Bag[A]
   extends scala.collection.Bag[A]
   with BagLike[A, Bag[A]] {
 
-  protected def bktFactory: immutable.BagBucketFactory[A]
+  //  protected def bucketFactory: immutable.BagBucketFactory[A]
+
+  protected override type BagBucket = immutable.BagBucket[A]
+  protected override type BagBucketFactory = immutable.BagBucketFactory[A]
+
 
 }
 

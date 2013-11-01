@@ -2,15 +2,21 @@ package scala.collection
 
 trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
-  with (A => BagBucket[A])
+  with (A => collection.BagBucket[A])
   with Equals {
 
-  protected def bktFactory: BagBucketFactory[A]
+  protected type BagBucket <: collection.BagBucket[A]
+  protected type BagBucketFactory <: collection.BagBucketFactory[A, BagBucket]
 
-  def apply(elem: A): BagBucket[A] = getBucket(elem)
+  protected def bucketFactory: BagBucketFactory
+
+  def apply(elem: A): collection.BagBucket[A] = getBucket(elem) match {
+    case Some(bucket) => bucket
+    case None => bucketFactory.empty(elem)
+  }
 
 
-  def bucketsIterator: Iterator[BagBucket[A]]
+  def bucketsIterator: Iterator[BagBucket]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
 
@@ -32,10 +38,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon(p: A => Boolean = _ => true): Bag[A]
 
 
-  def getBucket(elem: A): BagBucket[A] = bucketsIterator.find(_.sentinel == elem) match {
-    case Some(g) => g
-    case None => bktFactory.empty(elem)
-  }
+  def getBucket(elem: A): Option[BagBucket]
 
 
   def maxMultiplicity(p: A => Boolean = _ => true): Int = (0 :: (distinctIterator filter p map (this(_).multiplicity)).toList).max

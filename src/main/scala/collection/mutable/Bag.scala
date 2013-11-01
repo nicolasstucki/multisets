@@ -1,19 +1,37 @@
 package scala.collection.mutable
 
-import scala.collection.{GenTraversable, mutable}
+import scala.collection.{Iterator, GenTraversable, mutable}
+import scala.collection
 
 trait Bag[A]
   extends scala.collection.Bag[A]
   with scala.collection.BagLike[A, mutable.Bag[A]] {
 
-  protected def bktFactory: mutable.BagBucketFactory[A]
+  protected override type BagBucket = mutable.BagBucket[A]
+  protected override type BagBucketFactory = mutable.BagBucketFactory[A]
+
 
   def update(elem: A, count: Int): this.type
+
+  def updateBucket(bucket: mutable.BagBucket[A]): this.type
+
+  def bucketsIterator: Iterator[BagBucket]
+
+
+  override def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(_.sentinel == elem)
 
   def +=(elem: A): this.type = this += (elem -> 1)
 
   def +=(elemCount: (A, Int)): this.type = elemCount match {
     case (elem, count) => update(elem, this(elem).multiplicity + count)
+  }
+
+  def addBucket(bucket: collection.BagBucket[A]): this.type = {
+    this.getBucket(bucket.sentinel) match {
+      case Some(b) => b addBucket bucket
+      case None => updateBucket(bucketFactory.empty(bucket.sentinel) addedBucket bucket)
+    }
+    this
   }
 
   def -=(elem: A): this.type = this -= (elem -> 1)
@@ -22,7 +40,6 @@ trait Bag[A]
     val (elem, count) = elemCount
     update(elem, Math.max(this(elem).multiplicity - count, 0))
   }
-
 
 }
 

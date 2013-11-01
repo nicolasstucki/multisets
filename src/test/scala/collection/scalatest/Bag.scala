@@ -6,7 +6,7 @@ import org.scalatest._
 
 class Bag extends FlatSpec with Matchers {
 
-  implicit val m = MultiplicityBagBucketFactory.of[Char]
+  implicit val m = BagBucketFactory.ofMultiplicities[Char]
 
   "A Bag" should " initialise correctly" in {
     Bag.empty.toSeq should be(Seq.empty)
