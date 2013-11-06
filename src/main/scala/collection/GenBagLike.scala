@@ -38,7 +38,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon(p: A => Boolean = _ => true): Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket]
+  def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(_.sentinel == elem)
 
 
   def maxMultiplicity(p: A => Boolean = _ => true): Int = (0 :: (distinctIterator filter p map (this(_).multiplicity)).toList).max

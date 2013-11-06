@@ -15,11 +15,6 @@ trait Bag[A]
 
   def updateBucket(bucket: mutable.BagBucket[A]): this.type
 
-  def bucketsIterator: Iterator[BagBucket]
-
-
-  override def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(_.sentinel == elem)
-
   def +=(elem: A): this.type = this += (elem -> 1)
 
   def +=(elemCount: (A, Int)): this.type = elemCount match {

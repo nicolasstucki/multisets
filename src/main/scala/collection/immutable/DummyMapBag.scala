@@ -18,7 +18,7 @@ class DummyMapBag[A](multiplicityMap: immutable.Map[A, immutable.BagBucket[A]])(
   }
 
 
-  def getBucket(elem: A): Option[BagBucket] = multiplicityMap.get(elem)
+  override def getBucket(elem: A): Option[BagBucket] = multiplicityMap.get(elem)
 
   // Added Bucket
   override def addedBucket(bucket: scala.collection.BagBucket[A]): immutable.DummyMapBag[A] = {
