@@ -2,26 +2,27 @@ package scala.collection.mutable
 
 import scala.collection._
 
-trait BagBuilder[A, +Bag <: collection.Bag[A] with collection.BagLike[A, Bag]] extends mutable.Builder[A, Bag] {
+trait BagBucketBuilder[A, +BagBucket <: collection.BagBucket[A]] extends mutable.Builder[A, BagBucket] {
+
   def add(elem: A, count: Int): this.type
 
   def addBucket(bucket: collection.BagBucket[A]): this.type
 }
 
-class BagBuilderImpl[A, Bag <: collection.Bag[A] with collection.BagLike[A, Bag]](empty: Bag) extends mutable.BagBuilder[A, Bag] {
+class BagBucketBuilderImpl[A](empty: immutable.BagBucket[A]) extends mutable.BagBucketBuilder[A, immutable.BagBucket[A]] {
   protected var elems = empty
 
-  def +=(x: A) = {
+  def +=(x: A): this.type = {
     elems = elems + x
     this
   }
 
-  def add(elem: A, count: Int) = {
+  def add(elem: A, count: Int): this.type = {
     elems = elems.added(elem, count)
     this
   }
 
-  def addBucket(bucket: collection.BagBucket[A]) = {
+  def addBucket(bucket: collection.BagBucket[A]): this.type = {
     elems = elems addedBucket bucket
     this
   }

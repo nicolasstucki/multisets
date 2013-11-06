@@ -12,7 +12,7 @@ trait GenBagLike[A, +Repr]
 
   def apply(elem: A): collection.BagBucket[A] = getBucket(elem) match {
     case Some(bucket) => bucket
-    case None => bucketFactory.empty(elem)
+    case None => bucketFactory.newBuilder(elem).result()
   }
 
 

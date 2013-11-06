@@ -4,8 +4,8 @@ import scala.collection.{Iterator, GenTraversable, mutable}
 import scala.collection
 
 trait Bag[A]
-  extends scala.collection.Bag[A]
-  with scala.collection.BagLike[A, mutable.Bag[A]] {
+  extends collection.Bag[A]
+  with mutable.BagLike[A, mutable.Bag[A]] {
 
   protected override type BagBucket = mutable.BagBucket[A]
   protected override type BagBucketFactory = mutable.BagBucketFactory[A]
@@ -29,7 +29,7 @@ trait Bag[A]
   def addBucket(bucket: collection.BagBucket[A]): this.type = {
     this.getBucket(bucket.sentinel) match {
       case Some(b) => b addBucket bucket
-      case None => updateBucket(bucketFactory.empty(bucket.sentinel) addedBucket bucket)
+      case None => updateBucket((bucketFactory.newBuilder(bucket.sentinel) addBucket bucket).result())
     }
     this
   }

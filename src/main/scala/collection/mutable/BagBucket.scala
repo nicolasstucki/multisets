@@ -3,7 +3,9 @@ package scala.collection.mutable
 import scala.collection.{immutable, mutable}
 import scala.collection
 
-trait BagBucket[A] extends scala.collection.BagBucket[A] {
+trait BagBucket[A]
+  extends scala.collection.BagBucket[A]
+  with mutable.BagBucketBuilder[A, mutable.BagBucket[A]] {
 
   protected override type BagBucket = mutable.BagBucket[A]
 
@@ -21,6 +23,13 @@ trait BagBucket[A] extends scala.collection.BagBucket[A] {
 class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
   extends scala.collection.MultiplicityBagBucket[A]
   with mutable.BagBucket[A] {
+
+  def clear(): Unit = {
+    multiplicity = 0
+  }
+
+  def result(): mutable.MultiplicityBagBucket[A] = new mutable.MultiplicityBagBucket[A](sentinel, multiplicity)
+
 
   def update(elem: A, multiplicity: Int): Unit = if (elem == sentinel) this.multiplicity = multiplicity
 
@@ -76,6 +85,13 @@ class SeqBagBucket[A](val sentinel: A, var sequence: immutable.Seq[A])
   extends scala.collection.SeqBagBucket[A]
   with mutable.BagBucket[A] {
 
+
+  def clear(): Unit = {
+    sequence = immutable.Seq.empty[A]
+  }
+
+  def result(): mutable.SeqBagBucket[A] = new mutable.SeqBagBucket[A](sentinel, sequence)
+
   def +=(elem: A) = {
     sentinelCheck(elem)
     sequence = sequence :+ elem
@@ -91,7 +107,7 @@ class SeqBagBucket[A](val sentinel: A, var sequence: immutable.Seq[A])
 
   def added(elem: A, count: Int) = {
     sentinelCheck(elem)
-    new mutable.SeqBagBucket[A](sentinel, sequence ++ Iterable.fill(count)(elem))
+    new mutable.SeqBagBucket[A](sentinel, sequence ++ mutable.Iterable.fill(count)(elem))
   }
 
 

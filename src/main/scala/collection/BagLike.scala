@@ -2,7 +2,7 @@ package scala.collection
 
 
 import scala.collection.generic.{CanBuildFrom, Subtractable}
-import scala.annotation.tailrec
+import scala.collection.mutable.{BagBuilder, Builder}
 
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
@@ -13,8 +13,10 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def empty: This
 
-  override protected[this] def newBuilder: mutable.Builder[A, This] = new mutable.BagBuilder[A, This](empty)
 
+  protected[this] def newBagBuilder: mutable.BagBuilder[A, This] = new mutable.BagBuilderImpl(empty)
+
+  override protected[this] def newBuilder: mutable.Builder[A, This] = newBagBuilder
 
   def contains(elem: A): Boolean = repr(elem).multiplicity > 0
 
@@ -62,7 +64,24 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
 
   // Added Bucket
-  def addedBucket(bucket: collection.BagBucket[A]): This
+
+  def added(elem: A, count: Int): This = {
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator) {
+      b addBucket bucket
+    }
+    b.add(elem, count)
+    b.result()
+  }
+
+  def addedBucket(bucket: collection.BagBucket[A]): This = {
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator) {
+      b addBucket bucket
+    }
+    b addBucket bucket
+    b.result()
+  }
 
 
   // Multiset operations
@@ -144,7 +163,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     }
     val b = builder
     for (bucket <- bucketsIterator) b += op(bucket)
-    b.result
+    b.result()
   }
 
 
