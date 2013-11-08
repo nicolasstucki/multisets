@@ -3,7 +3,7 @@ package collection
 
 
 trait Bag[A]
-  extends (A => BagBucket[A])
+  extends (A => Int)
   with Iterable[A]
   with BagLike[A, Bag[A]]
   with GenBag[A] {

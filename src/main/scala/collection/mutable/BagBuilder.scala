@@ -8,27 +8,35 @@ trait BagBuilder[A, +Bag <: collection.Bag[A] with collection.BagLike[A, Bag]] e
   def addBucket(bucket: collection.BagBucket[A]): this.type
 }
 
-class BagBuilderImpl[A, Bag <: collection.Bag[A] with collection.BagLike[A, Bag]](empty: Bag) extends mutable.BagBuilder[A, Bag] {
-  protected var elems = empty
+object BagBuilder {
 
-  def +=(x: A) = {
-    elems = elems + x
-    this
+  def newBuilder[A, Bag <: collection.Bag[A] with collection.BagLike[A, Bag]](empty: Bag): mutable.BagBuilder[A, Bag] = new BagBuilderImpl(empty)
+
+  protected class BagBuilderImpl[A, Bag <: collection.Bag[A] with collection.BagLike[A, Bag]](empty: Bag) extends mutable.BagBuilder[A, Bag] {
+    protected var elems = empty
+
+    def +=(x: A) = {
+      elems = elems + x
+      this
+    }
+
+    def add(elem: A, count: Int) = {
+      elems = elems.added(elem, count)
+      this
+    }
+
+    def addBucket(bucket: collection.BagBucket[A]) = {
+      elems = elems addedBucket bucket
+      this
+    }
+
+    def clear() {
+      elems = empty
+    }
+
+    def result() = elems
   }
 
-  def add(elem: A, count: Int) = {
-    elems = elems.added(elem, count)
-    this
-  }
-
-  def addBucket(bucket: collection.BagBucket[A]) = {
-    elems = elems addedBucket bucket
-    this
-  }
-
-  def clear() {
-    elems = empty
-  }
-
-  def result() = elems
 }
+
+

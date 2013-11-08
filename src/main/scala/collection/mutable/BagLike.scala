@@ -9,6 +9,10 @@ trait BagLike[A, +This <: mutable.BagLike[A, This] with mutable.Bag[A]]
   with mutable.BagBuilder[A, This] {
   self =>
 
+  protected override type BagBucket = mutable.BagBucket[A]
+  protected override type BagBucketFactory = mutable.BagBucketFactory[A]
+
+
   override protected[this] def newBagBuilder: mutable.BagBuilder[A, This] = empty
 
 }

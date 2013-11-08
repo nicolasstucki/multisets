@@ -13,7 +13,6 @@ class DummyMapBag[A](multiplicityMap: mutable.Map[A, mutable.BagBucket[A]])(prot
   def clear(): Unit = multiplicityMap.clear()
 
 
-
   def add(elem: A, count: Int) = {
     multiplicityMap.get(elem) match {
       case Some(bucket) =>
@@ -26,13 +25,16 @@ class DummyMapBag[A](multiplicityMap: mutable.Map[A, mutable.BagBucket[A]])(prot
     this
   }
 
-  // Added elements
-  def +(elem: A): mutable.Bag[A] = {
-    val newBag = mutable.DummyMapBag(this.toIterable)(bucketFactory)
-    newBag += elem
-    newBag
-  }
 
+  def addedBucket(bucket: collection.BagBucket[A]): mutable.Bag[A] = {
+    val b = bucketFactory.newBuilder(bucket.sentinel)
+    b addBucket bucket
+    multiplicityMap.get(bucket.sentinel) match {
+      case Some(bucket2) => b addBucket bucket2
+      case None =>
+    }
+    new mutable.DummyMapBag[A](multiplicityMap.updated(bucket.sentinel, b.result()))(bucketFactory)
+  }
 
   def updateBucket(bucket: mutable.BagBucket[A]) = {
     multiplicityMap.update(bucket.sentinel, bucket)
@@ -42,26 +44,13 @@ class DummyMapBag[A](multiplicityMap: mutable.Map[A, mutable.BagBucket[A]])(prot
 
   // Removed elements
   def -(elem: A): mutable.Bag[A] = {
-    val newBag = mutable.DummyMapBag(this.toIterable)(bucketFactory)
+    val newBag = mutable.DummyMapBag(this.iterator.toIterable)(bucketFactory)
     newBag -= elem
     newBag
   }
 
   def bucketsIterator: Iterator[mutable.BagBucket[A]] = multiplicityMap.valuesIterator
 
-  def update(elem: A, count: Int): this.type = {
-    val bkt = multiplicityMap.getOrElseUpdate(elem, bucketFactory.empty(elem))
-    bkt += elem
-    this
-  }
-
-  override def distinctIterator = multiplicityMap.keysIterator
-
-  override def multiplicitiesIterator = multiplicityMap.iterator map {
-    case (elem, group) => elem -> group.multiplicity
-  }
-
-  override def iterator = multiplicityMap.valuesIterator.flatMap(_.iterator)
 
 }
 

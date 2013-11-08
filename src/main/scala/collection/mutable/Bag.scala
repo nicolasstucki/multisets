@@ -7,18 +7,20 @@ trait Bag[A]
   extends collection.Bag[A]
   with mutable.BagLike[A, mutable.Bag[A]] {
 
-  protected override type BagBucket = mutable.BagBucket[A]
-  protected override type BagBucketFactory = mutable.BagBucketFactory[A]
 
-
-  def update(elem: A, count: Int): this.type
+  def update(elem: A, count: Int): this.type = {
+    val b = bucketFactory.newBuilder(elem)
+    b.add(elem, count)
+    updateBucket(b.result())
+    this
+  }
 
   def updateBucket(bucket: mutable.BagBucket[A]): this.type
 
   def +=(elem: A): this.type = this += (elem -> 1)
 
   def +=(elemCount: (A, Int)): this.type = elemCount match {
-    case (elem, count) => update(elem, this(elem).multiplicity + count)
+    case (elem, count) => update(elem, this.multiplicity(elem) + count)
   }
 
   def addBucket(bucket: collection.BagBucket[A]): this.type = {
@@ -33,7 +35,7 @@ trait Bag[A]
 
   def -=(elemCount: (A, Int)): this.type = {
     val (elem, count) = elemCount
-    update(elem, Math.max(this(elem).multiplicity - count, 0))
+    update(elem, Math.max(this.multiplicity(elem) - count, 0))
   }
 
 }

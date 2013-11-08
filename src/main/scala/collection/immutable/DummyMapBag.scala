@@ -11,26 +11,16 @@ class DummyMapBag[A](multiplicityMap: immutable.Map[A, immutable.BagBucket[A]])(
 
   def bucketsIterator: Iterator[BagBucket] = multiplicityMap.valuesIterator
 
-  // Added elements
-  def +(elem: A): DummyMapBag[A] = {
-    val bkt = multiplicityMap.getOrElse(elem, bucketFactory.newBuilder(elem).result()) + elem
-    new DummyMapBag(multiplicityMap.updated(elem, bkt))(bucketFactory)
-  }
 
-
-  override def getBucket(elem: A): Option[BagBucket] = multiplicityMap.get(elem)
-
-  // Added Bucket
-  override def addedBucket(bucket: scala.collection.BagBucket[A]): immutable.DummyMapBag[A] = {
+  def addedBucket(bucket: collection.BagBucket[A]): Bag[A] = {
     val b = bucketFactory.newBuilder(bucket.sentinel)
+    b addBucket bucket
     multiplicityMap.get(bucket.sentinel) match {
-      case Some(oldBucket) => b addBucket oldBucket
+      case Some(bucket2) => b addBucket bucket2
       case None =>
     }
-    b addBucket bucket
-    new immutable.DummyMapBag[A](multiplicityMap.updated(bucket.sentinel, b.result()))(bucketFactory)
+    new DummyMapBag(multiplicityMap.updated(bucket.sentinel, b.result()))(bucketFactory)
   }
-
 
   // Removed elements
   def -(elem: A): DummyMapBag[A] = {

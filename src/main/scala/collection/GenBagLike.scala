@@ -2,7 +2,7 @@ package scala.collection
 
 trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
-  with (A => collection.BagBucket[A])
+  with (A => Int)
   with Equals {
 
   protected type BagBucket <: collection.BagBucket[A]
@@ -10,10 +10,7 @@ trait GenBagLike[A, +Repr]
 
   protected def bucketFactory: BagBucketFactory
 
-  def apply(elem: A): collection.BagBucket[A] = getBucket(elem) match {
-    case Some(bucket) => bucket
-    case None => bucketFactory.newBuilder(elem).result()
-  }
+  def apply(elem: A): Int = multiplicity(elem)
 
 
   def bucketsIterator: Iterator[BagBucket]
@@ -24,8 +21,10 @@ trait GenBagLike[A, +Repr]
 
   def distinctIterator: Iterator[A] = bucketsIterator.map(_.sentinel)
 
-  def distinctSize: Int = bucketsIterator.size
-
+  def multiplicity(elem: A): Int = getBucket(elem) match {
+    case Some(bucket) => bucket.multiplicity
+    case None => 0
+  }
 
   def contains(elem: A): Boolean
 
@@ -33,18 +32,17 @@ trait GenBagLike[A, +Repr]
 
   def -(elem: A): Repr
 
-  def mostCommon(p: A => Boolean = _ => true): Bag[A]
+  def mostCommon: Bag[A]
 
-  def leastCommon(p: A => Boolean = _ => true): Bag[A]
+  def leastCommon: Bag[A]
 
 
   def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(_.sentinel == elem)
 
 
-  def maxMultiplicity(p: A => Boolean = _ => true): Int = (0 :: (distinctIterator filter p map (this(_).multiplicity)).toList).max
+  def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max
 
-  def minMultiplicity(p: A => Boolean = _ => true): Int = (Int.MaxValue :: (distinctIterator filter p map (this(_).multiplicity)).toList).max
-
+  def minMultiplicity: Int = bucketsIterator.map(_.multiplicity).min
 
   def intersect(that: GenBag[A]): Repr
 
@@ -60,10 +58,7 @@ trait GenBagLike[A, +Repr]
 
   def &~(that: GenBag[A]): Repr = this diff that
 
-  def subsetOf(that: GenBag[A]): Boolean = bucketsIterator.forall(bkt => bkt.multiplicity <= that(bkt.sentinel).multiplicity)
-
-  def properSubsetOf(that: GenBag[A]): Boolean = this.size < that.size && bucketsIterator.forall(bkt => bkt.multiplicity <= that(bkt.sentinel).multiplicity)
-
+  def subsetOf(that: GenBag[A]): Boolean = bucketsIterator.forall(bkt => bkt.multiplicity <= multiplicity(bkt.sentinel))
 
   def toMap: immutable.Map[A, Int] = Map.empty ++ multiplicitiesIterator
 

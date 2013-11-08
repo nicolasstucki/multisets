@@ -14,26 +14,30 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   def empty: This
 
 
-  protected[this] def newBagBuilder: mutable.BagBuilder[A, This] = new mutable.BagBuilderImpl(empty)
+  protected[this] def newBagBuilder: mutable.BagBuilder[A, This] = mutable.BagBuilder.newBuilder(empty)
 
   override protected[this] def newBuilder: mutable.Builder[A, This] = newBagBuilder
 
-  def contains(elem: A): Boolean = repr(elem).multiplicity > 0
+  def contains(elem: A): Boolean = repr.multiplicity(elem) > 0
 
-  override def mostCommon(p: A => Boolean = _ => true): Bag[A] = {
-    val maxM = maxMultiplicity(p)
-    val b = newBuilder
-    for (bucket <- bucketsIterator if maxM == bucket.multiplicity && p(bucket.sentinel); elem <- bucket) {
-      b += elem
+  def mostCommon: Bag[A] = {
+    if (isEmpty) return empty
+
+    val maxM = maxMultiplicity
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator if maxM == bucket.multiplicity) {
+      b addBucket bucket
     }
     b.result()
   }
 
-  override def leastCommon(p: A => Boolean = _ => true): Bag[A] = {
-    val minM = minMultiplicity(p)
-    var b = newBuilder
-    for (bucket <- bucketsIterator if minM == bucket.multiplicity && p(bucket.sentinel); elem <- bucket) {
-      b += elem
+  override def leastCommon: Bag[A] = {
+    if (isEmpty) return empty
+
+    val minM = minMultiplicity
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator if minM == bucket.multiplicity) {
+      b addBucket bucket
     }
     b.result()
   }
@@ -47,9 +51,15 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
   // Added elements
-  def +(elem: A): This
+  def +(elem: A): This = this addedBucket (bucketFactory.newBuilder(elem) += elem).result()
 
-  def +(elemMultiplicity: (A, Int)): This = this ++ Iterator.fill(elemMultiplicity._2)(elemMultiplicity._1)
+
+  def +(elemCount: (A, Int)): This = {
+    val (elem, count) = elemCount
+    val bb = bucketFactory.newBuilder(elem)
+    bb.add(elem, count)
+    this.addedBucket(bb.result())
+  }
 
   def ++(elems: GenTraversableOnce[A]): This = {
     val b = newBuilder
@@ -74,14 +84,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
-  def addedBucket(bucket: collection.BagBucket[A]): This = {
-    val b = newBagBuilder
-    for (bucket <- bucketsIterator) {
-      b addBucket bucket
-    }
-    b addBucket bucket
-    b.result()
-  }
+  def addedBucket(bucket: collection.BagBucket[A]): This
 
 
   // Multiset operations
@@ -91,19 +94,19 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override def maxUnion(that: GenBag[A]): This = {
     newBuilder.result ++ (for (elem <- (this union that).distinctIterator) yield {
-      for (_ <- (1 to Math.max(this(elem).multiplicity, that(elem).multiplicity)).iterator) yield {
+      for (_ <- (1 to Math.max(this.multiplicity(elem), that.multiplicity(elem))).iterator) yield {
         elem
       }
     }).flatten.toIterable
   }
 
   override def intersect(that: GenBag[A]): This = {
-    val b = newBuilder
-    for (bucket <- bucketsIterator if that(bucket.sentinel).multiplicity > 0) {
-      if (that(bucket.sentinel).multiplicity > bucket.multiplicity) {
-        for (elem <- bucket) b += elem
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator if that.multiplicity(bucket.sentinel) > 0) {
+      if (bucket.multiplicity <= that.multiplicity(bucket.sentinel)) {
+        b addBucket bucket
       } else {
-        for (elem <- that(bucket.sentinel)) b += elem
+        b addBucket that.getBucket(bucket.sentinel).get
       }
     }
     b.result()
@@ -117,8 +120,15 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     case _ => repr
   }
 
-  def -*(elem: A): This = this - (elem -> repr(elem).multiplicity)
+  def -*(elem: A): This = removedBucket(elem)
 
+  def removedBucket(elem: A): This = {
+    val b = newBagBuilder
+    for (bucket <- bucketsIterator if bucket.sentinel != elem) {
+      b addBucket bucket
+    }
+    b.result()
+  }
 
   def multiplicities: Map[A, Int] = new Multiplicities(repr)
 

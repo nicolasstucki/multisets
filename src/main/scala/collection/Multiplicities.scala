@@ -3,7 +3,7 @@ package scala.collection
 
 class Multiplicities[A](bag: Bag[A]) extends Map[A, Int] {
 
-  def get(key: A): Option[Int] = Some(bag(key).multiplicity)
+  def get(key: A): Option[Int] = Some(bag.multiplicity(key))
 
   def iterator: Iterator[(A, Int)] = bag.bucketsIterator map (g => (g.sentinel, g.multiplicity))
 

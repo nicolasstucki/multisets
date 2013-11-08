@@ -6,8 +6,6 @@ trait Bag[A]
   extends collection.Bag[A]
   with immutable.BagLike[A, Bag[A]] {
 
-  protected override type BagBucket = immutable.BagBucket[A]
-  protected override type BagBucketFactory = immutable.BagBucketFactory[A]
 
 }
 

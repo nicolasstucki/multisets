@@ -70,7 +70,10 @@ class SeqBagBucket[A](val sentinel: A, val sequence: Seq[A])
 
   def -(elem: A): SeqBagBucket[A] = {
     sentinelCheck(elem)
-    new SeqBagBucket(sentinel, sequence.tail)
+    if (sequence.isEmpty)
+      new SeqBagBucket(sentinel, Seq.empty[A])
+    else
+      new SeqBagBucket(sentinel, sequence.tail)
   }
 }
 

@@ -1,7 +1,7 @@
 package scala.collection
 
 
-trait BagBucketFactory[A, BagBucket <: collection.BagBucket[A]] {
+trait BagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] {
 
   def empty(sentinel: A): BagBucket
 
