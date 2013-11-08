@@ -9,16 +9,30 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
   def intBagBehavior(bag: => collection.Bag[Int]) {
 
     it should "grow by 1 with +(elem) operation" in {
-      assert((bag + 1).size == bag.size + 1)
-      assert((bag + 2).size == bag.size + 1)
-      assert((bag + 10).size == bag.size + 1)
+      assertResult(bag.size + 1) {
+        (bag + 1).size
+      }
+      assertResult(bag.size + 1) {
+        (bag + 2).size
+      }
+      assertResult(bag.size + 1) {
+        (bag + 10).size
+      }
     }
 
     it should "grow by m with +(elem->m) operation" in {
-      assert((bag + (1 -> 4)).size == bag.size + 4)
-      assert((bag + (2 -> 1)).size == bag.size + 1)
-      assert((bag + (3 -> 0)).size == bag.size)
-      assert((bag + (3 -> -3)).size == bag.size)
+      assertResult(bag.size + 4) {
+        (bag + (1 -> 4)).size
+      }
+      assertResult(bag.size + 1) {
+        (bag + (2 -> 1)).size
+      }
+      assertResult(bag.size) {
+        (bag + (3 -> 0)).size
+      }
+      assertResult(bag.size) {
+        (bag + (3 -> -3)).size
+      }
     }
 
 
@@ -29,21 +43,26 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
     }
 
     it should "implement [distinct]: all distinct element must be present" in {
-      assert(distinct.toList.sorted === bag.toSet.toList.sorted)
+      assertResult(bag.toSet.toList.sorted) {
+        distinct.toList.sorted
+      }
     }
 
 
     it should "implement [sum]" in {
-      assert(bag.sum === bag.toList.sum)
+      assertResult(bag.toList.sum) {
+        bag.sum
+      }
     }
 
     it should "implement [product]" in {
-      assert(bag.product === bag.toList.product)
+      assertResult(bag.toList.product) {
+        bag.product
+      }
     }
 
 
   }
-
 
 
 }
