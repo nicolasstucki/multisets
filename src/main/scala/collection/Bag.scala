@@ -2,6 +2,9 @@ package scala
 package collection
 
 
+import generic._
+
+
 trait Bag[A]
   extends (A => Int)
   with Iterable[A]
@@ -14,16 +17,20 @@ trait Bag[A]
 }
 
 
-object Bag {
+object Bag extends BagFactory[immutable.Bag] {
 
-  def empty[A](implicit bktFactory: immutable.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag.empty(bktFactory)
+  type BagBucket[A] = immutable.BagBucket[A]
+  type BagBucketFactory[A] = immutable.BagBucketFactory[A]
 
-  def apply[A](elem: (A, Int))(implicit bktFactory: immutable.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag(elem)(bktFactory)
+  def defaultBagBucketFactory[A]: Bag.BagBucketFactory[A] = immutable.BagBucketFactory.ofMultiplicities[A]
 
-  def apply[A](elem1: (A, Int), elem2: (A, Int), elems: (A, Int)*)(implicit bktFactory: immutable.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag(elem1, elem2, elems: _*)(bktFactory)
+  implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, immutable.Bag[A]] = bagCanBuildFrom[A](defaultBagBucketFactory)
 
-  def apply[A](elems: GenTraversable[A])(implicit bktFactory: immutable.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag(elems)(bktFactory)
+  def newBuilder[A](implicit bucketFactory: Bag.BagBucketFactory[A]): mutable.BagBuilder[A, immutable.Bag[A]] = immutable.Bag.newBuilder[A](bucketFactory)
+
+  override def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag.empty(bucketFactory)
 
 }
 
+private[scala] abstract class AbstractBag[A] extends AbstractIterable[A] with Bag[A]
 

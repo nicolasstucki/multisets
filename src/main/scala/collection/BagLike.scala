@@ -165,7 +165,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override def map[B, That](f: (A) => B)(implicit bf: CanBuildFrom[This, B, That]): That = super.map(f)(bf)
 
-  def mapBuckets[B, That](op: (BagBucket) => B)(implicit bf: CanBuildFrom[This, B, That]): That = {
+  def mapBuckets[B, That](op: (BagBucket[A]) => B)(implicit bf: CanBuildFrom[This, B, That]): That = {
     def builder = {
       val b = bf(repr)
       b.sizeHint(this)

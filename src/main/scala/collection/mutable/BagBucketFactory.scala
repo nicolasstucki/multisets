@@ -17,12 +17,18 @@ object BagBucketFactory {
 
 
   class MultiplicityBagBucketFactory[A] extends scala.collection.mutable.BagBucketFactory[A] {
-    def empty(sentinel: A) = new mutable.MultiplicityBagBucket[A](sentinel, 0)
+
+    def empty(sentinel: A): mutable.MultiplicityBagBucket[A] = new mutable.MultiplicityBagBucket[A](sentinel, 0)
+
+    def from(elem: A): mutable.MultiplicityBagBucket[A] = new mutable.MultiplicityBagBucket[A](elem, 1)
   }
 
 
   class SeqBagBucketFactory[A] extends scala.collection.mutable.BagBucketFactory[A] {
+
     def empty(sentinel: A): mutable.BagBucket[A] = new mutable.SeqBagBucket[A](sentinel, immutable.Seq.empty[A])
+
+    def from(elem: A): mutable.BagBucket[A] = new mutable.SeqBagBucket[A](elem, immutable.Seq(elem))
   }
 
 }

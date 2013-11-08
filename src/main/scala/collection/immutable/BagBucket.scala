@@ -2,10 +2,11 @@ package scala.collection.immutable
 
 import scala.collection.{BagBucketException, immutable}
 import scala.collection
+import scala.language.higherKinds
 
 trait BagBucket[A] extends scala.collection.BagBucket[A] {
 
-  protected override type BagBucket = immutable.BagBucket[A]
+  protected override type BagBucket[X] = immutable.BagBucket[X]
 
 
 }

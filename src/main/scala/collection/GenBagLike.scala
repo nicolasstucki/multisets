@@ -1,19 +1,21 @@
 package scala.collection
 
+import scala.language.higherKinds
+
 trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
   with (A => Int)
   with Equals {
 
-  protected type BagBucket <: collection.BagBucket[A]
-  protected type BagBucketFactory <: collection.BagBucketFactory[A, BagBucket]
+  protected type BagBucket[X] <: collection.BagBucket[X]
+  protected type BagBucketFactory[X] <: collection.BagBucketFactory[X, BagBucket[X]]
 
-  protected def bucketFactory: BagBucketFactory
+  protected def bucketFactory: BagBucketFactory[A]
 
   def apply(elem: A): Int = multiplicity(elem)
 
 
-  def bucketsIterator: Iterator[BagBucket]
+  def bucketsIterator: Iterator[BagBucket[A]]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
 
@@ -37,7 +39,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon: Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(_.sentinel == elem)
+  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(_.sentinel == elem)
 
 
   def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max

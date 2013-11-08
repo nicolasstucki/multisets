@@ -1,5 +1,7 @@
 package scala.collection
 
+import scala.language.higherKinds
+
 
 object BagBucket {
 
@@ -13,19 +15,19 @@ trait BagBucket[A]
 
   assert(multiplicity >= 0)
 
-  protected type BagBucket <: collection.BagBucket[A]
+  protected type BagBucket[X] <: collection.BagBucket[X]
 
   def sentinel: A
 
   def multiplicity: Int
 
-  def +(elem: A): BagBucket
+  def +(elem: A): BagBucket[A]
 
-  def added(elem: A, count: Int): BagBucket
+  def added(elem: A, count: Int): BagBucket[A]
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket[A]
 
-  def -(elem: A): BagBucket
+  def -(elem: A): BagBucket[A]
 
   protected def sentinelCheck(other: A) {
     if (sentinel != other)
