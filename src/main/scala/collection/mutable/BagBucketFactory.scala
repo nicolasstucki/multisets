@@ -5,7 +5,7 @@ import scala.collection.{immutable, mutable}
 trait BagBucketFactory[A]
   extends collection.BagBucketFactory[A, mutable.BagBucket[A]] {
 
-  def newBuilder(sentinel: A) = empty(sentinel)
+  def newBuilder(sentinel: A) = new mutable.GrowingBagBucketBuilder[A](empty(sentinel))
 }
 
 

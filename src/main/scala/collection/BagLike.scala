@@ -13,10 +13,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def empty: This
 
-
-  protected[this] def newBagBuilder: mutable.BagBuilder[A, This] = mutable.BagBuilder.newBuilder(empty)
-
-  override protected[this] def newBuilder: mutable.Builder[A, This] = newBagBuilder
+  override protected[this] def newBuilder: mutable.BagBuilder[A, This] = mutable.BagBuilder(empty)
 
   def contains(elem: A): Boolean = repr.multiplicity(elem) > 0
 
@@ -24,7 +21,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     if (isEmpty) return empty
 
     val maxM = maxMultiplicity
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator if maxM == bucket.multiplicity) {
       b addBucket bucket
     }
@@ -35,7 +32,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     if (isEmpty) return empty
 
     val minM = minMultiplicity
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator if minM == bucket.multiplicity) {
       b addBucket bucket
     }
@@ -76,7 +73,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   // Added Bucket
 
   def added(elem: A, count: Int): This = {
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator) {
       b addBucket bucket
     }
@@ -101,7 +98,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
   override def intersect(that: GenBag[A]): This = {
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator if that.multiplicity(bucket.sentinel) > 0) {
       if (bucket.multiplicity <= that.multiplicity(bucket.sentinel)) {
         b addBucket bucket
@@ -123,7 +120,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   def -*(elem: A): This = removedBucket(elem)
 
   def removedBucket(elem: A): This = {
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator if bucket.sentinel != elem) {
       b addBucket bucket
     }

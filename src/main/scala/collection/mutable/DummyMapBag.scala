@@ -44,7 +44,7 @@ class DummyMapBag[A](multiplicityMap: mutable.Map[A, mutable.BagBucket[A]])(prot
 
   // Removed elements
   def -(elem: A): mutable.Bag[A] = {
-    val b = newBagBuilder
+    val b = newBuilder
     for (bucket <- bucketsIterator) {
       if (bucket.sentinel == elem) {
         b addBucket (bucket - elem)

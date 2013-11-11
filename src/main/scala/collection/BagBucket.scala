@@ -28,13 +28,6 @@ trait BagBucket[A]
   def addedBucket(bucket: collection.BagBucket[A]): BagBucket[A]
 
   def -(elem: A): BagBucket[A]
-
-  protected def sentinelCheck(other: A) {
-    if (sentinel != other)
-      throw new BagBucketException("Bag Bucket sentinel miss match.")
-  }
-
-
 }
 
 
@@ -48,28 +41,28 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 
   override def min[B >: A](implicit cmp: Ordering[B]): A = {
     if (isEmpty)
-      throw new UnsupportedOperationException("empty.minBy")
+      throw new UnsupportedOperationException("emptyBag.minBy")
 
     sentinel
   }
 
   override def max[B >: A](implicit cmp: Ordering[B]): A = {
     if (isEmpty)
-      throw new UnsupportedOperationException("empty.minBy")
+      throw new UnsupportedOperationException("emptyBag.minBy")
 
     sentinel
   }
 
   override def minBy[B](f: (A) => B)(implicit cmp: Ordering[B]): A = {
     if (isEmpty)
-      throw new UnsupportedOperationException("empty.minBy")
+      throw new UnsupportedOperationException("emptyBag.minBy")
 
     sentinel
   }
 
   override def maxBy[B](f: (A) => B)(implicit cmp: Ordering[B]): A = {
     if (isEmpty)
-      throw new UnsupportedOperationException("empty.minBy")
+      throw new UnsupportedOperationException("emptyBag.minBy")
 
     sentinel
   }
@@ -93,6 +86,3 @@ trait SeqBagBucket[A] extends BagBucket[A] {
 
   def iterator: Iterator[A] = sequence.iterator
 }
-
-
-class BagBucketException(msg: String) extends Exception(msg)
