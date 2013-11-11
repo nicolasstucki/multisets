@@ -8,9 +8,9 @@ import scala.collection.mutable
 abstract class MutableBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X, CC[X]]]
   extends BagFactory[CC] {
 
-  type BagBucket[A] = mutable.BagBucket[A]
+  type BagBucket[X] = mutable.BagBucket[X]
 
-  type BagBucketFactory[A] = mutable.BagBucketFactory[A]
+  type BagBucketFactory[X] = mutable.BagBucketFactory[X]
 
   def defaultBagBucketFactory[A]: BagBucketFactory[A] = mutable.BagBucketFactory.ofMultiplicities[A]
 
