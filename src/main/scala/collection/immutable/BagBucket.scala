@@ -40,32 +40,32 @@ class MultiplicityBagBucket[A](val sentinel: A, val multiplicity: Int)
 }
 
 
-class SeqBagBucket[A](val sentinel: A, val sequence: Seq[A])
-  extends scala.collection.SeqBagBucket[A]
+class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
+  extends scala.collection.VectorBagBucket[A]
   with immutable.BagBucket[A] {
 
 
-  def +(elem: A): SeqBagBucket[A] = {
-    new immutable.SeqBagBucket(sentinel, sequence :+ elem)
+  def +(elem: A): VectorBagBucket[A] = {
+    new immutable.VectorBagBucket(sentinel, vector :+ elem)
   }
 
 
   def added(elem: A, count: Int) = {
     if (count > 0)
-      new immutable.SeqBagBucket[A](elem, sequence ++ Iterator.fill(count)(elem))
+      new immutable.VectorBagBucket[A](elem, vector ++ Iterator.fill(count)(elem))
     else
       this
   }
 
   def addedBucket(bucket: collection.BagBucket[A]): immutable.BagBucket[A] = {
-    new immutable.SeqBagBucket[A](sentinel, this.sequence ++ bucket)
+    new immutable.VectorBagBucket[A](sentinel, this.vector ++ bucket)
   }
 
-  def -(elem: A): SeqBagBucket[A] = {
-    if (sequence.isEmpty)
-      new SeqBagBucket(sentinel, Seq.empty[A])
+  def -(elem: A): VectorBagBucket[A] = {
+    if (vector.isEmpty)
+      new VectorBagBucket(sentinel, Vector.empty[A])
     else
-      new SeqBagBucket(sentinel, sequence.tail)
+      new VectorBagBucket(sentinel, vector.tail)
   }
 }
 

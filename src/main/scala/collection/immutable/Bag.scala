@@ -15,6 +15,6 @@ object Bag extends generic.ImmutableBagFactory[Bag] {
 
   implicit def canBuildFrom[A](implicit b: BagBucketFactory[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A]
 
-  override def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): Bag[A] = immutable.DummyMapBag.empty
+  override def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): Bag[A] = immutable.VectorBag.empty
 
 }

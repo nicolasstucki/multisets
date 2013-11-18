@@ -1,6 +1,5 @@
 package scala.collection.mutable
 
-import scala.collection.{immutable, mutable}
 import scala.collection._
 import scala.collection.generic.GrowableBag
 
@@ -66,56 +65,59 @@ class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
 }
 
 
-class SeqBagBucket[A](val sentinel: A, var sequence: immutable.Seq[A])
-  extends scala.collection.SeqBagBucket[A]
+class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
+  extends scala.collection.VectorBagBucket[A]
   with mutable.BagBucket[A] {
 
+  var vec: Vector[A] = initialVector
+
+  def vector: Vector[A] = vec
 
   def clear(): Unit = {
-    sequence = immutable.Seq.empty[A]
+    vec = immutable.Vector.empty[A]
   }
 
-  def result(): mutable.SeqBagBucket[A] = new mutable.SeqBagBucket[A](sentinel, sequence)
+  def result(): mutable.VectorBagBucket[A] = new mutable.VectorBagBucket[A](sentinel, vec)
 
 
   override def +=(elem: A) = {
-    sequence = sequence :+ elem
+    vec = vec :+ elem
     this
   }
 
   def -=(elem: A) = {
-    sequence = sequence.tail
+    vec = vec.init
     this
   }
 
 
   def added(elem: A, count: Int) = {
-    new mutable.SeqBagBucket[A](sentinel, sequence ++ mutable.Iterable.fill(count)(elem))
+    new mutable.VectorBagBucket[A](sentinel, vec ++ Iterator.fill(count)(elem))
   }
 
 
   def add(elem: A, count: Int) = {
-    sequence = sequence ++ Iterator.fill(count)(elem)
+    vec = vec ++ Iterator.fill(count)(elem)
     this
   }
 
   def addBucket(bucket: collection.BagBucket[A]) = {
-    sequence = sequence ++ bucket
+    vec = vec ++ bucket
     this
   }
 
   def +(elem: A) = {
-    new mutable.SeqBagBucket(sentinel, sequence :+ elem)
+    new mutable.VectorBagBucket(sentinel, vec :+ elem)
   }
 
 
   def addedBucket(bucket: collection.BagBucket[A]) = {
-    new mutable.SeqBagBucket[A](sentinel, sequence ++ bucket)
+    new mutable.VectorBagBucket[A](sentinel, vec ++ bucket)
   }
 
   def -(elem: A) = {
-    if (sequence.isEmpty) this
-    else new mutable.SeqBagBucket(sentinel, sequence.tail)
+    if (vec.isEmpty) this
+    else new mutable.VectorBagBucket(sentinel, vec.tail)
   }
 }
 

@@ -13,8 +13,6 @@ object BagBucket {
 trait BagBucket[A]
   extends Iterable[A] {
 
-  assert(multiplicity >= 0)
-
   protected type BagBucket[X] <: collection.BagBucket[X]
 
   def sentinel: A
@@ -76,13 +74,11 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 }
 
 
-trait SeqBagBucket[A] extends BagBucket[A] {
+trait VectorBagBucket[A] extends BagBucket[A] {
 
-  assert(sequence.hasDefiniteSize)
+  def vector: Vector[A]
 
-  def sequence: Seq[A]
+  def multiplicity: Int = vector.size
 
-  def multiplicity: Int = sequence.size
-
-  def iterator: Iterator[A] = sequence.iterator
+  def iterator: Iterator[A] = vector.iterator
 }

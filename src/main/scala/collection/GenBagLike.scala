@@ -39,7 +39,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon: Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(_.sentinel == elem)
+  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(bucket => bucketFactory.equiv(bucket.sentinel, elem))
 
 
   def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max
@@ -60,7 +60,7 @@ trait GenBagLike[A, +Repr]
 
   def &~(that: GenBag[A]): Repr = this diff that
 
-  def subsetOf(that: GenBag[A]): Boolean = bucketsIterator.forall(bkt => bkt.multiplicity <= multiplicity(bkt.sentinel))
+  def subsetOf(that: GenBag[A]): Boolean = bucketsIterator.forall(bucket => bucket.multiplicity <= multiplicity(bucket.sentinel))
 
   def toMap: immutable.Map[A, Int] = Map.empty ++ multiplicitiesIterator
 

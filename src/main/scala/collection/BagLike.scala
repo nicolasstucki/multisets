@@ -3,6 +3,7 @@ package scala.collection
 
 import scala.collection.generic.{CanBuildFrom, Subtractable}
 import scala.collection.mutable.{BagBuilder, Builder}
+import scala.annotation.tailrec
 
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
@@ -41,27 +42,28 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def distinct: Bag[A] = {
     val b = newBuilder
-    for (bkt <- bucketsIterator) {
-      b += bkt.sentinel
+    for (bucket <- bucketsIterator) {
+      b += bucket.sentinel
     }
     b.result()
   }
 
   // Added elements
-  def +(elem: A): This = this addedBucket (bucketFactory.newBuilder(elem) += elem).result()
+  def +(elem: A): This = this added(elem, 1)
 
 
-  def +(elemCount: (A, Int)): This = {
-    val (elem, count) = elemCount
+  def added(elem: A, count: Int): This = {
     val bb = bucketFactory.newBuilder(elem)
     bb.add(elem, count)
     this.addedBucket(bb.result())
   }
 
+  def added(elemCount: (A, Int)): This = added(elemCount._1, elemCount._2)
+
   def ++(elems: GenTraversableOnce[A]): This = {
     val b = newBuilder
-    for (bucket <- this.bucketsIterator; elem <- bucket) {
-      b += elem
+    for (bucket <- this.bucketsIterator) {
+      b addBucket bucket
     }
     for (elem <- elems) {
       b += elem
@@ -72,17 +74,8 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   // Added Bucket
 
-  def added(elem: A, count: Int): This = {
-    val b = newBuilder
-    for (bucket <- bucketsIterator) {
-      b addBucket bucket
-    }
-    b.add(elem, count)
-    b.result()
-  }
 
   def addedBucket(bucket: collection.BagBucket[A]): This
-
 
   // Multiset operations
   override def union(that: GenBag[A]): This = this ++ that
@@ -110,18 +103,39 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
   // Removed elements
-  def -(elem: A): This
+  def -(elem: A): This = removed(elem, 1)
 
-  def -(elemCount: (A, Int)): This = elemCount match {
-    case (elem, count) if count > 0 => (this - elem) - (elem -> (count - 1))
-    case _ => repr
+  def -(elemCount: (A, Int)): This = removed(elemCount._1, elemCount._2)
+
+  def removed(elem: A, count: Int): This = {
+    val b = newBuilder
+
+    for (bucket <- bucketsIterator) {
+      if (bucketFactory.equiv(bucket.sentinel, elem)) {
+        val bb = bucketFactory.newBuilder(elem)
+        var countToAdd = bucket.multiplicity - count
+        val it = bucket.iterator
+        while (countToAdd > 0 && it.hasNext) {
+          bb += it.next()
+          countToAdd -= 1
+        }
+        val result = bb.result()
+        if (result.nonEmpty)
+          b addBucket bb.result()
+
+      } else {
+        b addBucket bucket
+      }
+    }
+
+    b.result()
   }
 
   def -*(elem: A): This = removedBucket(elem)
 
   def removedBucket(elem: A): This = {
     val b = newBuilder
-    for (bucket <- bucketsIterator if bucket.sentinel != elem) {
+    for (bucket <- bucketsIterator if !bucketFactory.equiv(bucket.sentinel, elem)) {
       b addBucket bucket
     }
     b.result()
@@ -133,7 +147,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def zipWithMultiplicities: Iterable[(A, Int)] = multiplicitiesIterator.toIterable
 
-  def setMultiplicity(elem: A, count: Int): This = this -* elem + (elem -> count)
+  def setMultiplicity(elem: A, count: Int): This = (this -* elem).added(elem, count)
 
 
   override def forall(p: (A) => Boolean): Boolean = bucketsIterator.forall(_.forall(p))
@@ -162,17 +176,6 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override def map[B, That](f: (A) => B)(implicit bf: CanBuildFrom[This, B, That]): That = super.map(f)(bf)
 
-  def mapBuckets[B, That](op: (BagBucket[A]) => B)(implicit bf: CanBuildFrom[This, B, That]): That = {
-    def builder = {
-      val b = bf(repr)
-      b.sizeHint(this)
-      b
-    }
-    val b = builder
-    for (bucket <- bucketsIterator) b += op(bucket)
-    b.result()
-  }
-
 
   override def sum[B >: A](implicit num: Numeric[B]): B = bucketsIterator.map(_.sum(num)).foldLeft(num.zero)(num.plus)
 
@@ -190,7 +193,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     var first = true
     var acc: B = 0.asInstanceOf[B]
 
-    for (bucket <- bucketsIterator if !bucket.isEmpty) {
+    for (bucket <- bucketsIterator if bucket.nonEmpty) {
       if (first) {
         acc = bucket.reduceLeft(op)
         first = false

@@ -22,16 +22,16 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
 
     it should "grow by m with +(elem->m) operation" in {
       assertResult(bag.size + 4) {
-        (bag + (1 -> 4)).size
+        (bag added (1 -> 4)).size
       }
       assertResult(bag.size + 1) {
-        (bag + (2 -> 1)).size
+        (bag added (2 -> 1)).size
       }
       assertResult(bag.size) {
-        (bag + (3 -> 0)).size
+        (bag added (3 -> 0)).size
       }
       assertResult(bag.size) {
-        (bag + (3 -> -3)).size
+        (bag added (3 -> -3)).size
       }
     }
 

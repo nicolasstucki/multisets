@@ -9,5 +9,5 @@ class IntMutableDummyMapBagOnMultiplicitiesTest extends IntBagTest {
 }
 
 class IntMutableDummyMapBagOnSeqTest extends IntBagTest {
-  override def emptyBag = mutable.DummyMapBag.empty(mutable.BagBucketFactory.ofSeq[Int])
+  override def emptyBag = mutable.DummyMapBag.empty(mutable.BagBucketFactory.ofVectors[Int])
 }
