@@ -2,9 +2,8 @@ package scala.collection.mutable
 
 import scala.collection._
 
-trait BagLike[A, This <: mutable.BagLike[A, This] with mutable.Bag[A]]
+trait BagLike[A, This <: mutable.Bag[A] with mutable.BagLike[A, This] ]
   extends collection.BagLike[A, This]
-  with GenBagLike[A, This]
   with generic.Subtractable[A, This]
   with generic.GrowableBag[A] {
   self =>
