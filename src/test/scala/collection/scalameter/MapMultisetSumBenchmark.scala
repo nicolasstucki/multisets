@@ -2,7 +2,7 @@ package scala.collection.scalameter
 
 import org.scalameter.api._
 
-import scala.collection.mutable
+import scala.collection._
 
 object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
 
@@ -11,11 +11,11 @@ object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
   val bags = for {
     size <- sizes
   } yield {
-    val bag = mutable.DummyMapBag.empty(mutable.BagBucketFactory.ofMultiplicities[Int])
+    val b = immutable.VectorBag.newBuilder(immutable.BagBucketFactory.ofMultiplicities[Int])
     for (n <- 1 to size) {
-      bag += (n -> n)
+      b.add(n, n)
     }
-    bag
+    b.result()
   }
 
   performance of "MapMultiset" in {

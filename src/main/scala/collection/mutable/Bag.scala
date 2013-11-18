@@ -47,5 +47,5 @@ trait Bag[A]
 
 object Bag extends generic.MutableBagFactory[mutable.Bag] {
 
-  def empty[A](implicit bucketFactory: mutable.Bag.BagBucketFactory[A]): mutable.Bag[A] = mutable.DummyMapBag.empty
+  def empty[A](implicit bucketFactory: mutable.Bag.BagBucketFactory[A]): mutable.Bag[A] = mutable.LinkedListBag.empty
 }
