@@ -11,6 +11,6 @@ abstract class ImmutableBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagL
   type BagBucket[A] = immutable.BagBucket[A]
   type BagBucketFactory[A] = immutable.BagBucketFactory[A]
 
-  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
+  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
 
 }

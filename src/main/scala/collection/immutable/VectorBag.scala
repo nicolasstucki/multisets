@@ -2,8 +2,9 @@ package scala.collection.immutable
 
 import scala.collection._
 import scala.collection
+import scala.collection.generic.CanBuildFrom
 
-final class VectorBag[A](vector: Vector[BagBucket[A]])(protected val bucketFactory: immutable.BagBucketFactory[A])
+final class VectorBag[A](vector: Vector[BagBucket[A]])(implicit protected val bucketFactory: immutable.BagBucketFactory[A], protected val equivClass: Equiv[A])
   extends immutable.Bag[A]
   with immutable.BagLike[A, VectorBag[A]] {
 
@@ -13,21 +14,25 @@ final class VectorBag[A](vector: Vector[BagBucket[A]])(protected val bucketFacto
     bb addBucket bucket
     for (i <- 0 until vector.size) {
       val bucket2 = vector(i)
-      if (bucketFactory.equiv(bucket.sentinel, bucket2.sentinel)) {
+      if (equivClass.equiv(bucket.sentinel, bucket2.sentinel)) {
         bb addBucket bucket2
-        return new VectorBag[A](vector.updateAt(i, bb.result()))(bucketFactory)
+        return new VectorBag[A](vector.updateAt(i, bb.result()))
       }
     }
 
-    new VectorBag[A](vector.appendBack(bb.result()))(bucketFactory)
+    new VectorBag[A](vector.appendBack(bb.result()))
   }
 
   def bucketsIterator: Iterator[BagBucket[A]] = vector.iterator
 
-  def empty: VectorBag[A] = new VectorBag[A](Vector.empty[BagBucket[A]])(bucketFactory)
+  def empty: VectorBag[A] = VectorBag.empty[A]
 
 }
 
 object VectorBag extends generic.ImmutableBagFactory[VectorBag] {
-  def empty[A](implicit bucketFactory: VectorBag.BagBucketFactory[A]): VectorBag[A] = new VectorBag(Vector.empty[BagBucket[A]])(bucketFactory)
+
+  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A](bucketFactory, equivClass)
+
+
+  def empty[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): VectorBag[A] = new VectorBag(Vector.empty[BagBucket[A]])(bucketFactory, equivClass)
 }

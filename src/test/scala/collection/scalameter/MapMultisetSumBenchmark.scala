@@ -11,7 +11,8 @@ object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
   val bags = for {
     size <- sizes
   } yield {
-    val b = immutable.VectorBag.newBuilder(immutable.BagBucketFactory.ofMultiplicities[Int])
+    implicit val m = immutable.BagBucketFactory.ofMultiplicities[Int]
+    val b = immutable.VectorBag.newBuilder
     for (n <- 1 to size) {
       b.add(n, n)
     }

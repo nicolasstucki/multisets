@@ -12,9 +12,6 @@ abstract class MutableBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X,
 
   type BagBucketFactory[X] = mutable.BagBucketFactory[X]
 
-  def defaultBagBucketFactory[A]: BagBucketFactory[A] = mutable.BagBucketFactory.ofMultiplicities[A]
-
-
-  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A]): mutable.BagBuilder[A, CC[A]] = new mutable.GrowingBagBuilder[A, CC[A]](empty[A])
+  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): mutable.BagBuilder[A, CC[A]] = new mutable.GrowingBagBuilder[A, CC[A]](empty[A])
 
 }
