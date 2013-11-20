@@ -58,7 +58,6 @@ val files = List(
 
 
 
-implicit val bagBucketFactory = BagBucketFactory.ofVectors[File]
 
 
 
@@ -67,7 +66,6 @@ implicit val bagBucketFactory = BagBucketFactory.ofVectors[File]
 
 
 
-val bag1 = Bag(files: _*)(bagBucketFactory, FileEquiv.ExtensionEquiv)
 
 
 
@@ -82,6 +80,7 @@ val bag1 = Bag(files: _*)(bagBucketFactory, FileEquiv.ExtensionEquiv)
 
 
 
+val bag1 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.ExtensionEquiv))
 
 
 
@@ -94,7 +93,6 @@ val bag1 = Bag(files: _*)(bagBucketFactory, FileEquiv.ExtensionEquiv)
 
 
 
-val bag2 = Bag(files: _*)(bagBucketFactory, FileEquiv.FileNameEquiv)
 
 
 
@@ -116,7 +114,6 @@ val bag2 = Bag(files: _*)(bagBucketFactory, FileEquiv.FileNameEquiv)
 
 
 
-val bag3 = Bag(files: _*)(bagBucketFactory, FileEquiv.DirEquiv)
 
 
 
@@ -138,7 +135,275 @@ val bag3 = Bag(files: _*)(bagBucketFactory, FileEquiv.DirEquiv)
 
 
 
-val bag4 = Bag(files: _*)(bagBucketFactory, FileEquiv.DirDepthEquiv)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+val bag2 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.FileNameEquiv))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+val bag3 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.DirEquiv))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+val bag4 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.DirDepthEquiv))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -168,7 +433,9 @@ def m(bag: Bag[File], path: String) = {
 
 
 
+
 m(bag1, "/f.jpeg")
+
 m(bag1, "/f.txt")
 m(bag1, "/f.png")
 m(bag2, "/file1.x")
@@ -185,8 +452,14 @@ m(bag3, "/dirB/dir3/x.x")
 m(bag4, "/x.x")
 m(bag4, "/dirB/x.x")
 m(bag4, "/dirB/dir3/x.x")
-
 bag1.mostCommon
+
+
+
+
+
+
+
 
 
 
@@ -212,7 +485,19 @@ bag2.mostCommon
 
 
 
+
+
+
+
+
+
+
 bag3.mostCommon
+
+
+
+
+
 
 
 
@@ -241,11 +526,24 @@ bag4.mostCommon
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 bag1.leastCommon
 
 
 
+
 bag2.leastCommon
+
 
 
 
@@ -266,7 +564,13 @@ bag3.leastCommon
 
 
 
+
+
+
+
+
 bag4.leastCommon
+
 
 
 

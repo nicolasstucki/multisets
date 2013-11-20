@@ -5,19 +5,18 @@ import scala.collection.scalatest._
 import scala.collection.mutable
 
 class IntMutableLinkedListBagBagOnMultiplicitiesTest extends IntBagTest {
-  implicit val bagBucketFactory = mutable.BagBucketFactory.ofMultiplicities[Int]
 
-  override def emptyBag = mutable.LinkedListBag.empty
+  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.ofMultiplicities[Int]
+
+  override def emptyBag: mutable.Bag[Int] = mutable.LinkedListBag.empty[Int]
+
 }
 
 class IntMutableLinkedListBagOnVectorBucketTest extends IntBagTest {
 
-  implicit val bagBucketFactory = mutable.BagBucketFactory.ofVectors[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.ofVectors[Int]
 
-  override def emptyBag = {
+  override def emptyBag: mutable.Bag[Int] = mutable.LinkedListBag.empty[Int]
 
-    println("emptyBag: "+ mutable.BagBucketFactory.ofVectors[Int])
-    mutable.LinkedListBag.empty
 
-  }
 }

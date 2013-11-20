@@ -8,9 +8,9 @@ import scala.language.higherKinds
 abstract class ImmutableBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
   extends BagFactory[CC] {
 
-  type BagBucket[A] = immutable.BagBucket[A]
-  type BagBucketFactory[A] = immutable.BagBucketFactory[A]
+  type BagBucket[X] = immutable.BagBucket[X]
+  type BagBucketFactory[X] = immutable.BagBucketFactory[X]
 
-  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
+  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
 
 }

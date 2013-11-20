@@ -52,7 +52,6 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
 
   def added(elem: A, count: Int): This = {
-    println(bucketFactory)
     val bb = bucketFactory.newBuilder(elem)
     bb.add(elem, count)
     this.addedBucket(bb.result())
@@ -111,7 +110,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     val b = newBuilder
 
     for (bucket <- bucketsIterator) {
-      if (equivClass.equiv(bucket.sentinel, elem)) {
+      if (bucketFactory.equiv(bucket.sentinel, elem)) {
         val bb = bucketFactory.newBuilder(elem)
         var countToAdd = bucket.multiplicity - count
         val it = bucket.iterator
@@ -135,7 +134,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def removedBucket(elem: A): This = {
     val b = newBuilder
-    for (bucket <- bucketsIterator if !equivClass.equiv(bucket.sentinel, elem)) {
+    for (bucket <- bucketsIterator if !bucketFactory.equiv(bucket.sentinel, elem)) {
       b addBucket bucket
     }
     b.result()

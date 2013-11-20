@@ -1,6 +1,6 @@
 package scala.collection.mutable
 
-import scala.collection.{immutable, mutable}
+import scala.collection.mutable
 
 trait BagBucketFactory[A]
   extends collection.BagBucketFactory[A, mutable.BagBucket[A]] {
@@ -14,6 +14,7 @@ object BagBucketFactory {
   def ofMultiplicities[A] = new MultiplicityBagBucketFactory[A]
 
   def ofVectors[A](implicit equivClass: Equiv[A]) = new VectorBagBucketFactory[A](equivClass)
+
 
 
   class MultiplicityBagBucketFactory[A] extends scala.collection.mutable.BagBucketFactory[A] {
@@ -34,7 +35,6 @@ object BagBucketFactory {
     def from(elem: A): mutable.BagBucket[A] = new mutable.VectorBagBucket[A](elem, Vector(elem))
 
     def equiv(x: A, y: A): Boolean = equivClass.equiv(x, y)
-
   }
 
 }

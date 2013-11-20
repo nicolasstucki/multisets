@@ -5,7 +5,7 @@
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value="scala-compiler" />
-        <option name="compilerOptions" value="-feature" />
+        <option name="compilerOptions" value="-feature -Xlog-implicits" />
       </configuration>
     </facet>
   </component>

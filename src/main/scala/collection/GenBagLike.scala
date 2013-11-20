@@ -11,10 +11,6 @@ trait GenBagLike[A, +Repr]
   protected type BagBucket[X] <: collection.BagBucket[X]
   protected type BagBucketFactory[X] <: collection.BagBucketFactory[X, BagBucket[X]]
 
-
-  protected def equivClass: Equiv[A]
-
-
   protected def bucketFactory: BagBucketFactory[A]
 
   def apply(elem: A): Int = multiplicity(elem)
@@ -23,7 +19,6 @@ trait GenBagLike[A, +Repr]
   def bucketsIterator: Iterator[BagBucket[A]]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
-
 
 
   def multiplicitiesIterator: Iterator[(A, Int)] = bucketsIterator.map(g => g.sentinel -> g.multiplicity)
@@ -46,7 +41,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon: Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(bucket => equivClass.equiv(bucket.sentinel, elem))
+  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(bucket => bucketFactory.equiv(bucket.sentinel, elem))
 
 
   def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max
@@ -86,3 +81,4 @@ trait GenBagLike[A, +Repr]
 
   override def hashCode() = scala.util.hashing.MurmurHash3.mapHash(this.toMap)
 }
+

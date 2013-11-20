@@ -10,9 +10,7 @@ class IntBagTest extends FlatSpec with IntBagBehaviors {
 
 
   def emptyBag: collection.Bag[Int] = {
-    implicit val bucketFactory = BagBucketFactory.ofMultiplicities[Int]
-
-    println("emptyBag: " + bucketFactory)
+    implicit val bagBucketFactory = BagBucketFactory.ofMultiplicities[Int]
     collection.Bag.empty[Int]
   }
 

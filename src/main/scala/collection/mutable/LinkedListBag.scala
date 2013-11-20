@@ -4,10 +4,9 @@ import scala.collection.generic.{CanBuildFrom, MutableBagFactory}
 import scala.collection.mutable
 import scala.collection
 
-final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(implicit protected val bucketFactory: mutable.BagBucketFactory[A], protected val equivClass: Equiv[A])
+final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(implicit protected val bucketFactory: mutable.BagBucketFactory[A])
   extends mutable.Bag[A] {
   //with mutable.BagLike[A, LinkedListBag[A]] {
-  println("LinkedListBag const: "+bucketFactory)
 
   def clear(): Unit = list.clear()
 
@@ -21,7 +20,7 @@ final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(im
     for (bucket2 <- bucketsIterator) {
       val bb = bucketFactory.newBuilder(bucket2.sentinel)
       bb addBucket bucket2
-      if (!added && equivClass.equiv(bucket.sentinel, bucket2.sentinel)) {
+      if (!added && bucketFactory.equiv(bucket.sentinel, bucket2.sentinel)) {
         bb addBucket bucket
         added = true
       }
@@ -38,7 +37,7 @@ final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(im
   }
 
   def updateBucket(bucket: mutable.BagBucket[A]): this.type = {
-    val index = list.indexWhere(b => equivClass.equiv(b.sentinel, bucket.sentinel))
+    val index = list.indexWhere(b => bucketFactory.equiv(b.sentinel, bucket.sentinel))
     if (index >= 0) {
       list.update(index, bucket)
     } else {
@@ -51,7 +50,7 @@ final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(im
 
 object LinkedListBag extends MutableBagFactory[mutable.Bag] {
 
-  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A](bucketFactory, equivClass)
+  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A]): CanBuildFrom[Coll, A, mutable.Bag[A]] = bagCanBuildFrom[A]
 
-  def empty[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): mutable.LinkedListBag[A] = new mutable.LinkedListBag[A](mutable.MutableList.empty[BagBucket[A]])(bucketFactory, equivClass)
+  def empty[A](implicit bucketFactory: BagBucketFactory[A]): mutable.LinkedListBag[A] = new mutable.LinkedListBag[A](mutable.MutableList.empty[BagBucket[A]])
 }

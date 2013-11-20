@@ -13,8 +13,8 @@ trait Bag[A]
 
 object Bag extends generic.ImmutableBagFactory[Bag] {
 
-  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A](bucketFactory, equivClass)
+  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A]
 
-  def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A], equivClass: Equiv[A]): Bag[A] = immutable.VectorBag.empty(bucketFactory, equivClass)
+  def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): Bag[A] = immutable.VectorBag.empty[A]
 
 }

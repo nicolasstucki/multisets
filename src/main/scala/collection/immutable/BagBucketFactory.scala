@@ -16,6 +16,7 @@ object BagBucketFactory {
   def ofVectors[A](implicit equivClass: Equiv[A]) = new VectorBagBucketFactory[A](equivClass)
 
   class MultiplicityBagBucketFactory[A] extends immutable.BagBucketFactory[A] {
+
     def empty(sentinel: A): immutable.MultiplicityBagBucket[A] = new immutable.MultiplicityBagBucket(sentinel, 0)
 
     def from(elem: A): immutable.MultiplicityBagBucket[A] = new MultiplicityBagBucket(elem, 1)
