@@ -25,7 +25,7 @@ trait GenericBagCompanion[CC[X] <: collection.Bag[X]] {
     }
   }
 
-  def from[A](elemCounts: (A, Int)*)(implicit bucketFactory: BagBucketFactory[A], equivClass: Equiv[A]): CC[A] = {
+  def from[A](elemCounts: (A, Int)*)(implicit bucketFactory: BagBucketFactory[A]): CC[A] = {
     if (elemCounts.isEmpty) empty[A]
     else {
       val b = newBuilder[A]

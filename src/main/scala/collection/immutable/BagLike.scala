@@ -2,6 +2,7 @@ package scala.collection.immutable
 
 import scala.collection.generic.Subtractable
 
+import scala.language.higherKinds
 import scala.collection._
 
 trait BagLike[A, +This <: immutable.BagLike[A, This] with immutable.Bag[A]]
@@ -11,6 +12,6 @@ trait BagLike[A, +This <: immutable.BagLike[A, This] with immutable.Bag[A]]
   self =>
 
   protected override type BagBucket[X] = immutable.BagBucket[X]
-  protected override type BagBucketFactory[X] = immutable.BagBucketFactory[X]
+  protected override type BagBucketFactory[X] <: immutable.BagBucketFactory[X]
 
 }

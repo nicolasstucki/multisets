@@ -80,7 +80,21 @@ val files = List(
 
 
 
+
+
+
+
+
+
+
 val bag1 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.ExtensionEquiv))
+
+
+
+
+
+
+
 
 
 
@@ -255,7 +269,21 @@ val bag2 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.FileNameEqu
 
 
 
+
+
+
+
+
+
+
 val bag3 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.DirEquiv))
+
+
+
+
+
+
+
 
 
 
@@ -425,10 +453,18 @@ val bag4 = Bag(files: _*)(BagBucketFactory.ofVectors[File](FileEquiv.DirDepthEqu
 
 
 
+
+
+
+
+
+
+
 def m(bag: Bag[File], path: String) = {
   val file = Path.parse(path)
   (path, bag.multiplicity(file))
 }
+
 
 
 
@@ -472,6 +508,10 @@ bag1.mostCommon
 
 
 
+
+
+
+
 bag2.mostCommon
 
 
@@ -492,7 +532,14 @@ bag2.mostCommon
 
 
 
+
+
+
+
 bag3.mostCommon
+
+
+
 
 
 
@@ -537,12 +584,20 @@ bag4.mostCommon
 
 
 
+
+
+
+
+
+
 bag1.leastCommon
 
 
 
 
+
 bag2.leastCommon
+
 
 
 
@@ -569,7 +624,11 @@ bag3.leastCommon
 
 
 
+
+
+
 bag4.leastCommon
+
 
 
 

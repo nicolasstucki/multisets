@@ -9,6 +9,8 @@ final class VectorBag[A](vector: Vector[BagBucket[A]])(implicit protected val bu
   with immutable.BagLike[A, VectorBag[A]] {
 
 
+  protected override type BagBucketFactory[X] = immutable.BagBucketFactory[X]
+
   def addedBucket(bucket: collection.BagBucket[A]): VectorBag[A] = {
     val bb = bucketFactory.newBuilder(bucket.sentinel)
     bb addBucket bucket
