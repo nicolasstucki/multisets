@@ -22,7 +22,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
     val maxM = maxMultiplicity
     val b = newBuilder
-    for (bucket <- bucketsIterator if maxM == bucket.multiplicity) {
+    for (bucket <- bucketsIterator if maxM == bucket.size) {
       b addBucket bucket
     }
     b.result()
@@ -33,7 +33,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
     val minM = minMultiplicity
     val b = newBuilder
-    for (bucket <- bucketsIterator if minM == bucket.multiplicity) {
+    for (bucket <- bucketsIterator if minM == bucket.size) {
       b addBucket bucket
     }
     b.result()
@@ -79,7 +79,20 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   // Multiset operations
   override def union(that: GenBag[A]): This = this ++ that
 
-  def diff(that: GenBag[A]): This = this -- that
+  def diff(that: GenBag[A]): This = {
+    val b = newBuilder
+    for (bucket <- bucketsIterator) {
+      that.getBucket(bucket.sentinel) match {
+        case Some(bucket2) =>
+          val diffBucket = bucket diff bucket2
+          if (diffBucket.nonEmpty)
+            b addBucket diffBucket
+        case None =>
+          b addBucket bucket
+      }
+    }
+    b.result()
+  }
 
   override def maxUnion(that: GenBag[A]): This = {
     newBuilder.result ++ (for (elem <- (this union that).distinctIterator) yield {
@@ -91,11 +104,13 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override def intersect(that: GenBag[A]): This = {
     val b = newBuilder
-    for (bucket <- bucketsIterator if that.multiplicity(bucket.sentinel) > 0) {
-      if (bucket.multiplicity <= that.multiplicity(bucket.sentinel)) {
-        b addBucket bucket
-      } else {
-        b addBucket that.getBucket(bucket.sentinel).get
+    for (bucket <- bucketsIterator) {
+      that.getBucket(bucket.sentinel) match {
+        case Some(bucket2) =>
+          val intersectionBucket = bucket intersect bucket2
+          if (intersectionBucket.nonEmpty)
+            b addBucket intersectionBucket
+        case None =>
       }
     }
     b.result()
@@ -111,16 +126,9 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
     for (bucket <- bucketsIterator) {
       if (bucketFactory.equiv(bucket.sentinel, elem)) {
-        val bb = bucketFactory.newBuilder(elem)
-        var countToAdd = bucket.multiplicity - count
-        val it = bucket.iterator
-        while (countToAdd > 0 && it.hasNext) {
-          bb += it.next()
-          countToAdd -= 1
-        }
-        val result = bb.result()
-        if (result.nonEmpty)
-          b addBucket bb.result()
+        val bucket2 = bucket.removed(elem, count)
+        if (bucket2.nonEmpty)
+          b addBucket bucket2
 
       } else {
         b addBucket bucket
@@ -142,12 +150,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def multiplicities: Map[A, Int] = new Multiplicities(repr)
 
-  def toMultiplicities: Map[A, Int] = Map.empty ++ bucketsIterator.map(g => (g.sentinel, g.multiplicity))
-
-  def zipWithMultiplicities: Iterable[(A, Int)] = multiplicitiesIterator.toIterable
-
   def setMultiplicity(elem: A, count: Int): This = (this -* elem).added(elem, count)
-
 
   override def forall(p: (A) => Boolean): Boolean = bucketsIterator.forall(_.forall(p))
 

@@ -4,7 +4,7 @@ import scala.language.higherKinds
 
 trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
-  with (A => Int)
+  with (A => Iterable[A])
   with Equals {
 
 
@@ -13,20 +13,20 @@ trait GenBagLike[A, +Repr]
 
   protected def bucketFactory: BagBucketFactory[A]
 
-  def apply(elem: A): Int = multiplicity(elem)
+  def apply(elem: A): Iterable[A] = getBucket(elem) match {
+    case Some(bucket) => bucket
+    case None => Iterable.empty[A]
+  }
 
 
   def bucketsIterator: Iterator[BagBucket[A]]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
 
-
-  def multiplicitiesIterator: Iterator[(A, Int)] = bucketsIterator.map(g => g.sentinel -> g.multiplicity)
-
-  def distinctIterator: Iterator[A] = bucketsIterator.map(_.sentinel)
+  def distinctIterator: Iterator[A] = bucketsIterator.flatMap(_.distinctIterator)
 
   def multiplicity(elem: A): Int = getBucket(elem) match {
-    case Some(bucket) => bucket.multiplicity
+    case Some(bucket) => bucket.multiplicity(elem)
     case None => 0
   }
 
@@ -44,9 +44,9 @@ trait GenBagLike[A, +Repr]
   def getBucket(elem: A): Option[BagBucket[A]]
 
 
-  def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max
+  def maxMultiplicity: Int = bucketsIterator.map(_.maxMultiplicity).max
 
-  def minMultiplicity: Int = bucketsIterator.map(_.multiplicity).min
+  def minMultiplicity: Int = bucketsIterator.map(_.minMultiplicity).min
 
   def intersect(that: GenBag[A]): Repr
 
@@ -62,9 +62,14 @@ trait GenBagLike[A, +Repr]
 
   def &~(that: GenBag[A]): Repr = this diff that
 
-  def subsetOf(that: GenBag[A]): Boolean = bucketsIterator.forall(bucket => bucket.multiplicity <= multiplicity(bucket.sentinel))
+  def subsetOf(that: GenBag[A]): Boolean = {
+    bucketsIterator.forall(
+      bucket => that.getBucket(bucket.sentinel) match {
+        case Some(bucket2) => bucket subsetOf bucket2
+        case None => false
+      })
+  }
 
-  def toMap: immutable.Map[A, Int] = Map.empty ++ multiplicitiesIterator
 
   override def equals(that: Any): Boolean = that match {
     case that: GenBag[_] =>
@@ -79,6 +84,6 @@ trait GenBagLike[A, +Repr]
       false
   }
 
-  override def hashCode() = scala.util.hashing.MurmurHash3.mapHash(this.toMap)
+  override def hashCode() = scala.util.hashing.MurmurHash3.seqHash(this.toList)
 }
 

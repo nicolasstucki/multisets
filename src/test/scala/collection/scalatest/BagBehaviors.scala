@@ -65,13 +65,15 @@ trait BagBehaviors {
     }
 
     it should "have [mostCommon] has constant multiplicity" in {
-      val m = bag.maxMultiplicity
-      assert(bag.mostCommon.bucketsIterator.forall(_.multiplicity == m))
+      val b = bag
+      val m = b.maxMultiplicity
+      assert(b.mostCommon.distinctIterator.forall(b.multiplicity(_) == m))
     }
 
     it should "have [leastCommon] has constant multiplicity" in {
-      val m = bag.minMultiplicity
-      assert(bag.leastCommon.bucketsIterator.forall(_.multiplicity == m))
+      val b = bag
+      val m = b.minMultiplicity
+      assert(b.leastCommon.distinctIterator.forall(b.multiplicity(_) == m))
     }
 
     it should behave like bagBehavior(bag)
@@ -87,10 +89,9 @@ trait BagBehaviors {
         assert(union.size == bag.size + bag2.size)
         assert(bag subsetOf union)
         assert(bag2 subsetOf union)
-        union.bucketsIterator.foreach {
-          bucket =>
-            val elem = bucket.sentinel
-            assert(bag.multiplicity(elem) + bag2.multiplicity(elem) === bucket.multiplicity)
+        union.distinctIterator.foreach {
+          elem =>
+            assert(bag.multiplicity(elem) + bag2.multiplicity(elem) === union.multiplicity(elem))
         }
       }
     }
@@ -103,10 +104,9 @@ trait BagBehaviors {
         assert(maxUnion.size >= bag2.size)
         assert(bag subsetOf maxUnion)
         assert(bag2 subsetOf maxUnion)
-        maxUnion.bucketsIterator.foreach {
-          bucket =>
-            val elem = bucket.sentinel
-            assert(Math.max(bag.multiplicity(elem), bag2.multiplicity(elem)) === bucket.multiplicity)
+        maxUnion.distinctIterator.foreach {
+          elem =>
+            assert(Math.max(bag.multiplicity(elem), bag2.multiplicity(elem)) === maxUnion.multiplicity(elem))
         }
       }
     }
@@ -118,10 +118,9 @@ trait BagBehaviors {
         assert(intersect.size <= bag2.size)
         assert(intersect subsetOf bag)
         assert(intersect subsetOf bag2)
-        intersect.bucketsIterator.foreach {
-          bucket =>
-            val elem = bucket.sentinel
-            assert(Math.min(bag.multiplicity(elem), bag2.multiplicity(elem)) === bucket.multiplicity)
+        intersect.distinctIterator.foreach {
+          elem =>
+            assert(Math.min(bag.multiplicity(elem), bag2.multiplicity(elem)) === intersect.multiplicity(elem))
         }
       }
     }
@@ -131,10 +130,9 @@ trait BagBehaviors {
         val diff = bag diff bag2
         assert(diff.size <= bag.size)
         assert(diff subsetOf bag)
-        diff.bucketsIterator.foreach {
-          bucket =>
-            val elem = bucket.sentinel
-            assert(Math.max(bag.multiplicity(elem) - bag2.multiplicity(elem), 0) === bucket.multiplicity)
+        diff.distinctIterator.foreach {
+          elem =>
+            assert(Math.max(bag.multiplicity(elem) - bag2.multiplicity(elem), 0) === diff.multiplicity(elem))
         }
       }
     }

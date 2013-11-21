@@ -39,7 +39,7 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
     val distinct = bag.distinct
 
     it should "implement [distinct]: all multiplicities must be one" in {
-      assert(distinct.bucketsIterator.forall(_.multiplicity == 1))
+      assert(distinct.forall(distinct.multiplicity(_) == 1))
     }
 
     it should "implement [distinct]: all distinct element must be present" in {

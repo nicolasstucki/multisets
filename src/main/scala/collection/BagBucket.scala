@@ -1,13 +1,7 @@
 package scala.collection
 
 import scala.language.higherKinds
-
-
-object BagBucket {
-
-  def unapply[A](bkt: BagBucket[A]): Option[(A, Int)] = Some((bkt.sentinel, bkt.multiplicity))
-
-}
+import scala.collection
 
 
 trait BagBucket[A]
@@ -17,19 +11,45 @@ trait BagBucket[A]
 
   def sentinel: A
 
-  def multiplicity: Int
+  def multiplicity(elem: A): Int
 
-  def +(elem: A): BagBucket[A]
+  def maxMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).max
+
+  def minMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).min
+
+  def intersect(that: collection.BagBucket[A]): BagBucket[A]
+  def diff(that: collection.BagBucket[A]): BagBucket[A]
+
+  def subsetOf(that: collection.BagBucket[A]): Boolean = {
+    this.distinctIterator.forall(elem => this.multiplicity(elem) <= that.multiplicity(elem))
+  }
+
+  def +(elem: A): BagBucket[A] = added(elem, 1)
 
   def added(elem: A, count: Int): BagBucket[A]
 
   def addedBucket(bucket: collection.BagBucket[A]): BagBucket[A]
 
   def -(elem: A): BagBucket[A]
+
+  def removed(elem: A, count: Int): BagBucket[A]
+
+  def distinctIterator: Iterator[A]
 }
 
 
 trait MultiplicityBagBucket[A] extends BagBucket[A] {
+
+  def multiplicity: Int
+
+  def multiplicity(elem: A): Int = if (elem == sentinel) multiplicity else 0
+
+  override def maxMultiplicity: Int = multiplicity
+
+  override def minMultiplicity: Int = multiplicity
+
+  override def subsetOf(that: collection.BagBucket[A]): Boolean = multiplicity <= that.multiplicity(sentinel)
+
 
   override def isEmpty: Boolean = multiplicity == 0
 
@@ -71,6 +91,7 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 
   override def find(p: (A) => Boolean): Option[A] = if (p(sentinel)) Some(sentinel) else None
 
+  def distinctIterator: Iterator[A] = Iterator(sentinel)
 }
 
 
@@ -78,7 +99,10 @@ trait VectorBagBucket[A] extends BagBucket[A] {
 
   def vector: Vector[A]
 
-  def multiplicity: Int = vector.size
+  def multiplicity(elem: A): Int = vector.count(_ == elem)
+
 
   def iterator: Iterator[A] = vector.iterator
+
+  def distinctIterator: Iterator[A] = vector.distinct.iterator
 }

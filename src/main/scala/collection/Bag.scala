@@ -6,8 +6,7 @@ import generic._
 
 
 trait Bag[A]
-  extends (A => Int)
-  with Iterable[A]
+  extends Iterable[A]
   with BagLike[A, Bag[A]]
   with GenBag[A] {
 

@@ -25,7 +25,7 @@ object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
         bag =>
           var acc: BigInt = 0
           for (bkt <- bag.bucketsIterator) {
-            acc += bkt.multiplicity * bkt.sentinel
+            acc += bkt.size * bkt.sentinel
           }
           acc
       }
