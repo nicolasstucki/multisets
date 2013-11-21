@@ -41,7 +41,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon: Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket[A]] = bucketsIterator.find(bucket => bucketFactory.equiv(bucket.sentinel, elem))
+  def getBucket(elem: A): Option[BagBucket[A]]
 
 
   def maxMultiplicity: Int = bucketsIterator.map(_.multiplicity).max

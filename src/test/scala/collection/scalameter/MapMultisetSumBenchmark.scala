@@ -6,13 +6,13 @@ import scala.collection._
 
 object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
 
-  val sizes = Gen.range("size")(4000, 24000, 4000)
+  val sizes = Gen.range("size")(20000, 100000, 20000)
 
   val bags = for {
     size <- sizes
   } yield {
-    implicit val m = immutable.BagBucketFactory.ofMultiplicities[Int]
-    val b = immutable.VectorBag.newBuilder
+    implicit val m = immutable.SortedBagBucketFactory.ofMultiplicities[BigInt]
+    val b = immutable.TreeBag.newBuilder
     for (n <- 1 to size) {
       b.add(n, n)
     }
@@ -23,7 +23,7 @@ object MapMultisetSumBenchmark extends PerformanceTest.Quickbenchmark {
     measure method "reduce{reference}" in {
       using(bags) in {
         bag =>
-          var acc = 0
+          var acc: BigInt = 0
           for (bkt <- bag.bucketsIterator) {
             acc += bkt.multiplicity * bkt.sentinel
           }

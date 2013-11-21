@@ -6,7 +6,6 @@ import scala.collection.mutable
 import scala.collection
 
 
-
 class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFactory: SortedBagBucketFactory[A])
   extends SortedBag[A]
   with SortedBagLike[A, TreeBag[A]]
@@ -18,8 +17,6 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
   }
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, TreeBag[A]] = TreeBag.newBuilder
-
-  override def size = RB.count(tree)
 
 
   def rangeImpl(from: Option[A], until: Option[A]): TreeBag[A] = new TreeBag[A](RB.rangeImpl(tree, from, until))
@@ -101,20 +98,15 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
 
   def bucketsIterator: Iterator[BagBucket[A]] = RB.valuesIterator(tree)
 
-  def addedBucket(bucket: collection.BagBucket[A]): TreeBag[A] = {
-    val b = bucketFactory.newBuilder(bucket.sentinel)
+  def getBucket(elem: A): Option[BagBucket[A]] = RB.get(tree, elem)
 
-    getBucket(bucket.sentinel) match {
-      case Some(bucket2) => b addBucket bucket2
-      case None =>
-    }
-
-    b addBucket bucket
-
-    updated(bucket.sentinel, b.result())
+  def addedBucket(bucket: collection.BagBucket[A]): TreeBag[A] = getBucket(bucket.sentinel) match {
+    case Some(bucket2) => updated(bucketFactory.from(bucket, bucket2))
+    case None => updated(bucketFactory.from(bucket))
   }
 
-  def updated(sentinel: A, bucket: BagBucket[A]): TreeBag[A] = new TreeBag(RB.update(tree, sentinel, bucket, overwrite = true))
+
+  def updated(bucket: BagBucket[A]): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 
 }
 

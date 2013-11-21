@@ -11,6 +11,9 @@ final class VectorBag[A](vector: Vector[BagBucket[A]])(implicit protected val bu
 
   protected override type BagBucketFactory[X] = immutable.BagBucketFactory[X]
 
+
+  def getBucket(elem: A): Option[VectorBag[A]#BagBucket[A]] = vector.find(bucket => bucketFactory.equiv(bucket.sentinel, elem))
+
   def addedBucket(bucket: collection.BagBucket[A]): VectorBag[A] = {
     val bb = bucketFactory.newBuilder(bucket.sentinel)
     bb addBucket bucket

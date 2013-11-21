@@ -8,11 +8,17 @@ final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(im
   extends mutable.Bag[A] {
   //with mutable.BagLike[A, LinkedListBag[A]] {
 
+
+  protected override type BagBucketFactory[X] = mutable.BagBucketFactory[X]
+
   def clear(): Unit = list.clear()
 
   def bucketsIterator: Iterator[BagBucket[A]] = list.iterator
 
   def empty: mutable.LinkedListBag[A] = mutable.LinkedListBag.empty
+
+
+  def getBucket(elem: A): Option[BagBucket[A]] = list.find(bucket => bucketFactory.equiv(bucket.sentinel, elem))
 
   def addedBucket(bucket: collection.BagBucket[A]): mutable.LinkedListBag[A] = {
     val newList = mutable.MutableList.empty[BagBucket[A]]
