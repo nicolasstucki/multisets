@@ -1,5 +1,7 @@
 package scala.collection
 
+import scala.util.hashing.Hashing
+
 
 trait BagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A] {
 
@@ -14,3 +16,5 @@ trait BagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A
 }
 
 trait SortedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Ordering[A]
+
+trait HashedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Equiv[A] with Hashing[A]
