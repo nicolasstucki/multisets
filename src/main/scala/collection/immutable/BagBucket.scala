@@ -1,6 +1,6 @@
 package scala.collection.immutable
 
-import scala.collection.{mutable, immutable}
+import scala.collection.immutable
 import scala.collection
 import scala.language.higherKinds
 
@@ -68,6 +68,7 @@ class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
   }
 
   def intersect(that: collection.BagBucket[A]): BagBucket[A] = new immutable.VectorBagBucket[A](sentinel, this.toList.intersect(that.toSeq).toVector)
+
   def diff(that: collection.BagBucket[A]): BagBucket[A] = new immutable.VectorBagBucket[A](sentinel, this.toList.diff(that.toSeq).toVector)
 
   def removed(elem: A, count: Int): BagBucket[A] = {
