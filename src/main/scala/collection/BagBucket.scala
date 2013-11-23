@@ -18,6 +18,7 @@ trait BagBucket[A]
   def minMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).min
 
   def intersect(that: collection.BagBucket[A]): BagBucket[A]
+
   def diff(that: collection.BagBucket[A]): BagBucket[A]
 
   def subsetOf(that: collection.BagBucket[A]): Boolean = {
@@ -44,12 +45,18 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 
   def multiplicity(elem: A): Int = if (elem == sentinel) multiplicity else 0
 
+
+
   override def maxMultiplicity: Int = multiplicity
 
   override def minMultiplicity: Int = multiplicity
 
   override def subsetOf(that: collection.BagBucket[A]): Boolean = multiplicity <= that.multiplicity(sentinel)
 
+
+  override def exists(p: (A) => Boolean): Boolean = p(sentinel)
+
+  override def forall(p: (A) => Boolean): Boolean = p(sentinel)
 
   override def isEmpty: Boolean = multiplicity == 0
 
@@ -101,6 +108,7 @@ trait VectorBagBucket[A] extends BagBucket[A] {
 
   def multiplicity(elem: A): Int = vector.count(_ == elem)
 
+  override def sum[B >: A](implicit num: Numeric[B]): B = distinctIterator.map(elem => num.times(elem, num.fromInt(multiplicity(elem)))).sum
 
   def iterator: Iterator[A] = vector.iterator
 
