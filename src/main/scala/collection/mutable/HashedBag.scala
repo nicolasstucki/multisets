@@ -14,5 +14,5 @@ trait HashedBag[A]
 
 object HashedBag extends MutableHashedBagFactory[mutable.HashedBag] {
 
-  def empty[A](implicit bucketFactory: BagBucketFactory[A]): mutable.HashedBag[A] = ???
+  def empty[A](implicit bucketFactory: BagBucketFactory[A]): mutable.HashedBag[A] = mutable.HashBag.empty
 }
