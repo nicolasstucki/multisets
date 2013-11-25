@@ -1,4 +1,4 @@
-package scala.collection.scalameter.immutable
+package scala.collection.scalameter.immutable.TreeBag
 
 import scala.language.higherKinds
 

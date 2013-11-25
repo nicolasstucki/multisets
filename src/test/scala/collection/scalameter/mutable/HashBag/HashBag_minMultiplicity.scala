@@ -1,14 +1,14 @@
-package scala.collection.scalameter.immutable
+package scala.collection.scalameter.mutable.HashBag
 
 import org.scalameter.api._
 
-object TreeBag_minMultiplicity extends TreeBagBenchmark {
+object HashBag_minMultiplicity extends HashBagBenchmark {
 
   def sizes = Gen.range("size")(5000, 50000, 5000)
 
   def funName: String = "maxMultiplicity"
 
-  def fun(bag: TreeBag_product.Bag[BigInt]): Unit = bag.minMultiplicity
+  def fun(bag: Bag[BigInt]): Unit = bag.minMultiplicity
 
 
   override val compareWithLists: Boolean = false
