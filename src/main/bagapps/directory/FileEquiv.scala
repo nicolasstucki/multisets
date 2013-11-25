@@ -1,22 +1,33 @@
 package bagapps.directory
 
+import scala.util.hashing.Hashing
+
 
 object FileEquiv {
 
-  object ExtensionEquiv extends Equiv[File] {
-    def equiv(x: File, y: File): Boolean = x.ext == y.ext
+  object ExtensionEquiv extends Ordering[File] with Hashing[File] {
+    def compare(x: File, y: File): Int = x.ext compareTo y.ext
+
+    def hash(x: File): Int = x.ext.hashCode
   }
 
-  object FileNameEquiv extends Equiv[File] {
-    def equiv(x: File, y: File): Boolean = x.name == y.name
+  object FileNameEquiv extends Ordering[File] with Hashing[File] {
+    def compare(x: File, y: File): Int = x.name compareTo y.name
+
+    def hash(x: File): Int = x.name.hashCode
   }
 
-  object DirEquiv extends Equiv[File] {
-    def equiv(x: File, y: File): Boolean = x.dir == y.dir
+  object DirEquiv extends Ordering[File] with Hashing[File] {
+    def compare(x: File, y: File): Int = x.dir.toString compareTo y.dir.toString
+
+    def hash(x: File): Int = x.dir.hashCode
   }
 
-  object DirDepthEquiv extends Equiv[File] {
-    def equiv(x: File, y: File): Boolean = x.directoryDepth == y.directoryDepth
+  object DirDepthEquiv extends Ordering[File] with Hashing[File] {
+    def compare(x: File, y: File): Int = x.directoryDepth compareTo y.directoryDepth
+
+    def hash(x: File): Int = x.directoryDepth.hashCode
   }
+
 
 }

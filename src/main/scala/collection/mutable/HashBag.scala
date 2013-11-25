@@ -7,7 +7,7 @@ import scala.Some
 import scala.Some
 
 
-class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bucketFactory: mutable.HashedBagBucketFactory[A])
+final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bucketFactory: mutable.HashedBagBucketFactory[A])
   extends mutable.HashedBag[A]
   with mutable.HashedBagLike[A, mutable.HashBag[A]]
   with mutable.HashTable[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]]
