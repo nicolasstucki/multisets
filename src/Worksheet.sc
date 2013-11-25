@@ -2,57 +2,34 @@ import scala.collection.immutable
 import scala.collection.immutable._
 
 
-
 implicit val mod3Equiv = new Ordering[Int] {
-
   def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
 }
-
 implicit val intVectorBucket = SortedBagBucketFactory.ofVectors[Int]
-
 
 val bag1 = immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1, 7 -> 1, 8 -> 1)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+bag1(0)
+bag1(1)
+bag1(2)
 bag1.multiplicity(0)
+
 bag1.multiplicity(1)
+
+
 bag1.multiplicity(2)
+
+
 bag1.multiplicity(4)
+
+
 bag1.multiplicity(53)
+
 
 implicit val StringNoCaseEquiv = new Ordering[String] {
   def compare(x: String, y: String): Int = x.toLowerCase.compareTo(y.toLowerCase)
 }
-
 implicit val stringVectorBucket = SortedBagBucketFactory.ofVectors[String]
-
-
-
-
-
-
 
 val bag2 = immutable.TreeBag.from("Cat" -> 2, "DOG" -> 1, "cat" -> 1, "cAt" -> 1, "Dog" -> 2, "dOG" -> 3)
 
@@ -60,37 +37,14 @@ val bag2 = immutable.TreeBag.from("Cat" -> 2, "DOG" -> 1, "cat" -> 1, "cAt" -> 1
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+bag2("cat")
+bag2("dog")
 
 bag2.multiplicity("Cat")
-
-
 bag2.multiplicity("caT")
-
-
 bag2.multiplicity("dog")
-
-
 bag2.multiplicity("DOG")
-
-
 bag2.multiplicity("DoG")
-
-
-
-
-
 
 
 
