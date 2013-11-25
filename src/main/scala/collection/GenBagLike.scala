@@ -4,7 +4,6 @@ import scala.language.higherKinds
 
 trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
-  with (A => Iterable[A])
   with Equals {
 
 
@@ -13,10 +12,6 @@ trait GenBagLike[A, +Repr]
 
   protected def bucketFactory: BagBucketFactory[A]
 
-  def apply(elem: A): Iterable[A] = getBucket(elem) match {
-    case Some(bucket) => bucket
-    case None => Iterable.empty[A]
-  }
 
 
   def bucketsIterator: Iterator[BagBucket[A]]

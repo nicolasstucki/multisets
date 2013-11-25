@@ -8,12 +8,20 @@ import scala.annotation.tailrec
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
   with GenBagLike[A, This]
+  with (A => This)
   with Subtractable[A, This] {
   self =>
 
   def empty: This
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, This] = mutable.BagBuilder(empty)
+
+
+  def apply(elem: A): This = getBucket(elem) match {
+    case Some(bucket) => (newBuilder addBucket bucket).result()
+    case None => empty
+  }
+
 
   def contains(elem: A): Boolean = repr.multiplicity(elem) > 0
 

@@ -7,23 +7,20 @@ implicit val mod3Equiv = new Ordering[Int] {
 }
 implicit val intVectorBucket = SortedBagBucketFactory.ofVectors[Int]
 
+
 val bag1 = immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1, 7 -> 1, 8 -> 1)
+
 
 bag1(0)
 bag1(1)
 bag1(2)
+bag1(53)
 bag1.multiplicity(0)
-
 bag1.multiplicity(1)
-
 
 bag1.multiplicity(2)
 
-
 bag1.multiplicity(4)
-
-
-bag1.multiplicity(53)
 
 
 implicit val StringNoCaseEquiv = new Ordering[String] {
@@ -39,6 +36,7 @@ val bag2 = immutable.TreeBag.from("Cat" -> 2, "DOG" -> 1, "cat" -> 1, "cAt" -> 1
 
 bag2("cat")
 bag2("dog")
+bag2("fish")
 
 bag2.multiplicity("Cat")
 bag2.multiplicity("caT")
