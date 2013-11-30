@@ -2,8 +2,7 @@ package scala.collection
 
 
 import scala.collection.generic.{CanBuildFrom, Subtractable}
-import scala.collection.mutable.{BagBuilder, Builder}
-import scala.annotation.tailrec
+
 
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
@@ -28,7 +27,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   def mostCommon: Bag[A] = {
     if (isEmpty) return empty
 
-    val maxM = maxMultiplicity
+    val maxM = bucketsIterator.map(_.size).max
     val b = newBuilder
     for (bucket <- bucketsIterator if maxM == bucket.size) {
       b addBucket bucket
@@ -39,7 +38,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   override def leastCommon: Bag[A] = {
     if (isEmpty) return empty
 
-    val minM = minMultiplicity
+    val minM = bucketsIterator.map(_.size).min
     val b = newBuilder
     for (bucket <- bucketsIterator if minM == bucket.size) {
       b addBucket bucket
@@ -219,4 +218,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
       cnt += bucket.count(p)
     cnt
   }
+
+  override def toString() = bucketsIterator.map(_.mkString(", ")).mkString(stringPrefix + "(", "; ", ")")
+
 }
