@@ -17,17 +17,10 @@ object FileEquiv {
     def hash(x: File): Int = x.name.hashCode
   }
 
-  object DirEquiv extends Ordering[File] with Hashing[File] {
-    def compare(x: File, y: File): Int = x.dir.toString compareTo y.dir.toString
+  object DirectoryEquiv extends Ordering[File] with Hashing[File] {
+    def compare(x: File, y: File): Int = x.directory compareTo y.directory
 
-    def hash(x: File): Int = x.dir.hashCode
+    def hash(x: File): Int = x.directory.hashCode
   }
-
-  object DirDepthEquiv extends Ordering[File] with Hashing[File] {
-    def compare(x: File, y: File): Int = x.directoryDepth compareTo y.directoryDepth
-
-    def hash(x: File): Int = x.directoryDepth.hashCode
-  }
-
 
 }

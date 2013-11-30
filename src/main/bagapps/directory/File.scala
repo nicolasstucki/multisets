@@ -1,68 +1,22 @@
 package bagapps.directory
 
-import scala.util.parsing.combinator.RegexParsers
 
+object File {
+  def withExtension(ext: String) = File("", "", ext)
 
-object Path extends RegexParsers {
+  def withName(name: String) = File("", name, "")
 
-  private def fileName: Parser[String] = """[a-zA-Z0-9_]*""".r
-
-  private def fileExt: Parser[String] = """[a-zA-Z0-9]*""".r
-
-  private def dirName: Parser[String] = """[a-zA-Z0-9_]*""".r <~ "/"
-
-  private def dir: Parser[Path] = """/""".r ~ rep(dirName) ^^ {
-    case "/" ~ list => list.foldLeft[Path](Root)((path, name) => new Dir(path, name))
-  }
-
-  private def file: Parser[File] = dir ~ fileName ~ "." ~ fileExt ^^ {
-    case dir ~ fileName ~ "." ~ fileExt => new File(dir, fileName, fileExt)
-  }
-
-
-  def parse(path: String): File = parse(file, path) match {
-    case Success(result, _) => result
-    case failure: NoSuccess => throw new Exception("file format exception: " + path)
-  }
-}
-
-trait Path {
-  def parent: Option[Path]
-
-  def name: String
-
-  def directoryDepth: Int
-}
-
-case class Dir(dir: Path, name: String) extends Path {
-  def parent: Option[Path] = Some(dir)
-
-
-  def directoryDepth: Int = dir.directoryDepth + 1
-
-  override def toString: String = dir.toString + name + '/'
-}
-
-case class File(dir: Path, name: String, ext: String) extends Path {
-
-  def parent: Option[Path] = Some(dir)
-
-
-  def directoryDepth: Int = dir.directoryDepth
-
-  override def toString: String = dir.toString + name + '.' + ext
+  def inDirectory(dir: String) = File(dir, "", "")
 }
 
 
-object Root extends Path {
-  def parent: Option[Path] = None
+case class File(directory: String, name: String, ext: String) {
 
-  def name: String = "/"
+  override def toString: String = s"$directory/$name.$ext"
 
-  def directoryDepth: Int = 0
-
-  override def toString: String = "/"
+  def fileName = s"$name.$ext"
 }
+
 
 
 
