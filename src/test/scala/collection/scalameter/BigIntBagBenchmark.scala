@@ -54,6 +54,8 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
 
   def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt]
 
+  def bagBucketFactoryOfBagBucketBag: BagBucketFactory[BigInt]
+
   def bagBucketFactoryOfVectors: BagBucketFactory[BigInt]
 
   def runBenchmark(): Unit = {
@@ -62,10 +64,17 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
       implicit val m = bagBucketFactoryOfMultiplicities
       benchBags(setBag)
     }
+
+    performance of s"$bagName[BigInt]{ofBagBucketBag filled as setBag}" in {
+      implicit val m = bagBucketFactoryOfMultiplicities
+      benchBags(setBag)
+    }
+
     performance of s"$bagName[BigInt]{ofVectors filled as setBag}" in {
       implicit val m = bagBucketFactoryOfVectors
       benchBags(setBag)
     }
+
     if (compareWithLists)
       performance of "List[BigInt]{from setBag}" in {
         implicit val m = bagBucketFactoryOfMultiplicities
@@ -77,10 +86,17 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
       implicit val m = bagBucketFactoryOfMultiplicities
       benchBags(stepsBag)
     }
+
+    performance of s"$bagName[BigInt]{ofBagBucketBag filled as stepsBag}" in {
+      implicit val m = bagBucketFactoryOfBagBucketBag
+      benchBags(stepsBag)
+    }
+
     performance of s"$bagName[BigInt]{ofVectors filled as stepsBag}" in {
       implicit val m = bagBucketFactoryOfVectors
       benchBags(stepsBag)
     }
+
     if (compareWithLists)
       performance of "List[BigInt]{from stepsBag}" in {
         implicit val m = bagBucketFactoryOfMultiplicities
@@ -92,10 +108,17 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
       implicit val m = bagBucketFactoryOfMultiplicities
       benchBags(squareBag)
     }
+
+    performance of s"$bagName[BigInt]{ofBagBucketBag filled as squareBag}" in {
+      implicit val m = bagBucketFactoryOfBagBucketBag
+      benchBags(squareBag)
+    }
+
     performance of s"$bagName[BigInt]{ofVectors filled as squareBag}" in {
       implicit val m = bagBucketFactoryOfVectors
       benchBags(squareBag)
     }
+
     if (compareWithLists)
       performance of "List[BigInt]{from squareBag}" in {
         implicit val m = bagBucketFactoryOfMultiplicities

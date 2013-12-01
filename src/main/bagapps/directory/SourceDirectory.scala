@@ -6,7 +6,7 @@ import scala.collection.mutable
 
 class SourceDirectory private(root: JFile) {
 
-  private implicit def bucketFactory(implicit equiv: Ordering[File]) = scala.collection.mutable.SortedBagBucketFactory.ofVectors[File]
+  private implicit def bucketFactory(implicit equiv: Ordering[File]) = mutable.BagBucketFactory.Sorted.ofVectors[File]
 
   private def putFilesInBag(bag: mutable.Bag[File]) {
     def putFilesInBag(directory: JFile) {

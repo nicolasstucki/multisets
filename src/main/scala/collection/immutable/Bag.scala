@@ -15,6 +15,5 @@ object Bag extends generic.ImmutableBagFactory[Bag] {
 
   implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A]
 
-  def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): Bag[A] = immutable.VectorBag.empty[A]
-
+  def empty[A](implicit bucketFactory: BagBucketFactory[A]): Bag[A] = ???
 }

@@ -46,7 +46,6 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
   def multiplicity(elem: A): Int = if (elem == sentinel) multiplicity else 0
 
 
-
   override def maxMultiplicity: Int = multiplicity
 
   override def minMultiplicity: Int = multiplicity
@@ -99,6 +98,59 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
   override def find(p: (A) => Boolean): Option[A] = if (p(sentinel)) Some(sentinel) else None
 
   def distinctIterator: Iterator[A] = Iterator(sentinel)
+}
+
+
+trait BagBucketBag[A] extends BagBucket[A] {
+
+  protected type Bag[X] <: collection.Bag[X]
+
+  def bag: Bag[A]
+
+  def multiplicity(elem: A): Int = bag.multiplicity(elem)
+
+  def distinctIterator: Iterator[A] = bag.distinctIterator
+
+  def iterator: Iterator[A] = bag.iterator
+
+  override def size: Int = bag.size
+
+  override def nonEmpty: Boolean = bag.nonEmpty
+
+  override def count(p: (A) => Boolean): Int = bag.count(p)
+
+  override def min[B >: A](implicit cmp: Ordering[B]): A = bag.min(cmp)
+
+  override def max[B >: A](implicit cmp: Ordering[B]): A = bag.max(cmp)
+
+  override def maxBy[B](f: (A) => B)(implicit cmp: Ordering[B]): A = bag.maxBy(f)(cmp)
+
+  override def minBy[B](f: (A) => B)(implicit cmp: Ordering[B]): A = bag.minBy(f)(cmp)
+
+  override def sum[B >: A](implicit num: Numeric[B]): B = bag.sum(num)
+
+  override def product[B >: A](implicit num: Numeric[B]): B = bag.product(num)
+
+  override def foldLeft[B](z: B)(op: (B, A) => B): B = bag.foldLeft(z)(op)
+
+  override def reduceLeft[B >: A](op: (B, A) => B): B = bag.reduceLeft(op)
+
+  override def forall(p: (A) => Boolean): Boolean = bag.forall(p)
+
+  override def exists(p: (A) => Boolean): Boolean = bag.exists(p)
+
+  override def find(p: (A) => Boolean): Option[A] = bag.find(p)
+
+  override def isEmpty: Boolean = bag.isEmpty
+
+  override def foldRight[B](z: B)(op: (A, B) => B): B = bag.foldRight(z)(op)
+
+  override def reduceRight[B >: A](op: (A, B) => B): B = bag.reduceRight(op)
+
+  override def maxMultiplicity: Int = bag.maxMultiplicity
+
+  override def minMultiplicity: Int = bag.minMultiplicity
+
 }
 
 

@@ -6,13 +6,10 @@ import org.scalatest._
 import scala.collection
 import scala.collection
 
-class IntBagTest extends FlatSpec with IntBagBehaviors {
+abstract class IntBagTest extends FlatSpec with IntBagBehaviors {
 
 
-  def emptyBag: collection.Bag[Int] = {
-    implicit val bagBucketFactory = BagBucketFactory.ofMultiplicities[Int]
-    collection.Bag.empty[Int]
-  }
+  def emptyBag: collection.Bag[Int]
 
   def bagWithOne = emptyBag + 1
 

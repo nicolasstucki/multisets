@@ -15,6 +15,10 @@ trait BagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A
 
 }
 
-trait SortedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Ordering[A]
+trait HashedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Hashing[A]
 
-trait HashedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Equiv[A] with Hashing[A]
+trait SortedBagBucketFactory[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketFactory[A, BagBucket] with Ordering[A] {
+  def ordering: Ordering[A]
+
+  def compare(x: A, y: A): Int = ordering.compare(x, y)
+}

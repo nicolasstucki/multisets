@@ -1,6 +1,6 @@
 package scala.collection.immutable
 
-import scala.collection.generic._
+import scala.collection.generic
 import scala.collection.immutable.{RedBlackTree => RB}
 import scala.collection.mutable
 import scala.collection
@@ -111,6 +111,6 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
 }
 
 
-object TreeBag extends ImmutableSortedBagFactory[TreeBag] {
+object TreeBag extends generic.ImmutableSortedBagFactory[TreeBag] {
   def empty[A](implicit bucketFactory: BagBucketFactory[A]) = new TreeBag[A](null)
 }

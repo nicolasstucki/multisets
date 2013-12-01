@@ -16,7 +16,9 @@ trait BigIntHashedBagBenchmark extends BigIntBagBenchmark {
   type Bag[X] <: scala.collection.mutable.HashedBag[X]
   type BagBucketFactory[X] = scala.collection.mutable.HashedBagBucketFactory[X]
 
-  def bagBucketFactoryOfVectors: BagBucketFactory[BigInt] = mutable.HashedBagBucketFactory.ofVectors
+  def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt] = mutable.BagBucketFactory.Hashed.ofMultiplicities
 
-  def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt] = mutable.HashedBagBucketFactory.ofMultiplicities
+  def bagBucketFactoryOfBagBucketBag: BagBucketFactory[BigInt] = mutable.BagBucketFactory.Hashed.ofMultiplicities
+
+  def bagBucketFactoryOfVectors: BagBucketFactory[BigInt] = mutable.BagBucketFactory.Hashed.ofVectors
 }
