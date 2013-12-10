@@ -183,6 +183,8 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
 
+  override def take(n: Int): This = super.take(n)
+
   override def map[B, That](f: (A) => B)(implicit bf: CanBuildFrom[This, B, That]): That = super.map(f)(bf)
 
 
@@ -219,6 +221,8 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     cnt
   }
 
+  //FIXME: problems with multiplicitybagbucket and bagbucketbag
   override def toString() = bucketsIterator.map(_.mkString(", ")).mkString(stringPrefix + "(", "; ", ")")
+
 
 }
