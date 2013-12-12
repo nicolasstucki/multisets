@@ -19,17 +19,20 @@ Bag delegates subtasks of the Iterable methods to the underlying BagBucket. Ther
 
 The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a BagBucketFactory that is implicitly taken into every constructor (ideally some default ones should be defined).
 
-The code of bags looks like (input --> output):
+The code of bags looks like (input `-->` output):
 ------------------------------------------------------------------------
+```scala
 implicit val m1 = SortedBagBucketFactory.ofMultiplicities[Int] // define compact representation for Int
 implicit val m2 = SortedBagBucketFactory.ofMultiplicities[Char] // define compact representation for Char
-Bag('c'->2, 'd'->3)  --> Bag('c', 'c', 'd', 'd', 'd')
-Bag(1,2,2,3,3)       -->   Bag(1,2,2,3,3)
-Bag(1,1) union Bag(1,2)    --> Bag(1,1,1,2)
+Bag('c'->2, 'd'->3)              --> Bag('c', 'c', 'd', 'd', 'd')
+Bag(1,2,2,3,3)                   --> Bag(1,2,2,3,3)
+Bag(1,1) union Bag(1,2)          --> Bag(1,1,1,2)
 Bag(1,2,2,3,3).multiplicity(2)   --> 2
 Bag(1,2,2,3,3).multiplicity(5)   --> 0
-Bag(1,2,2,3,3)(2)   -->  Iterable(2,2) // Return equivalent elements (still not sure about return type)
+Bag(1,2,2,3,3)(2)                --> Iterable(2,2) // Return equivalent elements (still not sure about return type)
+```
 ------------------------------------------------------------------------
+```scala
 implicit val mod3Equiv = new Ordering[Int] { // define that buckets will group Int that are equivalent modulo 3
    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
 }
@@ -41,6 +44,7 @@ val bag = immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1,
 bag(0)    --> Iterable(6, 3, 3, 3) // equivalent modulo 0
 bag(1)    --> Iterable(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
 bag(2)    --> Iterable(8, 5, 2) // equivalent modulo 2
+```
 ----------------------------------------------
 
 
