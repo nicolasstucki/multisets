@@ -1,16 +1,18 @@
 package bagapps.genetic_algorithm
 
-import scala.collection.immutable
-import scala.collection.immutable.{TreeBag => Population}
+import scala.collection.mutable._
+import scala.collection.mutable.{HashBag => Population}
 import scala.annotation.tailrec
 
 object Main {
 
   val populationSize = 20
   val genesSize = 8
-  val numberIterations = 10
+  val numberIterations = 20
   val elitism = 0.5d
   val mutation = 0.1d
+
+  implicit val m = BagBucketFactory.Hashed.ofBagBucketBag[Individual]
 
   def main(args: Array[String]) {
 
@@ -18,17 +20,18 @@ object Main {
     def geneticAlgorithm(population: Population[Individual], iteration: Int): Population[Individual] = {
       println(s"Iteration $iteration".padTo(15, ' '))
       println("  best fitness: " + (1d - population.head.fitness.toDouble / genesSize) * 100 + "%")
-            println(population + "  "+ population.size)
+      println("  best individual: " + population.head)
 
       if (iteration < numberIterations) {
 
         val numberElites = (elitism * populationSize).toInt
-        // FIXME: bug with .take method of bag
+
         val bestPopulation = population.take(numberElites)
 
         val numberCrossover = (populationSize - numberElites) / 2
 
-        val newGeneration = Population.newBuilder[Individual]
+        // Create a new Bag (Population) for the new generation
+        val newGeneration = Population.empty[Individual]
 
         for (_ <- 1 to numberCrossover) {
           val individualA = selectRandom(population)
@@ -37,7 +40,7 @@ object Main {
           newGeneration += mutated(individualC)
         }
 
-        val newPopulation = bestPopulation union newGeneration.result()
+        val newPopulation = bestPopulation union newGeneration
 
 
         geneticAlgorithm(newPopulation, iteration + 1)
@@ -62,13 +65,12 @@ object Main {
     def compare(x: Individual, y: Individual): Int = x.fitness compare y.fitness
   }
 
-  implicit val m = immutable.BagBucketFactory.Sorted.ofBagBucketBag[Individual]
 
   def randomPopulation = {
-    val b = Population.newBuilder[Individual]
+    val b = Population.empty[Individual]
     for (_ <- 1 to populationSize)
       b += Individual(Vector.fill(genesSize)(Math.random() < 0.5))
-    b.result()
+    b
   }
 
   def selectRandom(population: Population[Individual]) = {

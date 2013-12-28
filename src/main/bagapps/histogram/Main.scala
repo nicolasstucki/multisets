@@ -1,7 +1,7 @@
 package bagapps.histogram
 
 
-import scala.collection.immutable.{TreeBag => Histogram}
+import scala.collection.mutable.{HashBag => Histogram}
 
 object Main extends BagPredef {
 
@@ -9,14 +9,14 @@ object Main extends BagPredef {
 
     val LIMIT = 50
 
-    val histogram = {
-      val histogramBuilder = Histogram.newBuilder[Int]
+    // Create empty histogram
+    val histogram = Histogram.empty[Int]
 
-      (1 to LIMIT * LIMIT).foreach(_ => histogramBuilder += (Math.random() * LIMIT).toInt)
+    // Add every element to the histogram
+    (1 to LIMIT * LIMIT).foreach(_ => histogram += (Math.random() * LIMIT).toInt)
 
-      histogramBuilder.result()
-    }
 
+    // Print the contents of the histogram
     println(
       s"""
         |Histogram of (Math.random() * LIMIT).toInt over $LIMIT executions
@@ -25,12 +25,12 @@ object Main extends BagPredef {
         | minimum occurrences: ${histogram.minMultiplicity}
         |=================================================================
         |${
-            (0 until LIMIT).map {
-              i =>
-                val occurrences = histogram.multiplicity(i)
-                s"$i:".padTo(4, ' ') + "".padTo(occurrences, '|') + s"  $occurrences"
-            }.mkString("\n")
-          }
+        (0 until LIMIT).map {
+          i =>
+            val occurrences = histogram.multiplicity(i)
+            s"$i:".padTo(4, ' ') + "".padTo(occurrences, '|') + s"  $occurrences"
+        }.mkString("\n")
+      }
         |================================================================
         """.stripMargin)
 
