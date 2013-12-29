@@ -17,8 +17,6 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
   initWithContents(contents)
 
-  protected override type BagBucketFactory[X] = mutable.HashedBagBucketFactory[X]
-
   type Entry = mutable.DefaultEntry[A, mutable.BagBucket[A]]
 
   override def empty: mutable.HashBag[A] = mutable.HashBag.empty[A](bucketFactory)

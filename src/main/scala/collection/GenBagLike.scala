@@ -8,10 +8,8 @@ trait GenBagLike[A, +Repr]
 
 
   protected type BagBucket[X] <: collection.BagBucket[X]
-  protected type BagBucketFactory[X] <: collection.BagBucketFactory[X, BagBucket[X]]
 
-  protected def bucketFactory: BagBucketFactory[A]
-
+  protected def bucketFactory: collection.BagBucketFactory[A, BagBucket[A]]
 
 
   def bucketsIterator: Iterator[BagBucket[A]]

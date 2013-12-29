@@ -10,9 +10,6 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
-
-  protected override type BagBucketFactory[X] = immutable.SortedBagBucketFactory[X]
-
   implicit lazy val ord = new Ordering[BagBucket[A]] {
     def compare(x: BagBucket[A], y: BagBucket[A]): Int = bucketFactory.compare(x.sentinel, y.sentinel)
   }

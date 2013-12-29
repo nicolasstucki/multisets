@@ -8,9 +8,6 @@ final class LinkedListBag[A](list: mutable.MutableList[mutable.BagBucket[A]])(im
   extends mutable.Bag[A] {
   //with mutable.BagLike[A, LinkedListBag[A]] {
 
-
-  protected override type BagBucketFactory[X] = mutable.BagBucketFactory[X]
-
   def clear(): Unit = list.clear()
 
   def bucketsIterator: Iterator[BagBucket[A]] = list.iterator

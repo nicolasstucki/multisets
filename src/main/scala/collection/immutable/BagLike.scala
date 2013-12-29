@@ -12,6 +12,5 @@ trait BagLike[A, +This <: immutable.BagLike[A, This] with immutable.Bag[A]]
   self =>
 
   protected override type BagBucket[X] = immutable.BagBucket[X]
-  protected override type BagBucketFactory[X] <: immutable.BagBucketFactory[X]
 
 }
