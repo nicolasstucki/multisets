@@ -5,13 +5,13 @@ import scala.collection.immutable.{RedBlackTree => RB}
 import scala.collection
 
 
-class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFactory: immutable.SortedBagBucketFactory[A])
+class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagBucketConfiguration: immutable.SortedBagBucketConfiguration[A])
   extends Bag[A]
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
   implicit lazy val ord = new Ordering[BagBucket[A]] {
-    def compare(x: BagBucket[A], y: BagBucket[A]): Int = bucketFactory.compare(x.sentinel, y.sentinel)
+    def compare(x: BagBucket[A], y: BagBucket[A]): Int = bagBucketConfiguration.compare(x.sentinel, y.sentinel)
   }
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, TreeBag[A]] = TreeBag.newBuilder
@@ -32,7 +32,7 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
 
   def lastKey = RB.greatest(tree).key
 
-  def compare(k0: A, k1: A): Int = bucketFactory.compare(k0, k1)
+  def compare(k0: A, k1: A): Int = bagBucketConfiguration.compare(k0, k1)
 
   override def head = {
     val smallest = RB.smallest(tree)
@@ -99,8 +99,8 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
   def getBucket(elem: A): Option[BagBucket[A]] = RB.get(tree, elem)
 
   def addedBucket(bucket: collection.BagBucket[A]): TreeBag[A] = getBucket(bucket.sentinel) match {
-    case Some(bucket2) => updated(bucketFactory.from(bucket, bucket2))
-    case None => updated(bucketFactory.from(bucket))
+    case Some(bucket2) => updated(bagBucketConfiguration.from(bucket, bucket2))
+    case None => updated(bagBucketConfiguration.from(bucket))
   }
 
 
@@ -110,5 +110,5 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFact
 
 
 object TreeBag extends generic.ImmutableSortedBagFactory[TreeBag] {
-  def empty[A](implicit bucketFactory: BagBucketFactory[A]) = new TreeBag[A](null)
+  def empty[A](implicit bagBucketConfiguration: BBC[A]) = new TreeBag[A](null)
 }

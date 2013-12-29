@@ -10,7 +10,7 @@ trait Bag[A]
 
 
   def update(elem: A, count: Int): this.type = {
-    val b = bucketFactory.newBuilder(elem)
+    val b = bagBucketConfiguration.newBuilder(elem)
     b.add(elem, count)
     updateBucket(b.result())
     this
@@ -22,7 +22,7 @@ trait Bag[A]
   def add(elem: A, count: Int): this.type = {
     this.getBucket(elem) match {
       case Some(b) => b add(elem, count)
-      case None => updateBucket((bucketFactory.newBuilder(elem) add(elem, count)).result())
+      case None => updateBucket((bagBucketConfiguration.newBuilder(elem) add(elem, count)).result())
     }
     this
   }
@@ -30,7 +30,7 @@ trait Bag[A]
   def addBucket(bucket: collection.BagBucket[A]): this.type = {
     this.getBucket(bucket.sentinel) match {
       case Some(b) => b addBucket bucket
-      case None => updateBucket((bucketFactory.newBuilder(bucket.sentinel) addBucket bucket).result())
+      case None => updateBucket((bagBucketConfiguration.newBuilder(bucket.sentinel) addBucket bucket).result())
     }
     this
   }
@@ -47,5 +47,7 @@ trait Bag[A]
 
 object Bag extends generic.MutableBagFactory[mutable.Bag] {
 
-  def empty[A](implicit bucketFactory: mutable.Bag.BagBucketFactory[A]): mutable.Bag[A] = mutable.LinkedListBag.empty[A]
+
+  def empty[A](implicit bagBucketConfiguration: mutable.Bag.BBC[A]): mutable.Bag[A] = mutable.LinkedListBag.empty[A]
+
 }

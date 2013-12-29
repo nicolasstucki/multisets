@@ -6,9 +6,9 @@ import scala.collection._
 abstract class MutableHashedBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X, CC[X]]]
   extends HashedBagFactory[CC] {
 
-  type BagBucket[X] = mutable.BagBucket[X]
-  type BagBucketFactory[X] = mutable.HashedBagBucketFactory[X]
+  type BB[X] = mutable.BagBucket[X]
+  type BBC[X] = mutable.HashedBagBucketConfiguration[X]
 
 
-  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A]): mutable.BagBuilder[A, CC[A]] = new mutable.GrowingBagBuilder(empty)
+  def newBuilder[A](implicit bucketFactory: BBC[A]): mutable.BagBuilder[A, CC[A]] = new mutable.GrowingBagBuilder(empty)
 }

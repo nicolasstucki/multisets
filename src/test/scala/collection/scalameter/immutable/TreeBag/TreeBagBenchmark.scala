@@ -8,7 +8,7 @@ trait TreeBagBenchmark extends scala.collection.scalameter.immutable.BigIntSorte
 
   type Bag[X] = immutable.TreeBag[X]
 
-  def newBuilder(implicit m: BagBucketFactory[BigInt]) = immutable.TreeBag.newBuilder[BigInt](m)
+  def newBuilder(implicit m: BagBucketConfiguration[BigInt]) = immutable.TreeBag.newBuilder[BigInt](m)
 
   def bagName: String = "immutable.TreeBag"
 

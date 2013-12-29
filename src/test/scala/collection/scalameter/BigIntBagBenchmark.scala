@@ -10,12 +10,12 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
 
   type Bag[X] <: scala.collection.Bag[X]
   type BagBucket[X] <: scala.collection.BagBucket[X]
-  type BagBucketFactory[X] <: scala.collection.BagBucketFactory[X, BagBucket[X]]
+  type BagBucketConfiguration[X] <: scala.collection.BagBucketConfiguration[X, BagBucket[X]]
 
 
   def sizes: Gen[Int]
 
-  def newBuilder(implicit m: BagBucketFactory[BigInt]): scala.collection.mutable.BagBuilder[BigInt, Bag[BigInt]]
+  def newBuilder(implicit m: BagBucketConfiguration[BigInt]): scala.collection.mutable.BagBuilder[BigInt, Bag[BigInt]]
 
   def bagName: String
 
@@ -34,29 +34,29 @@ trait BigIntBagBenchmark extends PerformanceTest.Quickbenchmark {
   }
 
 
-  def setBag(implicit m: BagBucketFactory[BigInt]) = for {
+  def setBag(implicit m: BagBucketConfiguration[BigInt]) = for {
     size <- sizes
   } yield {
     TestBagFactory.setBag(size, newBuilder, n => BigInt(n))
   }
 
-  def stepsBag(implicit m: BagBucketFactory[BigInt]) = for {
+  def stepsBag(implicit m: BagBucketConfiguration[BigInt]) = for {
     size <- sizes
   } yield {
     TestBagFactory.stepsBag(size, newBuilder, n => BigInt(n))
   }
 
-  def squareBag(implicit m: BagBucketFactory[BigInt]) = for {
+  def squareBag(implicit m: BagBucketConfiguration[BigInt]) = for {
     size <- sizes
   } yield {
     TestBagFactory.squareBag(size, newBuilder, n => BigInt(n))
   }
 
-  def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt]
+  def bagBucketFactoryOfMultiplicities: BagBucketConfiguration[BigInt]
 
-  def bagBucketFactoryOfBagBucketBag: BagBucketFactory[BigInt]
+  def bagBucketFactoryOfBagBucketBag: BagBucketConfiguration[BigInt]
 
-  def bagBucketFactoryOfVectors: BagBucketFactory[BigInt]
+  def bagBucketFactoryOfVectors: BagBucketConfiguration[BigInt]
 
   def runBenchmark(): Unit = {
 

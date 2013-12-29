@@ -4,8 +4,8 @@ import scala.collection._
 import scala.collection
 import scala.util.hashing.Hashing
 
-trait BagBucketFactory[A]
-  extends collection.BagBucketFactory[A, immutable.BagBucket[A]] {
+trait BagBucketConfiguration[A]
+  extends collection.BagBucketConfiguration[A, immutable.BagBucket[A]] {
 
   override def from(bucket: collection.BagBucket[A]): BagBucket[A] = bucket match {
     case immutableBucket: immutable.BagBucket[A] => immutableBucket
@@ -16,29 +16,29 @@ trait BagBucketFactory[A]
 
 }
 
-trait HashedBagBucketFactory[A]
-  extends immutable.BagBucketFactory[A]
-  with collection.HashedBagBucketFactory[A, immutable.BagBucket[A]]
+trait HashedBagBucketConfiguration[A]
+  extends immutable.BagBucketConfiguration[A]
+  with collection.HashedBagBucketConfiguration[A, immutable.BagBucket[A]]
 
-trait SortedBagBucketFactory[A]
-  extends immutable.BagBucketFactory[A]
-  with collection.SortedBagBucketFactory[A, immutable.BagBucket[A]]
+trait SortedBagBucketConfiguration[A]
+  extends immutable.BagBucketConfiguration[A]
+  with collection.SortedBagBucketConfiguration[A, immutable.BagBucket[A]]
 
 
-object BagBucketFactory {
+object BagBucketConfiguration {
 
-  private class MultiplicityBagBucketFactory[A]
-    extends immutable.BagBucketFactory[A] {
+  private class MultiplicityBagBucketConfiguration[A]
+    extends immutable.BagBucketConfiguration[A] {
     def empty(sentinel: A): immutable.MultiplicityBagBucket[A] = new immutable.MultiplicityBagBucket(sentinel, 0)
 
     def equiv(x: A, y: A): Boolean = x == y
   }
 
-  private abstract class BagBucketBagFactory[A](val equivClass: Equiv[A]) extends immutable.BagBucketFactory[A] {
+  private abstract class BagBucketBagConfiguration[A](val equivClass: Equiv[A]) extends immutable.BagBucketConfiguration[A] {
     def equiv(x: A, y: A): Boolean = equivClass.equiv(x, y)
   }
 
-  private class VectorBagBucketFactory[A](val equivClass: Equiv[A]) extends immutable.BagBucketFactory[A] {
+  private class VectorBagBucketConfiguration[A](val equivClass: Equiv[A]) extends immutable.BagBucketConfiguration[A] {
     def empty(sentinel: A): immutable.VectorBagBucket[A] = new immutable.VectorBagBucket(sentinel, immutable.Vector.empty[A])
 
     def equiv(x: A, y: A): Boolean = equivClass.equiv(x, y)
@@ -47,59 +47,59 @@ object BagBucketFactory {
 
   object Hashed {
 
-    private class MultiplicityBagBucketFactory[A]
-      extends immutable.BagBucketFactory.MultiplicityBagBucketFactory[A]
-      with immutable.HashedBagBucketFactory[A] {
+    private class MultiplicityBagBucketConfiguration[A]
+      extends immutable.BagBucketConfiguration.MultiplicityBagBucketConfiguration[A]
+      with immutable.HashedBagBucketConfiguration[A] {
       def hash(x: A): Int = x.hashCode()
     }
 
-    private class BagBucketBagFactory[A](equivClass: Equiv[A], hashing: Hashing[A])
-      extends BagBucketFactory.BagBucketBagFactory[A](equivClass)
-      with immutable.HashedBagBucketFactory[A] {
+    private class BagBucketBagConfiguration[A](equivClass: Equiv[A], hashing: Hashing[A])
+      extends BagBucketConfiguration.BagBucketBagConfiguration[A](equivClass)
+      with immutable.HashedBagBucketConfiguration[A] {
 
       def empty(sentinel: A): immutable.BagBucketBag[A] = ??? // new immutable.BagBucketBag(sentinel, mutable.HashBag.empty[A](ofMultiplicities[A]))
 
       def hash(x: A): Int = hashing.hash(x)
     }
 
-    private class VectorBagBucketFactory[A](equivClass: Equiv[A], hashing: Hashing[A])
-      extends BagBucketFactory.VectorBagBucketFactory[A](equivClass)
-      with immutable.HashedBagBucketFactory[A] {
+    private class VectorBagBucketConfiguration[A](equivClass: Equiv[A], hashing: Hashing[A])
+      extends BagBucketConfiguration.VectorBagBucketConfiguration[A](equivClass)
+      with immutable.HashedBagBucketConfiguration[A] {
       def hash(x: A): Int = hashing.hash(x)
     }
 
 
-    def ofMultiplicities[A]: immutable.HashedBagBucketFactory[A] = new BagBucketFactory.Hashed.MultiplicityBagBucketFactory
+    def ofMultiplicities[A]: immutable.HashedBagBucketConfiguration[A] = new BagBucketConfiguration.Hashed.MultiplicityBagBucketConfiguration
 
-    def ofBagBucketBag[A](implicit equivClass: Equiv[A], hashing: Hashing[A]): immutable.HashedBagBucketFactory[A] = new BagBucketFactory.Hashed.BagBucketBagFactory(equivClass, hashing)
+    def ofBagBucketBag[A](implicit equivClass: Equiv[A], hashing: Hashing[A]): immutable.HashedBagBucketConfiguration[A] = new BagBucketConfiguration.Hashed.BagBucketBagConfiguration(equivClass, hashing)
 
-    def ofVectors[A](implicit equivClass: Equiv[A], hashing: Hashing[A]): immutable.HashedBagBucketFactory[A] = new BagBucketFactory.Hashed.VectorBagBucketFactory(equivClass, hashing)
+    def ofVectors[A](implicit equivClass: Equiv[A], hashing: Hashing[A]): immutable.HashedBagBucketConfiguration[A] = new BagBucketConfiguration.Hashed.VectorBagBucketConfiguration(equivClass, hashing)
   }
 
 
   object Sorted {
 
-    private class MultiplicityBagBucketFactory[A](val ordering: Ordering[A])
-      extends BagBucketFactory.MultiplicityBagBucketFactory[A]
-      with SortedBagBucketFactory[A]
+    private class MultiplicityBagBucketConfiguration[A](val ordering: Ordering[A])
+      extends BagBucketConfiguration.MultiplicityBagBucketConfiguration[A]
+      with SortedBagBucketConfiguration[A]
 
-    private class BagBucketBagFactory[A](val ordering: Ordering[A])
-      extends BagBucketFactory.BagBucketBagFactory[A](ordering)
-      with SortedBagBucketFactory[A] {
+    private class BagBucketBagConfiguration[A](val ordering: Ordering[A])
+      extends BagBucketConfiguration.BagBucketBagConfiguration[A](ordering)
+      with SortedBagBucketConfiguration[A] {
       def empty(sentinel: A): immutable.BagBucketBag[A] = new immutable.BagBucketBag(sentinel, immutable.TreeBag.empty[A](ofMultiplicities[A](ordering)))
     }
 
 
-    private class VectorBagBucketFactory[A](val ordering: Ordering[A])
-      extends BagBucketFactory.VectorBagBucketFactory[A](ordering)
-      with SortedBagBucketFactory[A]
+    private class VectorBagBucketConfiguration[A](val ordering: Ordering[A])
+      extends BagBucketConfiguration.VectorBagBucketConfiguration[A](ordering)
+      with SortedBagBucketConfiguration[A]
 
 
-    def ofMultiplicities[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketFactory[A] = new MultiplicityBagBucketFactory(ordering)
+    def ofMultiplicities[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketConfiguration[A] = new MultiplicityBagBucketConfiguration(ordering)
 
-    def ofBagBucketBag[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketFactory[A] = new BagBucketBagFactory(ordering)
+    def ofBagBucketBag[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketConfiguration[A] = new BagBucketBagConfiguration(ordering)
 
-    def ofVectors[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketFactory[A] = new VectorBagBucketFactory(ordering)
+    def ofVectors[A](implicit ordering: Ordering[A]): immutable.SortedBagBucketConfiguration[A] = new VectorBagBucketConfiguration(ordering)
 
   }
 

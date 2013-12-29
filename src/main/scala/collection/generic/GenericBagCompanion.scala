@@ -9,14 +9,14 @@ trait GenericBagCompanion[CC[X] <: collection.Bag[X]] {
 
   type Coll = CC[_]
 
-  type BagBucket[A] <: collection.BagBucket[A]
-  type BagBucketFactory[A] <: collection.BagBucketFactory[A, BagBucket[A]]
+  type BB[A] <: collection.BagBucket[A]
+  type BBC[A] <: collection.BagBucketConfiguration[A, BagBucket[A]]
 
-  def newBuilder[A](implicit bucketFactory: BagBucketFactory[A]): mutable.BagBuilder[A, CC[A]]
+  def newBuilder[A](implicit bagBucketConfiguration: BBC[A]): mutable.BagBuilder[A, CC[A]]
 
-  def empty[A](implicit bucketFactory: BagBucketFactory[A]): CC[A]
+  def empty[A](implicit bagBucketConfiguration: BBC[A]): CC[A]
 
-  def apply[A](elems: A*)(implicit bucketFactory: BagBucketFactory[A]): CC[A] = {
+  def apply[A](elems: A*)(implicit bagBucketConfiguration: BBC[A]): CC[A] = {
     if (elems.isEmpty) empty[A]
     else {
       val b = newBuilder[A]
@@ -25,7 +25,7 @@ trait GenericBagCompanion[CC[X] <: collection.Bag[X]] {
     }
   }
 
-  def from[A](elemCounts: (A, Int)*)(implicit bucketFactory: BagBucketFactory[A]): CC[A] = {
+  def from[A](elemCounts: (A, Int)*)(implicit bagBucketConfiguration: BBC[A]): CC[A] = {
     if (elemCounts.isEmpty) empty[A]
     else {
       val b = newBuilder[A]

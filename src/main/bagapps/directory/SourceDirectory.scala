@@ -2,13 +2,14 @@ package bagapps.directory
 
 import java.io.{File => JFile}
 import scala.collection.mutable._
+import scala.collection.mutable
 
 
 class SourceDirectory private(root: JFile) {
 
-  private implicit def bucketFactory(implicit equiv: Ordering[File]) = BagBucketFactory.Sorted.ofVectors[File]
+  private implicit def bagBucketConfiguration(implicit equiv: Ordering[File]) = mutable.BagBucketConfiguration.Sorted.ofVectors[File]
 
-  private def putFilesInBag(bag: Bag[File]) {
+  private def putFilesInBag(bag: mutable.Bag[File]) {
     def putFilesInBag(directory: JFile) {
       directory.listFiles().foreach {
         case dir if dir.isDirectory =>
@@ -29,21 +30,21 @@ class SourceDirectory private(root: JFile) {
 
   lazy val filesByName: collection.Bag[File] = {
     implicit val equiv = File.FileNameEquiv
-    val bag = Bag.empty[File]
+    val bag = mutable.Bag.empty[File]
     putFilesInBag(bag)
     bag
   }
 
   lazy val filesByDirectory: collection.Bag[File] = {
     implicit val equiv = File.DirectoryEquiv
-    val bag = Bag.empty[File]
+    val bag = mutable.Bag.empty[File]
     putFilesInBag(bag)
     bag
   }
 
   lazy val filesByExtension: collection.Bag[File] = {
     implicit val equiv = File.ExtensionEquiv
-    val bag = Bag.empty[File]
+    val bag = mutable.Bag.empty[File]
     putFilesInBag(bag)
     bag
   }

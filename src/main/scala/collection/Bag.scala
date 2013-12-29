@@ -18,14 +18,14 @@ trait Bag[A]
 
 object Bag extends BagFactory[immutable.Bag] {
 
-  type BagBucket[A] = immutable.BagBucket[A]
-  type BagBucketFactory[A] = immutable.BagBucketFactory[A]
+  type BB[A] = immutable.BagBucket[A]
+  type BBC[A] = immutable.BagBucketConfiguration[A]
 
-  implicit def canBuildFrom[A](implicit bucketFactory: BagBucketFactory[A]): CanBuildFrom[Coll, A, immutable.Bag[A]] = bagCanBuildFrom[A]
+  implicit def canBuildFrom[A](implicit bagBucketConfiguration: BBC[A]): CanBuildFrom[Coll, A, immutable.Bag[A]] = bagCanBuildFrom[A]
 
-  def newBuilder[A](implicit bucketFactory: Bag.BagBucketFactory[A]): mutable.BagBuilder[A, immutable.Bag[A]] = immutable.Bag.newBuilder[A]
+  def newBuilder[A](implicit bagBucketConfiguration: BBC[A]): mutable.BagBuilder[A, immutable.Bag[A]] = immutable.Bag.newBuilder[A]
 
-  override def empty[A](implicit bucketFactory: Bag.BagBucketFactory[A]): immutable.Bag[A] = immutable.Bag.empty[A]
+  override def empty[A](implicit bagBucketConfiguration: BBC[A]): immutable.Bag[A] = immutable.Bag.empty[A]
 
 }
 

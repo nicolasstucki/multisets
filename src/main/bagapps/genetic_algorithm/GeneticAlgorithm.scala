@@ -1,9 +1,10 @@
 package bagapps.genetic_algorithm
 
-import scala.collection.immutable._
+import scala.collection.immutable
 import scala.collection.immutable.{TreeBag => Population}
 import scala.annotation.tailrec
 import scala.util.hashing.Hashing
+import scala.collection.mutable
 
 trait Individual {
   def fitness: Double
@@ -24,7 +25,7 @@ object GeneticAlgorithm {
 
   def run[I <: Individual](individuals: Individuals[I], numberIterations: Int = 20, populationSize: Int = 20, elitism: Double = 0.5d) {
 
-    implicit val m = BagBucketFactory.Sorted.ofVectors[I](individuals)
+    implicit val m = immutable.BagBucketConfiguration.Sorted.ofVectors[I](individuals)
 
     @tailrec
     def runRec(population: Population[I], iteration: Int): Population[I] = {

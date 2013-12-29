@@ -7,25 +7,24 @@ import scala.Some
 import scala.Some
 
 
-final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bucketFactory: mutable.HashedBagBucketFactory[A])
+final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bagBucketConfiguration: mutable.HashedBagBucketConfiguration[A])
   extends mutable.Bag[A]
   with mutable.BagLike[A, mutable.HashBag[A]]
   with mutable.HashTable[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]]
   with Serializable {
 
 
-
   initWithContents(contents)
 
   type Entry = mutable.DefaultEntry[A, mutable.BagBucket[A]]
 
-  override def empty: mutable.HashBag[A] = mutable.HashBag.empty[A](bucketFactory)
+  override def empty: mutable.HashBag[A] = mutable.HashBag.empty[A](bagBucketConfiguration)
 
   override def clear() {
     clearTable()
   }
 
-  override protected def elemHashCode(key: A): Int = bucketFactory.hash(key)
+  override protected def elemHashCode(key: A): Int = bagBucketConfiguration.hash(key)
 
   def getBucket(elem: A): Option[BagBucket[A]] = {
     val e = findEntry(elem)
@@ -52,6 +51,6 @@ object HashBag extends MutableHashedBagFactory[mutable.HashBag] {
   //  implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, HashMap[A, B]] = new BagCanBuildFrom[A, B]
 
 
-  def empty[A](implicit bucketFactory: BagBucketFactory[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
+  def empty[A](implicit bagBucketConfiguration: BBC[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
 
 }

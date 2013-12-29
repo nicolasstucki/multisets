@@ -8,17 +8,17 @@ import scala.collection.immutable
 trait BigIntBagBenchmark extends scala.collection.scalameter.BigIntBagBenchmark {
   type Bag[X] <: scala.collection.immutable.Bag[X]
   type BagBucket[X] = scala.collection.immutable.BagBucket[X]
-  type BagBucketFactory[X] <: scala.collection.immutable.BagBucketFactory[X]
+  type BagBucketConfiguration[X] <: scala.collection.immutable.BagBucketConfiguration[X]
 }
 
 
 trait BigIntSortedBagBenchmark extends BigIntBagBenchmark {
   type Bag[X] <: scala.collection.immutable.Bag[X]
-  type BagBucketFactory[X] = scala.collection.immutable.SortedBagBucketFactory[X]
+  type BagBucketConfiguration[X] = scala.collection.immutable.SortedBagBucketConfiguration[X]
 
-  def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt] = immutable.BagBucketFactory.Sorted.ofMultiplicities
+  def bagBucketFactoryOfMultiplicities: BagBucketConfiguration[BigInt] = immutable.BagBucketConfiguration.Sorted.ofMultiplicities
 
-  def bagBucketFactoryOfBagBucketBag: BagBucketFactory[BigInt] = immutable.BagBucketFactory.Sorted.ofBagBucketBag
+  def bagBucketFactoryOfBagBucketBag: BagBucketConfiguration[BigInt] = immutable.BagBucketConfiguration.Sorted.ofBagBucketBag
 
-  def bagBucketFactoryOfVectors: BagBucketFactory[BigInt] = immutable.BagBucketFactory.Sorted.ofVectors
+  def bagBucketFactoryOfVectors: BagBucketConfiguration[BigInt] = immutable.BagBucketConfiguration.Sorted.ofVectors
 }

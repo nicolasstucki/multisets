@@ -5,7 +5,7 @@ import scala.collection.{immutable, mutable}
 
 class IntMutableHashBagOnMultiplicitiesTest extends IntBagTest {
 
-  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.Hashed.ofMultiplicities[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketConfiguration.Hashed.ofMultiplicities[Int]
 
   override def emptyBag: mutable.Bag[Int] = mutable.HashBag.empty[Int]
 
@@ -13,7 +13,7 @@ class IntMutableHashBagOnMultiplicitiesTest extends IntBagTest {
 
 class IntMutableHashBagOnBagBucketBagTest extends IntBagTest {
 
-  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.Hashed.ofBagBucketBag[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketConfiguration.Hashed.ofBagBucketBag[Int]
 
   override def emptyBag: mutable.Bag[Int] = mutable.HashBag.empty[Int]
 
@@ -21,14 +21,14 @@ class IntMutableHashBagOnBagBucketBagTest extends IntBagTest {
 
 class IntMutableHashBagOnVectorBucketTest extends IntBagTest {
 
-  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.Hashed.ofVectors[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketConfiguration.Hashed.ofVectors[Int]
 
   override def emptyBag: mutable.Bag[Int] = mutable.HashBag.empty[Int]
 
 }
 
 class IntMutableTreeBagOnBagBucketsBagWithMod3EquivTest extends IntBagTest {
-  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.Hashed.ofBagBucketBag[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketConfiguration.Hashed.ofBagBucketBag[Int]
 
   implicit lazy val mod3 = new Ordering[Int] {
     def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
@@ -38,7 +38,7 @@ class IntMutableTreeBagOnBagBucketsBagWithMod3EquivTest extends IntBagTest {
 }
 
 class IntMutableTreeBagOnVectorBucketsWithMod3EquivTest extends IntBagTest {
-  implicit lazy val bagBucketFactory = mutable.BagBucketFactory.Hashed.ofVectors[Int]
+  implicit lazy val bagBucketFactory = mutable.BagBucketConfiguration.Hashed.ofVectors[Int]
 
   implicit lazy val mod3 = new Ordering[Int] {
     def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
