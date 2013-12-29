@@ -8,12 +8,16 @@ import scala.Some
 
 
 final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bucketFactory: mutable.HashedBagBucketFactory[A])
-  extends mutable.HashedBag[A]
-  with mutable.HashedBagLike[A, mutable.HashBag[A]]
+  extends mutable.Bag[A]
+  with mutable.BagLike[A, mutable.HashBag[A]]
   with mutable.HashTable[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]]
   with Serializable {
 
+
+
   initWithContents(contents)
+
+  protected override type BagBucketFactory[X] = mutable.HashedBagBucketFactory[X]
 
   type Entry = mutable.DefaultEntry[A, mutable.BagBucket[A]]
 
@@ -49,5 +53,7 @@ object HashBag extends MutableHashedBagFactory[mutable.HashBag] {
 
   //  implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, HashMap[A, B]] = new BagCanBuildFrom[A, B]
 
-  def empty[A](implicit bucketFactory: mutable.HashedBag[A]#BagBucketFactory[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
+
+  def empty[A](implicit bucketFactory: BagBucketFactory[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
+
 }

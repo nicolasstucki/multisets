@@ -19,7 +19,7 @@ object Main extends BagPredef {
     // Print the contents of the histogram
     println(
       s"""
-        |Histogram of (Math.random() * LIMIT).toInt over $LIMIT executions
+        |Histogram of (Math.random() * LIMIT).toInt over ${LIMIT*LIMIT} executions
         |=================================================================
         | maximum occurrences: ${histogram.maxMultiplicity}
         | minimum occurrences: ${histogram.minMultiplicity}

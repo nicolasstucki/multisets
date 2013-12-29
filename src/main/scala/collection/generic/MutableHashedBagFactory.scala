@@ -3,7 +3,7 @@ package scala.collection.generic
 import scala.language.higherKinds
 import scala.collection._
 
-abstract class MutableHashedBagFactory[CC[X] <: mutable.HashedBag[X] with mutable.HashedBagLike[X, CC[X]]]
+abstract class MutableHashedBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X, CC[X]]]
   extends HashedBagFactory[CC] {
 
   type BagBucket[X] = mutable.BagBucket[X]

@@ -13,7 +13,7 @@ trait BigIntBagBenchmark extends scala.collection.scalameter.BigIntBagBenchmark 
 
 
 trait BigIntHashedBagBenchmark extends BigIntBagBenchmark {
-  type Bag[X] <: scala.collection.mutable.HashedBag[X]
+  type Bag[X] <: scala.collection.mutable.Bag[X]
   type BagBucketFactory[X] = scala.collection.mutable.HashedBagBucketFactory[X]
 
   def bagBucketFactoryOfMultiplicities: BagBucketFactory[BigInt] = mutable.BagBucketFactory.Hashed.ofMultiplicities

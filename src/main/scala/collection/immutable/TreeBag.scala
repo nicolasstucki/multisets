@@ -1,16 +1,17 @@
 package scala.collection.immutable
 
-import scala.collection.generic
+import scala.collection.{immutable, generic, mutable}
 import scala.collection.immutable.{RedBlackTree => RB}
-import scala.collection.mutable
 import scala.collection
 
 
-class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFactory: SortedBagBucketFactory[A])
-  extends SortedBag[A]
-  with SortedBagLike[A, TreeBag[A]]
+class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bucketFactory: immutable.SortedBagBucketFactory[A])
+  extends Bag[A]
   with BagLike[A, TreeBag[A]]
   with Serializable {
+
+
+  protected override type BagBucketFactory[X] = immutable.SortedBagBucketFactory[X]
 
   implicit lazy val ord = new Ordering[BagBucket[A]] {
     def compare(x: BagBucket[A], y: BagBucket[A]): Int = bucketFactory.compare(x.sentinel, y.sentinel)
