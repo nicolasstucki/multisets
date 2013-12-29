@@ -9,19 +9,12 @@ import scala.collection.immutable
  */
 trait BagPredef {
 
-  implicit val mutableBagBucketConfigurationHashedOfMultiplicitiesInt = mutable.BagBucketConfiguration.Hashed.ofMultiplicities[Int]
-  implicit val mutableBagBucketConfigurationHashedOfMultiplicitiesBigInt = mutable.BagBucketConfiguration.Hashed.ofMultiplicities[BigInt]
-  implicit val mutableBagBucketConfigurationHashedOfMultiplicitiesString = mutable.BagBucketConfiguration.Hashed.ofMultiplicities[String]
+  implicit def immutableBagBucketConfigurationHashedOfMultiplicities[A] = immutable.BagBucketConfiguration.Hashed.ofMultiplicities[A]
 
-  implicit val mutableBagBucketConfigurationSortedOfMultiplicitiesInt = mutable.BagBucketConfiguration.Sorted.ofMultiplicities[Int]
-  implicit val mutableBagBucketConfigurationSortedOfMultiplicitiesBigInt = mutable.BagBucketConfiguration.Sorted.ofMultiplicities[BigInt]
-  implicit val mutableBagBucketConfigurationSortedOfMultiplicitiesString = mutable.BagBucketConfiguration.Sorted.ofMultiplicities[String]
+  implicit def mutableBagBucketConfigurationHashedOfMultiplicities[A] = mutable.BagBucketConfiguration.Hashed.ofMultiplicities[A]
 
-  implicit val immutableBagBucketConfigurationHashedOfMultiplicitiesInt = immutable.BagBucketConfiguration.Hashed.ofMultiplicities[Int]
-  implicit val immutableBagBucketConfigurationHashedOfMultiplicitiesBigInt = immutable.BagBucketConfiguration.Hashed.ofMultiplicities[BigInt]
-  implicit val immutableBagBucketConfigurationHashedOfMultiplicitiesString = immutable.BagBucketConfiguration.Hashed.ofMultiplicities[String]
+  implicit def immutableBagBucketConfigurationSortedOfMultiplicities[A](implicit ordering: Ordering[A]) = immutable.BagBucketConfiguration.Sorted.ofMultiplicities[A](ordering)
 
-  implicit val immutableBagBucketConfigurationSortedOfMultiplicitiesInt = immutable.BagBucketConfiguration.Sorted.ofMultiplicities[Int]
-  implicit val immutableBagBucketConfigurationSortedOfMultiplicitiesBigInt = immutable.BagBucketConfiguration.Sorted.ofMultiplicities[BigInt]
-  implicit val immutableBagBucketConfigurationSortedOfMultiplicitiesString = immutable.BagBucketConfiguration.Sorted.ofMultiplicities[String]
+  implicit def mutableBagBucketConfigurationSortedOfMultiplicities[A](implicit ordering: Ordering[A]) = mutable.BagBucketConfiguration.Sorted.ofMultiplicities[A](ordering)
+
 }
