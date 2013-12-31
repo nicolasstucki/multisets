@@ -3,7 +3,7 @@ package scala.collection
 import scala.util.hashing.Hashing
 
 
-trait BagBucketConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A] {
+trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A] {
 
   def empty(sentinel: A): BagBucket
 
@@ -15,9 +15,9 @@ trait BagBucketConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends E
 
 }
 
-trait HashedBagBucketConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketConfiguration[A, BagBucket] with Hashing[A]
+trait HashedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] with Hashing[A]
 
-trait SortedBagBucketConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagBucketConfiguration[A, BagBucket] with Ordering[A] {
+trait SortedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] with Ordering[A] {
   def ordering: Ordering[A]
 
   def compare(x: A, y: A): Int = ordering.compare(x, y)

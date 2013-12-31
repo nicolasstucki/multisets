@@ -1,15 +1,19 @@
 package bagapps.directory
 
 import java.io.{File => JFile}
-import scala.collection.mutable._
-import scala.collection.mutable
+
+import scala.collection.immutable._
+import scala.collection
 
 
 class SourceDirectory private(root: JFile) {
 
-  private implicit def bagBucketConfiguration(implicit equiv: Ordering[File]) = mutable.BagBucketConfiguration.Sorted.ofVectors[File]
+  private def getFilesInBag(ord: Ordering[File]): Bag[File] = {
 
-  private def putFilesInBag(bag: mutable.Bag[File]) {
+    implicit val bagConfiguration = BagConfiguration.Sorted.ofBagBucketBag[File](ord)
+
+    val b = Bag.newBuilder[File]
+
     def putFilesInBag(directory: JFile) {
       directory.listFiles().foreach {
         case dir if dir.isDirectory =>
@@ -20,34 +24,21 @@ class SourceDirectory private(root: JFile) {
             val name = file.getName.substring(0, index)
             val ext = file.getName.substring(index + 1)
             val dir = file.getParent
-            bag += File(dir, name, ext)
+            b += File(dir, name, ext)
           }
       }
     }
 
     putFilesInBag(root)
+
+    b.result()
   }
 
-  lazy val filesByName: collection.Bag[File] = {
-    implicit val equiv = File.FileNameEquiv
-    val bag = mutable.Bag.empty[File]
-    putFilesInBag(bag)
-    bag
-  }
+  lazy val filesByName: collection.Bag[File] = getFilesInBag(File.FileNameEquiv)
 
-  lazy val filesByDirectory: collection.Bag[File] = {
-    implicit val equiv = File.DirectoryEquiv
-    val bag = mutable.Bag.empty[File]
-    putFilesInBag(bag)
-    bag
-  }
+  lazy val filesByDirectory: collection.Bag[File] = getFilesInBag(File.DirectoryEquiv)
 
-  lazy val filesByExtension: collection.Bag[File] = {
-    implicit val equiv = File.ExtensionEquiv
-    val bag = mutable.Bag.empty[File]
-    putFilesInBag(bag)
-    bag
-  }
+  lazy val filesByExtension: collection.Bag[File] = getFilesInBag(File.ExtensionEquiv)
 
   override def toString: String = root.getAbsolutePath
 }

@@ -3,18 +3,19 @@ package scala.collection.immutable
 import scala.collection.{immutable, generic, mutable}
 import scala.collection.immutable.{RedBlackTree => RB}
 import scala.collection
+import scala.collection.generic.CanBuildFrom
 
 
-class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagBucketConfiguration: immutable.SortedBagBucketConfiguration[A])
+class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfiguration: immutable.SortedBagConfiguration[A])
   extends Bag[A]
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
   implicit lazy val ord = new Ordering[BagBucket[A]] {
-    def compare(x: BagBucket[A], y: BagBucket[A]): Int = bagBucketConfiguration.compare(x.sentinel, y.sentinel)
+    def compare(x: BagBucket[A], y: BagBucket[A]): Int = bagConfiguration.compare(x.sentinel, y.sentinel)
   }
 
-  override protected[this] def newBuilder: mutable.BagBuilder[A, TreeBag[A]] = TreeBag.newBuilder
+  override protected[this] def newBuilder: mutable.BagBuilder[A, immutable.TreeBag[A]] = immutable.TreeBag.newBuilder
 
 
   def rangeImpl(from: Option[A], until: Option[A]): TreeBag[A] = new TreeBag[A](RB.rangeImpl(tree, from, until))
@@ -32,7 +33,7 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagBucketC
 
   def lastKey = RB.greatest(tree).key
 
-  def compare(k0: A, k1: A): Int = bagBucketConfiguration.compare(k0, k1)
+  def compare(k0: A, k1: A): Int = bagConfiguration.compare(k0, k1)
 
   override def head = {
     val smallest = RB.smallest(tree)
@@ -99,8 +100,8 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagBucketC
   def getBucket(elem: A): Option[BagBucket[A]] = RB.get(tree, elem)
 
   def addedBucket(bucket: collection.BagBucket[A]): TreeBag[A] = getBucket(bucket.sentinel) match {
-    case Some(bucket2) => updated(bagBucketConfiguration.from(bucket, bucket2))
-    case None => updated(bagBucketConfiguration.from(bucket))
+    case Some(bucket2) => updated(bagConfiguration.from(bucket, bucket2))
+    case None => updated(bagConfiguration.from(bucket))
   }
 
 
@@ -109,6 +110,9 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagBucketC
 }
 
 
-object TreeBag extends generic.ImmutableSortedBagFactory[TreeBag] {
-  def empty[A](implicit bagBucketConfiguration: BBC[A]) = new TreeBag[A](null)
+object TreeBag extends generic.ImmutableSortedBagFactory[immutable.TreeBag] {
+
+  implicit def canBuildFrom[A](implicit bagConfiguration: SortedBagConfiguration[A]): CanBuildFrom[Coll, A, immutable.TreeBag[A]] = bagCanBuildFrom[A]
+
+  def empty[A](implicit bagConfiguration: SortedBagConfiguration[A]): TreeBag[A] = new TreeBag[A](null)
 }

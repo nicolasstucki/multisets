@@ -9,7 +9,7 @@ trait GenBagLike[A, +Repr]
 
   protected type BagBucket[X] <: collection.BagBucket[X]
 
-  protected def bagBucketConfiguration: collection.BagBucketConfiguration[A, BagBucket[A]]
+  protected def bagConfiguration: collection.BagConfiguration[A, BagBucket[A]]
 
 
   def bucketsIterator: Iterator[BagBucket[A]]

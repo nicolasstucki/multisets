@@ -1,16 +1,17 @@
-package scala
-package collection
-package generic
+package scala.collection.generic
 
-import mutable.{Builder, BagBuilder}
+import scala.collection.{mutable, immutable}
 import scala.language.higherKinds
 
-abstract class ImmutableBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
-  extends BagFactory[CC] {
+abstract class ImmutableBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]], BC[X] <: immutable.BagConfiguration[X]]
+  extends BagFactory[CC, immutable.BagBucket, BC] {
 
-  type BB[X] = immutable.BagBucket[X]
-  type BBC[X] = immutable.BagBucketConfiguration[X]
-
-  def newBuilder[A](implicit bagBucketConfiguration: BBC[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
+  def newBuilder[A](implicit bucketFactory: BC[A]): mutable.BagBuilder[A, CC[A]] = mutable.BagBuilder(empty)
 
 }
+
+abstract class ImmutableHashedBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
+  extends ImmutableBagFactory[CC, immutable.HashedBagConfiguration]
+
+abstract class ImmutableSortedBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
+  extends ImmutableBagFactory[CC, immutable.SortedBagConfiguration]

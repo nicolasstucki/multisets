@@ -8,17 +8,17 @@ import scala.collection.mutable
 trait BigIntBagBenchmark extends scala.collection.scalameter.BigIntBagBenchmark {
   type Bag[X] <: scala.collection.mutable.Bag[X]
   type BagBucket[X] = scala.collection.mutable.BagBucket[X]
-  type BagBucketConfiguration[X] <: scala.collection.mutable.BagBucketConfiguration[X]
+  type BagConfiguration[X] <: scala.collection.mutable.BagConfiguration[X]
 }
 
 
 trait BigIntHashedBagBenchmark extends BigIntBagBenchmark {
   type Bag[X] <: scala.collection.mutable.Bag[X]
-  type BagBucketConfiguration[X] = scala.collection.mutable.HashedBagBucketConfiguration[X]
+  type BagConfiguration[X] = scala.collection.mutable.HashedBagConfiguration[X]
 
-  def bagBucketFactoryOfMultiplicities: BagBucketConfiguration[BigInt] = mutable.BagBucketConfiguration.Hashed.ofMultiplicities
+  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofMultiplicities
 
-  def bagBucketFactoryOfBagBucketBag: BagBucketConfiguration[BigInt] = mutable.BagBucketConfiguration.Hashed.ofMultiplicities
+  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofMultiplicities
 
-  def bagBucketFactoryOfVectors: BagBucketConfiguration[BigInt] = mutable.BagBucketConfiguration.Hashed.ofVectors
+  def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofVectors
 }

@@ -8,7 +8,7 @@ trait HashBagBenchmark extends scala.collection.scalameter.mutable.BigIntHashedB
 
   type Bag[X] = mutable.HashBag[X]
 
-  def newBuilder(implicit m: BagBucketConfiguration[BigInt]) = mutable.HashBag.newBuilder[BigInt](m)
+  def newBuilder(implicit m: BagConfiguration[BigInt]) = mutable.HashBag.newBuilder[BigInt](m)
 
   def bagName: String = "mutable.HashBag"
 

@@ -2,12 +2,11 @@ package scala.collection.mutable
 
 
 import scala.collection._
-import scala.collection.generic.MutableHashedBagFactory
-import scala.Some
+import scala.collection.generic.CanBuildFrom
 import scala.Some
 
 
-final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bagBucketConfiguration: mutable.HashedBagBucketConfiguration[A])
+final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]])(implicit protected val bagConfiguration: mutable.HashedBagConfiguration[A])
   extends mutable.Bag[A]
   with mutable.BagLike[A, mutable.HashBag[A]]
   with mutable.HashTable[A, mutable.DefaultEntry[A, mutable.BagBucket[A]]]
@@ -18,13 +17,13 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
   type Entry = mutable.DefaultEntry[A, mutable.BagBucket[A]]
 
-  override def empty: mutable.HashBag[A] = mutable.HashBag.empty[A](bagBucketConfiguration)
+  override def empty: mutable.HashBag[A] = mutable.HashBag.empty[A](bagConfiguration)
 
   override def clear() {
     clearTable()
   }
 
-  override protected def elemHashCode(key: A): Int = bagBucketConfiguration.hash(key)
+  override protected def elemHashCode(key: A): Int = bagConfiguration.hash(key)
 
   def getBucket(elem: A): Option[BagBucket[A]] = {
     val e = findEntry(elem)
@@ -46,11 +45,9 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
 }
 
-object HashBag extends MutableHashedBagFactory[mutable.HashBag] {
+object HashBag extends generic.MutableHashedBagFactory[mutable.HashBag] {
 
-  //  implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, HashMap[A, B]] = new BagCanBuildFrom[A, B]
+  implicit def canBuildFrom[A](implicit bagConfiguration: mutable.HashedBagConfiguration[A]): CanBuildFrom[Coll, A, mutable.HashBag[A]] = bagCanBuildFrom[A]
 
-
-  def empty[A](implicit bagBucketConfiguration: BBC[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
-
+  def empty[A](implicit bagConfiguration: mutable.HashedBagConfiguration[A]): mutable.HashBag[A] = new mutable.HashBag[A](null)
 }
