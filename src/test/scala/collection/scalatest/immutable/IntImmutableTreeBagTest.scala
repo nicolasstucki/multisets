@@ -9,7 +9,7 @@ class IntImmutableTreeBagOnMultiplicitiesTest extends IntBagTest {
   override def emptyBag = immutable.TreeBag.empty[Int]
 }
 
-class IntImmutableTreeBagOnSortedBagBucketBagTest extends IntBagTest {
+class IntImmutableTreeBagOnBagBucketBagTest extends IntBagTest {
   implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofBagBucketBag[Int]
 
   override def emptyBag = immutable.TreeBag.empty[Int]

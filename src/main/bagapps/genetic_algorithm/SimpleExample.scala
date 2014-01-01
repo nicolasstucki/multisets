@@ -9,7 +9,7 @@ object SimpleExample {
   case class IndividualImpl(genes: Vector[Boolean], epochTag: Int) extends Individual {
     lazy val fitness = (genes.count(b => b) * 100).toDouble / genes.size
 
-    override lazy val toString: String = genes.map(if (_) 1 else 0).mkString + "(from epoch " + epochTag + ")"
+    override lazy val toString: String = s"${genes.map(if (_) 1 else 0).mkString} [epoch: $epochTag, fitness: $fitness]"
   }
 
   object IndividualsImpl extends Individuals[IndividualImpl] {

@@ -10,13 +10,16 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
 
     it should "grow by 1 with +(elem) operation" in {
       assertResult(bag.size + 1) {
-        (bag + 1).size
+        val newBag = bag + 1
+        newBag.size
       }
       assertResult(bag.size + 1) {
-        (bag + 2).size
+        val newBag = bag + 2
+        newBag.size
       }
       assertResult(bag.size + 1) {
-        (bag + 10).size
+        val newBag = bag + 10
+        newBag.size
       }
     }
 
@@ -39,7 +42,11 @@ trait IntBagBehaviors extends BagBehaviors with Matchers {
     val distinct = bag.distinct
 
     it should "implement [distinct]: all multiplicities must be one" in {
-      assert(distinct.forall(distinct.multiplicity(_) == 1))
+      for (elem <- distinct) {
+        assertResult(1) {
+          distinct.multiplicity(elem)
+        }
+      }
     }
 
     it should "implement [distinct]: all distinct element must be present" in {

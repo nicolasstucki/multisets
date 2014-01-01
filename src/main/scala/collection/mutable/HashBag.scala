@@ -33,11 +33,12 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
 
   def updateBucket(bucket: mutable.BagBucket[A]): this.type = {
+    removeEntry(bucket.sentinel)
     addEntry(createNewEntry(bucket.sentinel, bucket))
     this
   }
 
-  def addedBucket(bucket: collection.BagBucket[A]): mutable.HashBag[A] = new mutable.HashBag[A](hashTableContents) addBucket bucket
+  def updatedBucket(bucket: BagBucket[A]): mutable.HashBag[A] = new mutable.HashBag[A](hashTableContents) updateBucket bucket
 
   def bucketsIterator: Iterator[BagBucket[A]] = entriesIterator.map(_.value)
 

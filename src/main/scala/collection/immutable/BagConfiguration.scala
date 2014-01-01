@@ -7,9 +7,9 @@ import scala.util.hashing.Hashing
 trait BagConfiguration[A]
   extends collection.BagConfiguration[A, immutable.BagBucket[A]] {
 
-  override def from(bucket: collection.BagBucket[A]): BagBucket[A] = bucket match {
+  override def bucketFrom(bucket: collection.BagBucket[A]): BagBucket[A] = bucket match {
     case immutableBucket: immutable.BagBucket[A] => immutableBucket
-    case _ => super.from(bucket)
+    case _ => super.bucketFrom(bucket)
   }
 
   def newBuilder(sentinel: A) = mutable.BagBucketBuilder(empty(sentinel))
@@ -57,7 +57,7 @@ object BagConfiguration {
       extends BagConfiguration.BagBucketBagConfiguration[A](equivClass)
       with immutable.HashedBagConfiguration[A] {
 
-      def empty(sentinel: A): immutable.BagBucketBag[A] = ??? // new immutable.BagBucketBag(sentinel, mutable.HashBag.empty[A](ofMultiplicities[A]))
+      def empty(sentinel: A): immutable.BagBucketBag[A] = new immutable.BagBucketBag(sentinel, immutable.HashBag.empty[A](ofMultiplicities[A]))
 
       def hash(x: A): Int = hashing.hash(x)
     }

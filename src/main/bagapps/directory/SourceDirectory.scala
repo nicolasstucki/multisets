@@ -4,13 +4,14 @@ import java.io.{File => JFile}
 
 import scala.collection.immutable._
 import scala.collection
+import scala.util.hashing.Hashing
 
 
 class SourceDirectory private(root: JFile) {
 
-  private def getFilesInBag(ord: Ordering[File]): Bag[File] = {
-
-    implicit val bagConfiguration = BagConfiguration.Sorted.ofBagBucketBag[File](ord)
+  private def getFilesInBag(equivHash: Equiv[File] with Hashing[File]): Bag[File] = {
+    implicit val equivHashImplicit = equivHash
+    implicit val bagConfiguration = Bag.configuration.ofBagBucketBag[File] // receives equivHashImplicit implicitly as Equiv[File] and Hashing[File]
 
     val b = Bag.newBuilder[File]
 

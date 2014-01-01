@@ -2,8 +2,9 @@ package bagapps.histogram
 
 
 import scala.collection.mutable.{HashBag => Histogram}
+import scala.collection.BagPredef._
 
-object Main extends BagPredef {
+object Main {
 
   def main(args: Array[String]) {
 
@@ -19,7 +20,7 @@ object Main extends BagPredef {
     // Print the contents of the histogram
     println(
       s"""
-        |Histogram of (Math.random() * LIMIT).toInt over ${LIMIT*LIMIT} executions
+        |Histogram of (Math.random() * LIMIT).toInt over ${LIMIT * LIMIT} executions
         |=================================================================
         | maximum occurrences: ${histogram.maxMultiplicity}
         | minimum occurrences: ${histogram.minMultiplicity}

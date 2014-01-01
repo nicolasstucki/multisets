@@ -3,8 +3,6 @@ package bagapps.genetic_algorithm
 import scala.collection.immutable
 import scala.collection.immutable.{TreeBag => Population}
 import scala.annotation.tailrec
-import scala.util.hashing.Hashing
-import scala.collection.mutable
 
 trait Individual {
   def fitness: Double
@@ -25,12 +23,11 @@ object GeneticAlgorithm {
 
   def run[I <: Individual](individuals: Individuals[I], numberIterations: Int = 20, populationSize: Int = 20, elitism: Double = 0.5d) {
 
-    implicit val m = immutable.BagConfiguration.Sorted.ofVectors[I](individuals)
+    implicit val m = immutable.TreeBag.configuration.ofVectors[I](individuals)
 
     @tailrec
     def runRec(population: Population[I], iteration: Int): Population[I] = {
       println(s"Iteration $iteration".padTo(15, ' '))
-      println("  best fitness: " + population.head.fitness)
       println("  best individual: " + population.head)
 
       if (iteration <= numberIterations) {
@@ -52,13 +49,14 @@ object GeneticAlgorithm {
 
         val newPopulation = bestPopulation union newGeneration
 
-
         runRec(newPopulation, iteration + 1)
       }
       else population
     }
 
-    val bestPopulation = runRec(randomPopulation(individuals, Population.empty[I], populationSize), 1)
+    val initialPopulation = randomPopulation(individuals, Population.empty[I], populationSize)
+    val lastPopulation = runRec(initialPopulation, 1)
+    println(s"Last population: $lastPopulation")
   }
 
   def randomPopulation[I <: Individual](individuals: Individuals[I], emptyPopulation: Population[I], populationSize: Int) = {

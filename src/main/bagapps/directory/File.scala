@@ -10,20 +10,20 @@ object File {
 
   def inDirectory(dir: String) = File(dir, "", "")
 
-  object ExtensionEquiv extends Ordering[File] with Hashing[File] {
-    def compare(x: File, y: File): Int = x.ext compareTo y.ext
+  object ExtensionEquiv extends Equiv[File] with Hashing[File] {
+    def equiv(x: File, y: File): Boolean = x.ext == y.ext
 
     def hash(x: File): Int = x.ext.hashCode
   }
 
-  object FileNameEquiv extends Ordering[File] with Hashing[File] {
-    def compare(x: File, y: File): Int = x.name compareTo y.name
+  object FileNameEquiv extends Equiv[File] with Hashing[File] {
+    def equiv(x: File, y: File): Boolean = x.name == y.name
 
     def hash(x: File): Int = x.name.hashCode
   }
 
-  object DirectoryEquiv extends Ordering[File] with Hashing[File] {
-    def compare(x: File, y: File): Int = x.directory compareTo y.directory
+  object DirectoryEquiv extends Equiv[File] with Hashing[File] {
+    def equiv(x: File, y: File): Boolean = x.directory == y.directory
 
     def hash(x: File): Int = x.directory.hashCode
   }

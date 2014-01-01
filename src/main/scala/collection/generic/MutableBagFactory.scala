@@ -11,8 +11,16 @@ abstract class MutableBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X,
 }
 
 abstract class MutableHashedBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X, CC[X]]]
-  extends MutableBagFactory[CC, mutable.HashedBagConfiguration]
+  extends MutableBagFactory[CC, mutable.HashedBagConfiguration] {
+
+  def configuration = mutable.BagConfiguration.Hashed
+
+}
 
 
 abstract class MutableSortedBagFactory[CC[X] <: mutable.Bag[X] with mutable.BagLike[X, CC[X]]]
-  extends MutableBagFactory[CC, mutable.SortedBagConfiguration]
+  extends MutableBagFactory[CC, mutable.SortedBagConfiguration] {
+
+  def configuration = mutable.BagConfiguration.Sorted
+
+}

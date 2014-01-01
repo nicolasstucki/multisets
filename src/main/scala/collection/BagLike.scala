@@ -2,6 +2,7 @@ package scala.collection
 
 
 import scala.collection.generic.{CanBuildFrom, Subtractable}
+import scala.collection.immutable.RedBlackTree
 
 
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
@@ -24,7 +25,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def contains(elem: A): Boolean = repr.multiplicity(elem) > 0
 
-  def mostCommon: Bag[A] = {
+  def mostCommon: This = {
     if (isEmpty) return empty
 
     val maxM = bucketsIterator.map(_.size).max
@@ -35,7 +36,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
-  override def leastCommon: Bag[A] = {
+  override def leastCommon: This = {
     if (isEmpty) return empty
 
     val minM = bucketsIterator.map(_.size).min
@@ -46,11 +47,10 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
-  def distinct: Bag[A] = {
+  def distinct: This = {
     val b = newBuilder
-    for (bucket <- bucketsIterator) {
-      b += bucket.sentinel
-    }
+    for (bucket <- bucketsIterator; elem <- bucket.distinctIterator)
+      b += elem
     b.result()
   }
 
@@ -58,22 +58,14 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   def +(elem: A): This = this added(elem, 1)
 
 
-  def added(elem: A, count: Int): This = {
-    val bb = bagConfiguration.newBuilder(elem)
-    bb.add(elem, count)
-    this.addedBucket(bb.result())
-  }
+  def added(elem: A, count: Int): This = this.addedBucket(bagConfiguration.bucketFrom(elem, count))
 
   def added(elemCount: (A, Int)): This = added(elemCount._1, elemCount._2)
 
   def ++(elems: GenTraversableOnce[A]): This = {
     val b = newBuilder
-    for (bucket <- this.bucketsIterator) {
-      b addBucket bucket
-    }
-    for (elem <- elems) {
-      b += elem
-    }
+    this.bucketsIterator.foreach(b addBucket _)
+    elems.foreach(b += _)
     b.result()
   }
 
@@ -81,10 +73,20 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   // Added Bucket
 
 
-  def addedBucket(bucket: collection.BagBucket[A]): This
+  def addedBucket(bucket: collection.BagBucket[A]): This = getBucket(bucket.sentinel) match {
+    case Some(bucket2) => updatedBucket(bagConfiguration.bucketFrom(bucket, bucket2))
+    case None => updatedBucket(bagConfiguration.bucketFrom(bucket))
+  }
+
+  def updatedBucket(bucket: BagBucket[A]): This
 
   // Multiset operations
-  override def union(that: GenBag[A]): This = this ++ that
+  override def union(that: GenBag[A]): This = {
+    val b = newBuilder
+    this.bucketsIterator.foreach(b addBucket _)
+    that.bucketsIterator.foreach(b addBucket _)
+    b.result()
+  }
 
   def diff(that: GenBag[A]): This = {
     val b = newBuilder
@@ -102,11 +104,21 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
   override def maxUnion(that: GenBag[A]): This = {
-    newBuilder.result ++ (for (elem <- (this union that).distinctIterator) yield {
-      for (_ <- (1 to Math.max(this.multiplicity(elem), that.multiplicity(elem))).iterator) yield {
-        elem
+    val b = newBuilder
+    val seen = mutable.Set.empty[A]
+
+    for (bucket <- this.bucketsIterator; elem = bucket.sentinel) {
+      b.add(elem, Math.max(bucket.multiplicity(elem), that.multiplicity(elem)))
+      seen += elem
+    }
+    for (bucket <- that.bucketsIterator; elem = bucket.sentinel) {
+      if (!seen(elem)) {
+        b.add(elem, bucket.multiplicity(elem))
+        seen += elem
       }
-    }).flatten.toIterable
+    }
+
+    b.result()
   }
 
   override def intersect(that: GenBag[A]): This = {

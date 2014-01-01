@@ -6,7 +6,7 @@ import scala.collection
 import scala.collection.generic.CanBuildFrom
 
 
-class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfiguration: immutable.SortedBagConfiguration[A])
+final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfiguration: immutable.SortedBagConfiguration[A])
   extends Bag[A]
   with BagLike[A, TreeBag[A]]
   with Serializable {
@@ -99,13 +99,7 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfigu
 
   def getBucket(elem: A): Option[BagBucket[A]] = RB.get(tree, elem)
 
-  def addedBucket(bucket: collection.BagBucket[A]): TreeBag[A] = getBucket(bucket.sentinel) match {
-    case Some(bucket2) => updated(bagConfiguration.from(bucket, bucket2))
-    case None => updated(bagConfiguration.from(bucket))
-  }
-
-
-  def updated(bucket: BagBucket[A]): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
+  override def updatedBucket(bucket: BagBucket[A]): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 
 }
 

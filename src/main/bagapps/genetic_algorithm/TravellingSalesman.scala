@@ -15,7 +15,7 @@ object TravellingSalesman {
   }
 
   object City {
-    def random() = City(Math.random() * 100, Math.random() * 100)
+    def random() = City((Math.random() * 100).floor, (Math.random() * 100).floor)
   }
 
   case class Path(cities: Vector[Int], epochTag: Int) extends Individual {
@@ -29,7 +29,7 @@ object TravellingSalesman {
       length
     }
 
-    override lazy val toString: String = cities.mkString("(", ",", ")") + " from epoch " + epochTag
+    override lazy val toString: String = s"${cities.mkString("(", ",", ")")} [epoch: $epochTag, fitness: $fitness]"
   }
 
   object Paths extends Individuals[Path] {
@@ -75,6 +75,7 @@ object TravellingSalesman {
 
 
   def main(args: Array[String]) {
+    println("City coordinates: " + cityLocation.mkString("{ ", ", ", " }"))
     GeneticAlgorithm.run(Paths, numberIterations = 200, populationSize = 500, elitism = 0.3)
   }
 

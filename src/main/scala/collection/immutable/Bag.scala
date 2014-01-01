@@ -11,9 +11,9 @@ trait Bag[A]
 }
 
 
-object Bag extends generic.ImmutableSortedBagFactory[immutable.Bag] {
+object Bag extends generic.ImmutableHashedBagFactory[immutable.Bag] {
 
-  implicit def canBuildFrom[A](implicit bagConfiguration: SortedBagConfiguration[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A]
+  implicit def canBuildFrom[A](implicit bagConfiguration: HashedBagConfiguration[A]): CanBuildFrom[Coll, A, Bag[A]] = bagCanBuildFrom[A]
 
-  def empty[A](implicit bagConfiguration: SortedBagConfiguration[A]): Bag[A] = immutable.TreeBag.empty[A]
+  def empty[A](implicit bagConfiguration: HashedBagConfiguration[A]): Bag[A] = immutable.HashBag.empty[A]
 }
