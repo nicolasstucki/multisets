@@ -1,6 +1,6 @@
 package scala.collection.scalatest.immutable
 
-import scala.collection.scalatest.IntBagTest
+import scala.collection.scalatest._
 import scala.collection.immutable
 
 class IntImmutableTreeBagOnMultiplicitiesTest extends IntBagTest {
@@ -39,4 +39,43 @@ class IntImmutableTreeBagOnVectorBucketsWithMod3EquivTest extends IntBagTest {
   }
 
   override def emptyBag = immutable.TreeBag.empty[Int]
+}
+
+
+class StringImmutableTreeBagOnMultiplicitiesTest extends StringBagTest {
+  implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofMultiplicities[String]
+
+  override def emptyBag = immutable.TreeBag.empty[String]
+}
+
+class StringImmutableTreeBagOnBagBucketBagTest extends StringBagTest {
+  implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofBagBucketBag[String]
+
+  override def emptyBag = immutable.TreeBag.empty[String]
+}
+
+class StringImmutableTreeBagOnVectorBucketTest extends StringBagTest {
+  implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofVectors[String]
+
+  override def emptyBag = immutable.TreeBag.empty[String]
+}
+
+class StringImmutableTreeBagOnBagBucketsBagWithStrSizeEquivTest extends StringBagTest {
+  implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofBagBucketBag[String]
+
+  implicit lazy val strSizeOrd = new Ordering[String] {
+    def compare(x: String, y: String): Int = x.size compare y.size
+  }
+
+  override def emptyBag = immutable.TreeBag.empty[String]
+}
+
+class StringImmutableTreeBagOnVectorBucketsWithStrSizeEquivTest extends StringBagTest {
+  implicit lazy val bagBucketFactory = immutable.BagConfiguration.Sorted.ofVectors[String]
+
+  implicit lazy val strSizeOrd = new Ordering[String] {
+    def compare(x: String, y: String): Int = x.size compare y.size
+  }
+
+  override def emptyBag = immutable.TreeBag.empty[String]
 }
