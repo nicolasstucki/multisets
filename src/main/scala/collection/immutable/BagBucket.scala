@@ -6,7 +6,7 @@ import scala.language.higherKinds
 
 trait BagBucket[A] extends scala.collection.BagBucket[A] {
 
-  protected override type BagBucket[X] = immutable.BagBucket[X]
+  final protected override type BagBucket = immutable.BagBucket[A]
 
 }
 
@@ -31,14 +31,14 @@ class MultiplicityBagBucket[A](val sentinel: A, val multiplicity: Int)
     new MultiplicityBagBucket(sentinel, Math.max(0, multiplicity - 1))
   }
 
-  def removed(elem: A, count: Int): MultiplicityBagBucket[A]#BagBucket[A] = {
+  def removed(elem: A, count: Int): BagBucket = {
     new MultiplicityBagBucket(sentinel, Math.max(0, multiplicity - count))
   }
 
-  def intersect(that: collection.BagBucket[A]): MultiplicityBagBucket[A]#BagBucket[A] =
+  def intersect(that: collection.BagBucket[A]): BagBucket =
     new immutable.MultiplicityBagBucket(sentinel, Math.min(this.multiplicity, that.multiplicity(sentinel)))
 
-  def diff(that: collection.BagBucket[A]): MultiplicityBagBucket[A]#BagBucket[A] =
+  def diff(that: collection.BagBucket[A]): BagBucket =
     new immutable.MultiplicityBagBucket(sentinel, Math.max(this.multiplicity - that.multiplicity(sentinel), 0))
 
 }
@@ -49,23 +49,23 @@ class BagBucketBag[A](val sentinel: A, val bag: immutable.Bag[A])
 
   protected type Bag[X] = immutable.Bag[X]
 
-  def intersect(that: collection.BagBucket[A]): BagBucket[A] = that match {
+  def intersect(that: collection.BagBucket[A]): BagBucket = that match {
     case bagBucketBag: collection.BagBucketBag[A] => new BagBucketBag(sentinel, bag intersect bagBucketBag.bag)
     case _ => new BagBucketBag(sentinel, bag.intersect(bag.empty ++ that))
   }
 
-  def diff(that: collection.BagBucket[A]): BagBucket[A] = that match {
+  def diff(that: collection.BagBucket[A]): BagBucket = that match {
     case bagBucketBag: collection.BagBucketBag[A] => new BagBucketBag(sentinel, bag diff bagBucketBag.bag)
     case _ => new BagBucketBag(sentinel, bag.diff(bag.empty ++ that))
   }
 
-  def added(elem: A, count: Int): BagBucket[A] = new BagBucketBag(sentinel, bag.added(elem, count))
+  def added(elem: A, count: Int): BagBucket = new BagBucketBag(sentinel, bag.added(elem, count))
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket[A] = new BagBucketBag(sentinel, bag.addedBucket(bucket))
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagBucketBag(sentinel, bag.addedBucket(bucket))
 
-  def -(elem: A): BagBucket[A] = new BagBucketBag(sentinel, bag - elem)
+  def -(elem: A): BagBucket = new BagBucketBag(sentinel, bag - elem)
 
-  def removed(elem: A, count: Int): BagBucket[A] = new BagBucketBag(sentinel, bag.removed(elem, count))
+  def removed(elem: A, count: Int): BagBucket = new BagBucketBag(sentinel, bag.removed(elem, count))
 }
 
 class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
@@ -90,11 +90,11 @@ class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
       new VectorBagBucket(sentinel, vector.tail)
   }
 
-  def intersect(that: collection.BagBucket[A]): BagBucket[A] = new immutable.VectorBagBucket[A](sentinel, this.toList.intersect(that.toSeq).toVector)
+  def intersect(that: collection.BagBucket[A]): BagBucket = new immutable.VectorBagBucket[A](sentinel, this.toList.intersect(that.toSeq).toVector)
 
-  def diff(that: collection.BagBucket[A]): BagBucket[A] = new immutable.VectorBagBucket[A](sentinel, this.toList.diff(that.toSeq).toVector)
+  def diff(that: collection.BagBucket[A]): BagBucket = new immutable.VectorBagBucket[A](sentinel, this.toList.diff(that.toSeq).toVector)
 
-  def removed(elem: A, count: Int): BagBucket[A] = {
+  def removed(elem: A, count: Int): BagBucket = {
     var c = count
     var v = Vector.empty[A]
     for (e <- iterator) {

@@ -25,7 +25,7 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
   override protected def elemHashCode(key: A): Int = bagConfiguration.hash(key)
 
-  def getBucket(elem: A): Option[BagBucket[A]] = {
+  def getBucket(elem: A): Option[BagBucket] = {
     val e = findEntry(elem)
     if (e eq null) None
     else Some(e.value)
@@ -38,9 +38,9 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
     this
   }
 
-  def updatedBucket(bucket: BagBucket[A]): mutable.HashBag[A] = new mutable.HashBag[A](hashTableContents) updateBucket bucket
+  def updatedBucket(bucket: BagBucket): mutable.HashBag[A] = new mutable.HashBag[A](hashTableContents) updateBucket bucket
 
-  def bucketsIterator: Iterator[BagBucket[A]] = entriesIterator.map(_.value)
+  def bucketsIterator: Iterator[BagBucket] = entriesIterator.map(_.value)
 
   protected def createNewEntry[B](key: A, value: B): mutable.DefaultEntry[A, mutable.BagBucket[A]] = new Entry(key, value.asInstanceOf[mutable.BagBucket[A]])
 

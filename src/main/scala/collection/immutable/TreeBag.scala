@@ -11,8 +11,8 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
-  implicit lazy val ord = new Ordering[BagBucket[A]] {
-    def compare(x: BagBucket[A], y: BagBucket[A]): Int = bagConfiguration.compare(x.sentinel, y.sentinel)
+  implicit lazy val ord = new Ordering[BagBucket] {
+    def compare(x: BagBucket, y: BagBucket): Int = bagConfiguration.compare(x.sentinel, y.sentinel)
   }
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, immutable.TreeBag[A]] = immutable.TreeBag.newBuilder
@@ -95,11 +95,11 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
   override def empty: TreeBag[A] = TreeBag.empty[A]
 
 
-  def bucketsIterator: Iterator[BagBucket[A]] = RB.valuesIterator(tree)
+  def bucketsIterator: Iterator[BagBucket] = RB.valuesIterator(tree)
 
-  def getBucket(elem: A): Option[BagBucket[A]] = RB.get(tree, elem)
+  def getBucket(elem: A): Option[BagBucket] = RB.get(tree, elem)
 
-  override def updatedBucket(bucket: BagBucket[A]): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
+  override def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 
 }
 

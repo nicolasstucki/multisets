@@ -7,12 +7,12 @@ trait GenBagLike[A, +Repr]
   with Equals {
 
 
-  protected type BagBucket[X] <: collection.BagBucket[X]
+  protected type BagBucket <: collection.BagBucket[A]
 
-  protected def bagConfiguration: collection.BagConfiguration[A, BagBucket[A]]
+  protected def bagConfiguration: collection.BagConfiguration[A, BagBucket]
 
 
-  def bucketsIterator: Iterator[BagBucket[A]]
+  def bucketsIterator: Iterator[BagBucket]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
 
@@ -34,7 +34,7 @@ trait GenBagLike[A, +Repr]
   def leastCommon: Bag[A]
 
 
-  def getBucket(elem: A): Option[BagBucket[A]]
+  def getBucket(elem: A): Option[BagBucket]
 
 
   def maxMultiplicity: Int = bucketsIterator.map(_.maxMultiplicity).max

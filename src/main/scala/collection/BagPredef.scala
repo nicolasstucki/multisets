@@ -1,7 +1,7 @@
 package scala.collection
 
 
-package object BagPredef {
+object BagPredef {
 
   implicit def immutableHashedBagConfigurationOfMultiplicities[A] = immutable.BagConfiguration.Hashed.ofMultiplicities[A]
 

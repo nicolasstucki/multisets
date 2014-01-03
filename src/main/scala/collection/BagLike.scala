@@ -78,7 +78,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     case None => updatedBucket(bagConfiguration.bucketFrom(bucket))
   }
 
-  def updatedBucket(bucket: BagBucket[A]): This
+  def updatedBucket(bucket: BagBucket): This
 
   // Multiset operations
   override def union(that: GenBag[A]): This = {

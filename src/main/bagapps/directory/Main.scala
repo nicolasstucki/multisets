@@ -1,6 +1,7 @@
 package bagapps.directory
 
 import java.io.{File => JFile}
+import scala.collection.Bag
 
 object Main {
 
@@ -20,6 +21,10 @@ object Main {
 
     val directory = SourceDirectory(rootDirectory)
 
+    val filesByName: Bag[File] = directory.filesByName
+    val filesByExtension: Bag[File] = directory.filesByExtension
+    val filesByDirectory: Bag[File] = directory.filesByDirectory
+
     println(
       s"""
          |SOURCE FOLDER
@@ -27,32 +32,34 @@ object Main {
          |========================
          |extension    count
          |------------------------
-         |.scala       ${directory.filesByExtension(File.withExtension("scala")).size}
-         |.xml         ${directory.filesByExtension(File.withExtension("xml")).size}
-         |.class       ${directory.filesByExtension(File.withExtension("class")).size}
-         |.jar         ${directory.filesByExtension(File.withExtension("jar")).size}
-         |.sbt         ${directory.filesByExtension(File.withExtension("sbt")).size}
-         |.properties  ${directory.filesByExtension(File.withExtension("properties")).size}
-         |*other       ${(directory.filesByExtension -* File.withExtension("scala") -* File.withExtension("xml") -* File.withExtension("class")
-        -* File.withExtension("jar") -* File.withExtension("sbt") -* File.withExtension("properties")).size}
+         |.scala       ${filesByExtension(File.withExtension("scala")).size}
+         |.xml         ${filesByExtension(File.withExtension("xml")).size}
+         |.class       ${filesByExtension(File.withExtension("class")).size}
+         |.jar         ${filesByExtension(File.withExtension("jar")).size}
+         |.sbt         ${filesByExtension(File.withExtension("sbt")).size}
+         |.properties  ${filesByExtension(File.withExtension("properties")).size}
+         |*other       ${
+        (filesByExtension -* File.withExtension("scala") -* File.withExtension("xml") -* File.withExtension("class")
+          -* File.withExtension("jar") -* File.withExtension("sbt") -* File.withExtension("properties")).size
+      }
          |========================
          |List of .scala files
          |------------------------
-         |${directory.filesByExtension(File.withExtension("scala")).take(10).mkString("\n")}
+         |${filesByExtension(File.withExtension("scala")).take(10).mkString("\n")}
          |.....
          |========================
          |Most common file names
          |------------------------
-         |${directory.filesByName.mostCommon.distinct.map(_.name).mkString("\n")}
+         |${filesByName.mostCommon.distinct.map(_.name).mkString("\n")}
          |========================
          |Directory with most files
          |------------------------
-         |${directory.filesByDirectory.mostCommon.distinct.map(_.directory).mkString("\n")}
-         |number of files in directory: ${directory.filesByDirectory.mostCommon.size}
+         |${filesByDirectory.mostCommon.distinct.map(_.directory).mkString("\n")}
+         |number of files in directory: ${filesByDirectory.mostCommon.size}
          |========================
-         | Files by extension: ${directory.filesByExtension}
-         | Files by directory: ${directory.filesByDirectory}
-         | Files by name:      ${directory.filesByName}
+         | Files by extension: ${filesByExtension}
+         | Files by directory: ${filesByDirectory}
+         | Files by name:      ${filesByName}
          |========================
       """.stripMargin)
 

@@ -7,7 +7,7 @@ import scala.collection
 trait BagBucket[A]
   extends Iterable[A] {
 
-  protected type BagBucket[X] <: collection.BagBucket[X]
+  protected type BagBucket <: collection.BagBucket[A]
 
   def sentinel: A
 
@@ -17,23 +17,23 @@ trait BagBucket[A]
 
   def minMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).min
 
-  def intersect(that: collection.BagBucket[A]): BagBucket[A]
+  def intersect(that: collection.BagBucket[A]): BagBucket
 
-  def diff(that: collection.BagBucket[A]): BagBucket[A]
+  def diff(that: collection.BagBucket[A]): BagBucket
 
   def subsetOf(that: collection.BagBucket[A]): Boolean = {
     this.distinctIterator.forall(elem => this.multiplicity(elem) <= that.multiplicity(elem))
   }
 
-  def +(elem: A): BagBucket[A] = added(elem, 1)
+  def +(elem: A): BagBucket = added(elem, 1)
 
-  def added(elem: A, count: Int): BagBucket[A]
+  def added(elem: A, count: Int): BagBucket
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket[A]
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket
 
-  def -(elem: A): BagBucket[A]
+  def -(elem: A): BagBucket
 
-  def removed(elem: A, count: Int): BagBucket[A]
+  def removed(elem: A, count: Int): BagBucket
 
   def distinctIterator: Iterator[A]
 }
