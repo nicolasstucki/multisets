@@ -1,6 +1,5 @@
 package scala.collection
 
-import scala.language.higherKinds
 import scala.collection
 
 
@@ -31,7 +30,7 @@ trait BagBucket[A]
 
   def addedBucket(bucket: collection.BagBucket[A]): BagBucket
 
-  def -(elem: A): BagBucket
+  def -(elem: A): BagBucket = removed(elem, 1)
 
   def removed(elem: A, count: Int): BagBucket
 
@@ -103,9 +102,7 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 
 trait BagBucketBag[A] extends BagBucket[A] {
 
-  protected type Bag[X] <: collection.Bag[X]
-
-  def bag: Bag[A]
+  def bag: collection.Bag[A]
 
   def multiplicity(elem: A): Int = bag.multiplicity(elem)
 

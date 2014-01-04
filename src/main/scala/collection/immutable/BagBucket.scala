@@ -27,7 +27,7 @@ class MultiplicityBagBucket[A](val sentinel: A, val multiplicity: Int)
   }
 
 
-  def -(elem: A): MultiplicityBagBucket[A] = {
+  override def -(elem: A): MultiplicityBagBucket[A] = {
     new MultiplicityBagBucket(sentinel, Math.max(0, multiplicity - 1))
   }
 
@@ -63,7 +63,7 @@ class BagBucketBag[A](val sentinel: A, val bag: immutable.Bag[A])
 
   def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagBucketBag(sentinel, bag.addedBucket(bucket))
 
-  def -(elem: A): BagBucket = new BagBucketBag(sentinel, bag - elem)
+  override def -(elem: A): BagBucket = new BagBucketBag(sentinel, bag - elem)
 
   def removed(elem: A, count: Int): BagBucket = new BagBucketBag(sentinel, bag.removed(elem, count))
 }
@@ -83,7 +83,7 @@ class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
     new immutable.VectorBagBucket[A](sentinel, this.vector ++ bucket)
   }
 
-  def -(elem: A): VectorBagBucket[A] = {
+  override def -(elem: A): VectorBagBucket[A] = {
     if (vector.isEmpty)
       new VectorBagBucket(sentinel, Vector.empty[A])
     else
