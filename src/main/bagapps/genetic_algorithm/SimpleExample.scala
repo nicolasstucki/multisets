@@ -14,7 +14,7 @@ object SimpleExample {
 
   object IndividualsImpl extends Individuals[IndividualImpl] {
 
-    private val genesSize = 32
+    private val genesSize = 64
     private val mutation = 0.1d
 
     def crossover(individualA: IndividualImpl, individualB: IndividualImpl, epoch: Int) = IndividualImpl(individualA.genes.take(genesSize / 2) ++ individualB.genes.drop(genesSize / 2), epoch)
@@ -28,6 +28,6 @@ object SimpleExample {
 
 
   def main(args: Array[String]) {
-    GeneticAlgorithm.run(IndividualsImpl, numberIterations = 20, populationSize = 20, elitism = 0.3)
+    GeneticAlgorithm.run(IndividualsImpl, numberIterations = 50, populationSize = 20, elitism = 0.3)
   }
 }

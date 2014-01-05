@@ -4,9 +4,15 @@ import scala.collection.immutable._
 
 import org.scalatest._
 import scala.collection
+import scala.util.hashing.Hashing
 
 abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
 
+  object StrSize extends Ordering[String] with Hashing[String] {
+    def hash(x: String): Int = x.size.hashCode()
+
+    def compare(x: String, y: String): Int = x.size compare y.size
+  }
 
   def emptyBag: collection.Bag[String]
 

@@ -7,6 +7,10 @@ trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A
 
   def empty(sentinel: A): BagBucket
 
+  protected def equivClass: Equiv[A]
+
+  def equiv(x: A, y: A): Boolean = equivClass.equiv(x, y)
+
   def bucketFrom(elem: A, count: Int): BagBucket = {
     val bb = newBuilder(elem)
     bb.add(elem, count)
@@ -21,10 +25,26 @@ trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends Equiv[A
 
 }
 
-trait HashedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] with Hashing[A]
+trait HashedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] with Hashing[A] {
+  protected def equivClass: Equiv[A] with Hashing[A]
+
+  def hash(x: A): Int = equivClass.hash(x)
+}
+
+object HashedBagConfiguration {
+
+  private[collection] def defaultHashedEquiv[A]: Equiv[A] with Hashing[A] = {
+    new Equiv[A] with Hashing[A] {
+      def hash(x: A): Int = x.hashCode()
+
+      def equiv(x: A, y: A): Boolean = x == y
+    }
+  }
+
+}
 
 trait SortedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] with Ordering[A] {
-  def ordering: Ordering[A]
+  protected def equivClass: Ordering[A]
 
-  def compare(x: A, y: A): Int = ordering.compare(x, y)
+  def compare(x: A, y: A): Int = equivClass.compare(x, y)
 }

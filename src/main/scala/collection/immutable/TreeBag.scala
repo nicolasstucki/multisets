@@ -2,7 +2,6 @@ package scala.collection.immutable
 
 import scala.collection.{immutable, generic, mutable}
 import scala.collection.immutable.{RedBlackTree => RB}
-import scala.collection
 import scala.collection.generic.CanBuildFrom
 
 
@@ -11,7 +10,7 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
-  implicit lazy val ord = new Ordering[BagBucket] {
+  implicit lazy val bucketOrdering = new Ordering[BagBucket] {
     def compare(x: BagBucket, y: BagBucket): Int = bagConfiguration.compare(x.sentinel, y.sentinel)
   }
 
@@ -94,12 +93,11 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
 
   override def empty: TreeBag[A] = TreeBag.empty[A]
 
-
   def bucketsIterator: Iterator[BagBucket] = RB.valuesIterator(tree)
 
   def getBucket(elem: A): Option[BagBucket] = RB.get(tree, elem)
 
-  override def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
+  override protected def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 
 }
 

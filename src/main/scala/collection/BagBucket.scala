@@ -12,9 +12,19 @@ trait BagBucket[A]
 
   def multiplicity(elem: A): Int
 
-  def maxMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).max
+  def maxMultiplicity: Int = {
+    if (isEmpty)
+      throw new UnsupportedOperationException("empty.maxMultiplicity")
 
-  def minMultiplicity: Int = distinctIterator.map(elem => multiplicity(elem)).min
+    distinctIterator.map(elem => multiplicity(elem)).max
+  }
+
+  def minMultiplicity: Int = {
+    if (isEmpty)
+      throw new UnsupportedOperationException("empty.maxMultiplicity")
+
+    distinctIterator.map(elem => multiplicity(elem)).min
+  }
 
   def intersect(that: collection.BagBucket[A]): BagBucket
 
@@ -100,7 +110,7 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
 }
 
 
-trait BagBucketBag[A] extends BagBucket[A] {
+trait BagOfMultiplicitiesBagBucket[A] extends BagBucket[A] {
 
   def bag: collection.Bag[A]
 

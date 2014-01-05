@@ -2,7 +2,6 @@ package scala.collection.immutable
 
 import scala.collection.immutable
 import scala.collection
-import scala.language.higherKinds
 
 trait BagBucket[A] extends scala.collection.BagBucket[A] {
 
@@ -43,29 +42,27 @@ class MultiplicityBagBucket[A](val sentinel: A, val multiplicity: Int)
 
 }
 
-class BagBucketBag[A](val sentinel: A, val bag: immutable.Bag[A])
-  extends scala.collection.BagBucketBag[A]
+class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: immutable.Bag[A])
+  extends scala.collection.BagOfMultiplicitiesBagBucket[A]
   with immutable.BagBucket[A] {
 
-  protected type Bag[X] = immutable.Bag[X]
-
   def intersect(that: collection.BagBucket[A]): BagBucket = that match {
-    case bagBucketBag: collection.BagBucketBag[A] => new BagBucketBag(sentinel, bag intersect bagBucketBag.bag)
-    case _ => new BagBucketBag(sentinel, bag.intersect(bag.empty ++ that))
+    case bagBucketBag: collection.BagOfMultiplicitiesBagBucket[A] => new BagOfMultiplicitiesBagBucket(sentinel, bag intersect bagBucketBag.bag)
+    case _ => new BagOfMultiplicitiesBagBucket(sentinel, bag.intersect(bag.empty ++ that))
   }
 
   def diff(that: collection.BagBucket[A]): BagBucket = that match {
-    case bagBucketBag: collection.BagBucketBag[A] => new BagBucketBag(sentinel, bag diff bagBucketBag.bag)
-    case _ => new BagBucketBag(sentinel, bag.diff(bag.empty ++ that))
+    case bagBucketBag: collection.BagOfMultiplicitiesBagBucket[A] => new BagOfMultiplicitiesBagBucket(sentinel, bag diff bagBucketBag.bag)
+    case _ => new BagOfMultiplicitiesBagBucket(sentinel, bag.diff(bag.empty ++ that))
   }
 
-  def added(elem: A, count: Int): BagBucket = new BagBucketBag(sentinel, bag.added(elem, count))
+  def added(elem: A, count: Int): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.added(elem, count))
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagBucketBag(sentinel, bag.addedBucket(bucket))
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.addedBucket(bucket))
 
-  override def -(elem: A): BagBucket = new BagBucketBag(sentinel, bag - elem)
+  override def -(elem: A): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag - elem)
 
-  def removed(elem: A, count: Int): BagBucket = new BagBucketBag(sentinel, bag.removed(elem, count))
+  def removed(elem: A, count: Int): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.removed(elem, count))
 }
 
 class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])

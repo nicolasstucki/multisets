@@ -31,7 +31,7 @@ class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mut
     else Some(e.value)
   }
 
-  def updatedBucket(bucket: BagBucket): HashBag[A] = {
+  protected def updatedBucket(bucket: BagBucket): HashBag[A] = {
     val bag = new HashBag.HashBagBuilder(hashTableContents)(bagConfiguration)
     bag.updateBucket(bucket)
     bag.result()

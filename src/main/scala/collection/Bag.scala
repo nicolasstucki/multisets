@@ -13,6 +13,8 @@ trait Bag[A]
 
   override def stringPrefix: String = "Bag"
 
+  override def toString() = bucketsIterator.map(_.mkString(", ")).mkString(stringPrefix + "(", "; ", ")")
+
 }
 
 

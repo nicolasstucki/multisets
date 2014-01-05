@@ -5,9 +5,15 @@ import scala.collection.immutable._
 import org.scalatest._
 import scala.collection
 import scala.collection
+import scala.util.hashing.Hashing
 
 abstract class IntBagTest extends FlatSpec with IntBagBehaviors {
 
+  object Mod3 extends Ordering[Int] with Hashing[Int] {
+    def hash(x: Int): Int = (x % 3).hashCode()
+
+    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
+  }
 
   def emptyBag: collection.Bag[Int]
 

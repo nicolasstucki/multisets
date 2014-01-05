@@ -14,6 +14,8 @@ trait GenericBagCompanion[CC[X] <: collection.Bag[X], BB[X] <: collection.BagBuc
 
   def empty[A](implicit bagConfiguration: BC[A]): CC[A]
 
+  def apply[A](implicit bagConfiguration: BC[A]): CC[A] = empty[A]
+
   def apply[A](elems: A*)(implicit bagConfiguration: BC[A]): CC[A] = {
     if (elems.isEmpty) empty[A]
     else {

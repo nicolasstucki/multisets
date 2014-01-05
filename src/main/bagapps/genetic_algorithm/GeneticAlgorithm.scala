@@ -23,7 +23,7 @@ object GeneticAlgorithm {
 
   def run[I <: Individual](individuals: Individuals[I], numberIterations: Int = 20, populationSize: Int = 20, elitism: Double = 0.5d) {
 
-    implicit val m = immutable.TreeBag.configuration.ofVectors[I](individuals)
+    implicit val m = immutable.TreeBag.configuration.keepAll[I](individuals)
 
     @tailrec
     def runRec(population: Population[I], iteration: Int): Population[I] = {

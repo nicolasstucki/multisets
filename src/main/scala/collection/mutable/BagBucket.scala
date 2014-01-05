@@ -68,8 +68,8 @@ class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
 
 }
 
-class BagBucketBag[A](val sentinel: A, val bag: mutable.Bag[A])
-  extends scala.collection.BagBucketBag[A]
+class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
+  extends scala.collection.BagOfMultiplicitiesBagBucket[A]
   with mutable.BagBucket[A] {
 
   def clear(): Unit = bag.clear()
@@ -84,22 +84,22 @@ class BagBucketBag[A](val sentinel: A, val bag: mutable.Bag[A])
     this
   }
 
-  def removed(elem: A, count: Int): BagBucket = new mutable.BagBucketBag(sentinel, bag.removed(elem, count))
+  def removed(elem: A, count: Int): BagBucket = new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.removed(elem, count))
 
-  override def -(elem: A): BagBucket = new mutable.BagBucketBag(sentinel, bag - elem)
+  override def -(elem: A): BagBucket = new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag - elem)
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new mutable.BagBucketBag(sentinel, bag addedBucket bucket)
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag addedBucket bucket)
 
-  def added(elem: A, count: Int): BagBucket = new mutable.BagBucketBag(sentinel, bag.added(elem, count))
+  def added(elem: A, count: Int): BagBucket = new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.added(elem, count))
 
   def diff(that: collection.BagBucket[A]): BagBucket = that match {
-    case bagBucketBag: collection.BagBucketBag[A] => new mutable.BagBucketBag(sentinel, bag diff bagBucketBag.bag)
-    case _ => new mutable.BagBucketBag(sentinel, bag.diff(bag.empty ++ that))
+    case bagBucketBag: collection.BagOfMultiplicitiesBagBucket[A] => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag diff bagBucketBag.bag)
+    case _ => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.diff(bag.empty ++ that))
   }
 
   def intersect(that: collection.BagBucket[A]): BagBucket = that match {
-    case bagBucketBag: collection.BagBucketBag[A] => new mutable.BagBucketBag(sentinel, bag intersect bagBucketBag.bag)
-    case _ => new mutable.BagBucketBag(sentinel, bag.intersect(bag.empty ++ that))
+    case bagBucketBag: collection.BagOfMultiplicitiesBagBucket[A] => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag intersect bagBucketBag.bag)
+    case _ => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.intersect(bag.empty ++ that))
   }
 }
 

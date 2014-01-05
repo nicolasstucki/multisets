@@ -13,13 +13,13 @@ abstract class ImmutableBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagL
 abstract class ImmutableHashedBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
   extends ImmutableBagFactory[CC, immutable.HashedBagConfiguration] {
 
-  def configuration = immutable.BagConfiguration.Hashed
+  def configuration = immutable.HashedBagConfiguration
 
 }
 
 abstract class ImmutableSortedBagFactory[CC[X] <: immutable.Bag[X] with immutable.BagLike[X, CC[X]]]
   extends ImmutableBagFactory[CC, immutable.SortedBagConfiguration] {
 
-  def configuration = immutable.BagConfiguration.Sorted
+  def configuration = immutable.SortedBagConfiguration
 
 }

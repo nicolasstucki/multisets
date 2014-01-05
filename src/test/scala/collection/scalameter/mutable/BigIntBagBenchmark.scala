@@ -3,6 +3,7 @@ package scala.collection.scalameter.mutable
 import scala.language.higherKinds
 
 import scala.collection.mutable
+import scala.util.hashing.Hashing
 
 
 trait BigIntBagBenchmark extends scala.collection.scalameter.BigIntBagBenchmark {
@@ -16,9 +17,11 @@ trait BigIntHashedBagBenchmark extends BigIntBagBenchmark {
   type Bag[X] <: scala.collection.mutable.Bag[X]
   type BagConfiguration[X] = scala.collection.mutable.HashedBagConfiguration[X]
 
-  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofMultiplicities
+  def equivClass: Equiv[BigInt] with Hashing[BigInt] = collection.HashedBagConfiguration.defaultHashedEquiv[BigInt]
 
-  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofMultiplicities
+  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.ofMultiplicities
 
-  def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = mutable.BagConfiguration.Hashed.ofVectors
+  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.ofBagOfMultiplicities(equivClass)
+
+  def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.keepAll
 }

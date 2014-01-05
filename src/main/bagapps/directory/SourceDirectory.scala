@@ -10,8 +10,7 @@ import scala.util.hashing.Hashing
 class SourceDirectory private(root: JFile) {
 
   private def getFilesInBag(equivHash: Equiv[File] with Hashing[File]): Bag[File] = {
-    implicit val equivHashImplicit = equivHash
-    implicit val bagConfiguration = Bag.configuration.ofBagBucketBag[File] // receives equivHashImplicit implicitly as Equiv[File] and Hashing[File]
+    implicit val bagConfiguration = Bag.configuration.ofBagOfMultiplicities[File](equivHash) // receives equivHashImplicit implicitly as Equiv[File] and Hashing[File]
 
     val b = Bag.newBuilder[File]
 

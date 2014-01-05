@@ -57,9 +57,9 @@ object Main {
          |${filesByDirectory.mostCommon.distinct.map(_.directory).mkString("\n")}
          |number of files in directory: ${filesByDirectory.mostCommon.size}
          |========================
-         | Files by extension: ${filesByExtension}
-         | Files by directory: ${filesByDirectory}
-         | Files by name:      ${filesByName}
+         | Files by extension: $filesByExtension
+         | Files by directory: $filesByDirectory
+         | Files by name:      $filesByName
          |========================
       """.stripMargin)
 

@@ -16,9 +16,11 @@ trait BigIntSortedBagBenchmark extends BigIntBagBenchmark {
   type Bag[X] <: scala.collection.immutable.Bag[X]
   type BagConfiguration[X] = scala.collection.immutable.SortedBagConfiguration[X]
 
-  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = immutable.BagConfiguration.Sorted.ofMultiplicities
+  def equivClass: Ordering[BigInt] = implicitly[Ordering[BigInt]]
 
-  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = immutable.BagConfiguration.Sorted.ofBagBucketBag
+  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.ofMultiplicities
 
-  def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = immutable.BagConfiguration.Sorted.ofVectors
+  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.ofBagOfMultiplicities(equivClass)
+
+  def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.keepAll
 }

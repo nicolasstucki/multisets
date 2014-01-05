@@ -78,7 +78,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     case None => updatedBucket(bagConfiguration.bucketFrom(bucket))
   }
 
-  def updatedBucket(bucket: BagBucket): This
+  protected def updatedBucket(bucket: BagBucket): This
 
   // Multiset operations
   override def union(that: GenBag[A]): This = {
@@ -107,11 +107,11 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     val b = newBuilder
     val seen = mutable.Set.empty[A]
 
-    for (bucket <- this.bucketsIterator; elem = bucket.sentinel) {
+    for (bucket <- this.bucketsIterator; elem <- bucket.distinctIterator) {
       b.add(elem, Math.max(bucket.multiplicity(elem), that.multiplicity(elem)))
       seen += elem
     }
-    for (bucket <- that.bucketsIterator; elem = bucket.sentinel) {
+    for (bucket <- that.bucketsIterator; elem <- bucket.distinctIterator) {
       if (!seen(elem)) {
         b.add(elem, bucket.multiplicity(elem))
         seen += elem
@@ -157,7 +157,9 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
-  def -*(elem: A): This = removedBucket(elem)
+  def removedAll(elem: A): This = removedBucket(elem)
+
+  def -*(elem: A): This = removedAll(elem)
 
   def removedBucket(elem: A): This = {
     val b = newBuilder
@@ -169,7 +171,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def multiplicities: Map[A, Int] = new Multiplicities(repr)
 
-  def setMultiplicity(elem: A, count: Int): This = (this -* elem).added(elem, count)
+  def setMultiplicity(elem: A, count: Int): This = (this removedAll elem).added(elem, count)
 
   override def forall(p: (A) => Boolean): Boolean = bucketsIterator.forall(_.forall(p))
 
@@ -233,5 +235,4 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     cnt
   }
 
-  override def toString() = bucketsIterator.map(_.mkString(", ")).mkString(stringPrefix + "(", "; ", ")")
 }

@@ -8,15 +8,17 @@ trait BagBehaviors {
 
   def emptyBagBehavior[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
     it should "be empty" in {
-      assert(bag.isEmpty)
+      assert(bag.isEmpty, s"bag = $bag")
     }
 
     it should "not be non-empty" in {
-      assert(!bag.nonEmpty)
+      assert(!bag.nonEmpty, s"bag = $bag")
     }
 
     it should "have size 0" in {
-      assert(bag.size == 0)
+      assertResult(0, s"bag = $bag") {
+        bag.size
+      }
     }
 
     it should "throw UnsupportedOperationException if for [minMultiplicity] and [maxMultiplicity]" in {
@@ -29,8 +31,8 @@ trait BagBehaviors {
     }
 
     it should "return an empty bag with [mostCommon] and [leastCommon]" in {
-      assert(bag.mostCommon.isEmpty)
-      assert(bag.leastCommon.isEmpty)
+      assert(bag.mostCommon.isEmpty, s"bag = $bag")
+      assert(bag.leastCommon.isEmpty, s"bag = $bag")
     }
 
     it should behave like bagBehavior(bag)
@@ -41,39 +43,54 @@ trait BagBehaviors {
 
   def nonEmptyBagBehavior[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
     it should "not be empty" in {
-      assert(!bag.isEmpty)
+      assert(!bag.isEmpty, s"bag = $bag")
     }
 
     it should "be non-empty" in {
-      assert(bag.nonEmpty)
+      assert(bag.nonEmpty, s"bag = $bag")
     }
 
     it should "have size greater than 0" in {
-      assert(bag.size > 0)
+      assert(bag.size > 0, s"bag = $bag, bag.size = ${bag.size}")
     }
 
     it should "have [minMultiplicity] grater than 0" in {
-      assert(bag.minMultiplicity > 0)
+      assert(bag.minMultiplicity > 0, s"bag = $bag, bag.minMultiplicity = ${bag.minMultiplicity}")
     }
 
     it should "have [maxMultiplicity] grater than 0" in {
-      assert(bag.minMultiplicity > 0)
+      assert(bag.maxMultiplicity > 0, s"bag = $bag, bag.maxMultiplicity = ${bag.maxMultiplicity}")
     }
 
     it should "have [minMultiplicity] lesser or equals [maxMultiplicity]" in {
-      assert(bag.minMultiplicity <= bag.maxMultiplicity)
+      assert(bag.minMultiplicity <= bag.maxMultiplicity, s"bag = $bag, bag.minMultiplicity = ${bag.minMultiplicity}, bag.maxMultiplicity = ${bag.maxMultiplicity}")
     }
 
-    it should "have [mostCommon] has constant multiplicity" in {
-      val b = bag
-      val m = b.maxMultiplicity
-      assert(b.mostCommon.distinctIterator.forall(b.multiplicity(_) == m))
+    it should "have [mostCommon] with constant sizes" in {
+      val b = bag.mostCommon
+      assert(bag.isEmpty === b.isEmpty, s"bag = $bag, b = $b")
+      if (b.nonEmpty) {
+        val m = b(b.head).size
+        for (elem <- b.distinctIterator) {
+          assertResult(m, s"bag = $bag, b = $b, elem = $elem") {
+            b(elem).size
+          }
+        }
+
+      }
     }
 
-    it should "have [leastCommon] has constant multiplicity" in {
-      val b = bag
-      val m = b.minMultiplicity
-      assert(b.leastCommon.distinctIterator.forall(b.multiplicity(_) == m))
+    it should "have [leastCommon] with constant sizes" in {
+      val b = bag.leastCommon
+      assert(bag.isEmpty === b.isEmpty, s"bag = $bag, b = $b")
+      if (b.nonEmpty) {
+        val m = b(b.head).size
+        for (elem <- b.distinctIterator) {
+          assertResult(m, s"bag = $bag, b = $b, elem = $elem") {
+            b(elem).size
+          }
+        }
+      }
     }
 
     it should behave like bagBehavior(bag)
@@ -86,12 +103,15 @@ trait BagBehaviors {
     it should "implement [union] as a multiset union" in {
       for (bag2 <- bags) {
         val union = bag union bag2
-        assert(union.size == bag.size + bag2.size)
-        assert(bag subsetOf union)
-        assert(bag2 subsetOf union)
+        val clue = s"bag = $bag, bag2 = $bag2, union = $union"
+        assert(union.size == bag.size + bag2.size, clue)
+        assert(bag subsetOf union, clue)
+        assert(bag2 subsetOf union, clue)
         union.distinctIterator.foreach {
           elem =>
-            assert(bag.multiplicity(elem) + bag2.multiplicity(elem) === union.multiplicity(elem))
+            assertResult(bag.multiplicity(elem) + bag2.multiplicity(elem), s"$clue, elem = $elem") {
+              union.multiplicity(elem)
+            }
         }
       }
     }
@@ -99,14 +119,17 @@ trait BagBehaviors {
     it should "implement [maxUnion] as a multiset max union (generalized set union)" in {
       for (bag2 <- bags) {
         val maxUnion = bag maxUnion bag2
-        assert(maxUnion.size <= bag.size + bag2.size)
-        assert(maxUnion.size >= bag.size)
-        assert(maxUnion.size >= bag2.size)
-        assert(bag subsetOf maxUnion)
-        assert(bag2 subsetOf maxUnion)
+        val clue = s"bag = $bag, bag2 = $bag2, maxUnion = $maxUnion"
+        assert(maxUnion.size <= bag.size + bag2.size, clue)
+        assert(maxUnion.size >= bag.size, clue)
+        assert(maxUnion.size >= bag2.size, clue)
+        assert(bag subsetOf maxUnion, clue)
+        assert(bag2 subsetOf maxUnion, clue)
         maxUnion.distinctIterator.foreach {
           elem =>
-            assert(Math.max(bag.multiplicity(elem), bag2.multiplicity(elem)) === maxUnion.multiplicity(elem))
+            assertResult(Math.max(bag.multiplicity(elem), bag2.multiplicity(elem)), s"$clue, elem = $elem") {
+              maxUnion.multiplicity(elem)
+            }
         }
       }
     }
@@ -114,13 +137,16 @@ trait BagBehaviors {
     it should "implement [intersect] as a multiset intersection" in {
       for (bag2 <- bags) {
         val intersect = bag intersect bag2
-        assert(intersect.size <= bag.size)
-        assert(intersect.size <= bag2.size)
-        assert(intersect subsetOf bag)
-        assert(intersect subsetOf bag2)
+        val clue = s"bag = $bag, bag2 = $bag2, intersect = $intersect"
+        assert(intersect.size <= bag.size, clue)
+        assert(intersect.size <= bag2.size, clue)
+        assert(intersect subsetOf bag, clue)
+        assert(intersect subsetOf bag2, clue)
         intersect.distinctIterator.foreach {
           elem =>
-            assert(Math.min(bag.multiplicity(elem), bag2.multiplicity(elem)) === intersect.multiplicity(elem))
+            assertResult(Math.min(bag.multiplicity(elem), bag2.multiplicity(elem)), s"$clue, elem = $elem") {
+              intersect.multiplicity(elem)
+            }
         }
       }
     }
@@ -128,11 +154,14 @@ trait BagBehaviors {
     it should "implement [diff] as a multiset difference" in {
       for (bag2 <- bags) {
         val diff = bag diff bag2
-        assert(diff.size <= bag.size)
-        assert(diff subsetOf bag)
+        val clue = s"bag = $bag, bag2 = $bag2, diff = $diff"
+        assert(diff.size <= bag.size, clue)
+        assert(diff subsetOf bag, clue)
         diff.distinctIterator.foreach {
           elem =>
-            assert(Math.max(bag.multiplicity(elem) - bag2.multiplicity(elem), 0) === diff.multiplicity(elem))
+            assertResult(Math.max(bag.multiplicity(elem) - bag2.multiplicity(elem), 0), s"$clue, elem = $elem") {
+              diff.multiplicity(elem)
+            }
         }
       }
     }
@@ -142,7 +171,7 @@ trait BagBehaviors {
   private def bagBehavior[A](bag: => collection.Bag[A]) {
 
     it should "have non negative size" in {
-      assert(bag.size >= 0)
+      assert(bag.size >= 0, s"bag = $bag")
     }
 
     it should "have only positive multiplicities (multiplicity>0)" in {

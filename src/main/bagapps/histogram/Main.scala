@@ -1,21 +1,25 @@
 package bagapps.histogram
 
 
-import scala.collection.mutable.{HashBag => Histogram}
-import scala.collection.BagPredef._
-
 object Main {
 
   def main(args: Array[String]) {
 
-    val LIMIT = 50
+    // Import HashBag and rename it to Histogram
+    import scala.collection.mutable.{HashBag => Histogram}
+
+    // Configuration for the bag using multiplicities of Int elements on default equivalence
+    implicit val bagConfiguration = Histogram.configuration.ofMultiplicities[Int]
 
     // Create empty histogram
     val histogram = Histogram.empty[Int]
 
-    // Add every element to the histogram
-    (1 to LIMIT * LIMIT).foreach(_ => histogram += (Math.random() * LIMIT).toInt)
+    val LIMIT = 50
 
+    // Add random numbers to the histogram
+    for (_ <- 1 to LIMIT * LIMIT) {
+      histogram += (Math.random() * LIMIT).toInt
+    }
 
     // Print the contents of the histogram
     println(
@@ -26,16 +30,13 @@ object Main {
         | minimum occurrences: ${histogram.minMultiplicity}
         |=================================================================
         |${
-        (0 until LIMIT).map {
-          i =>
-            val occurrences = histogram.multiplicity(i)
-            s"$i:".padTo(4, ' ') + "".padTo(occurrences, '|') + s"  $occurrences"
+        for (i <- 0 until LIMIT) yield {
+          val occurrences = histogram.multiplicity(i)
+          s"$i:".padTo(4, ' ') + "".padTo(occurrences, '|') + s"  $occurrences"
         }.mkString("\n")
       }
         |================================================================
         """.stripMargin)
-
-
   }
 
 }

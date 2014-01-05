@@ -2,80 +2,54 @@ package scala.collection.scalatest.immutable
 
 import scala.collection.scalatest._
 import scala.collection.immutable
+import scala.util.hashing.Hashing
 
 class IntImmutableHashBagOnMultiplicitiesTest extends IntBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofMultiplicities[Int]
+  implicit def bagConfiguration = immutable.HashBag.configuration.ofMultiplicities[Int]
 
   override def emptyBag = immutable.HashBag.empty[Int]
 }
 
-class IntImmutableHashBagOnBagBucketBagTest extends IntBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofBagBucketBag[Int]
+class IntImmutableHashBagOnKeepAllBucketsBucketTest extends IntBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.keepAll[Int]
 
   override def emptyBag = immutable.HashBag.empty[Int]
 }
 
-class IntImmutableHashBagOnVectorBucketTest extends IntBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofVectors[Int]
+class IntImmutableHashBagOnBagOfMultiplicitiesWithMod3EquivTest extends IntBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.ofBagOfMultiplicities(Mod3)
 
   override def emptyBag = immutable.HashBag.empty[Int]
 }
 
-class IntImmutableHasBagOnBagBucketsBagWithMod3EquivTest extends IntBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofBagBucketBag[Int]
-
-  implicit lazy val mod3 = new Ordering[Int] {
-    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
-  }
-
-  override def emptyBag = immutable.HashBag.empty[Int]
-}
-
-class IntImmutableHashBagOnVectorBucketsWithMod3EquivTest extends IntBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofVectors[Int]
-
-  implicit lazy val mod3 = new Ordering[Int] {
-    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
-  }
+class IntImmutableHashBagOnKeepAllBucketsBucketsWithMod3EquivTest extends IntBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.keepAll(Mod3)
 
   override def emptyBag = immutable.HashBag.empty[Int]
 }
 
 
 class StringImmutableHashBagOnMultiplicitiesTest extends StringBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofMultiplicities[String]
+  implicit def bagConfiguration = immutable.HashBag.configuration.ofMultiplicities[String]
 
   override def emptyBag = immutable.HashBag.empty[String]
 }
 
-class StringImmutableHashBagOnBagBucketBagTest extends StringBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofBagBucketBag[String]
+
+class StringImmutableHashBagOnKeepAllBucketsBucketTest extends StringBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.keepAll[String]
 
   override def emptyBag = immutable.HashBag.empty[String]
 }
 
-class StringImmutableHashBagOnVectorBucketTest extends StringBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofVectors[String]
+class StringImmutableHasBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.ofBagOfMultiplicities(StrSize)
 
   override def emptyBag = immutable.HashBag.empty[String]
 }
 
-class StringImmutableHasBagOnBagBucketsBagWithStrSizeEquivTest extends StringBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofBagBucketBag[String]
-
-  implicit lazy val strSizeOrd = new Ordering[String] {
-    def compare(x: String, y: String): Int = x.size compare y.size
-  }
-
-  override def emptyBag = immutable.HashBag.empty[String]
-}
-
-class StringImmutableHashBagOnVectorBucketsWithStrSizeEquivTest extends StringBagTest {
-  implicit lazy val bagConfiguration = immutable.BagConfiguration.Hashed.ofVectors[String]
-
-  implicit lazy val strSizeOrd = new Ordering[String] {
-    def compare(x: String, y: String): Int = x.size compare y.size
-  }
+class StringImmutableHashBagOnKeepAllBucketsBucketsWithStrSizeEquivTest extends StringBagTest {
+  implicit def bagConfiguration = immutable.HashBag.configuration.keepAll(StrSize)
 
   override def emptyBag = immutable.HashBag.empty[String]
 }
