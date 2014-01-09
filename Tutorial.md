@@ -5,7 +5,7 @@ Trait Bag
 ---------
 The Bag trait represents multisets. A bag is a kind of iterable that groups elements together. The goal is to take advantage of these groupings to compact the space required to keep elements in the data structure and/or make some methods execute faster.
 
-Groupings are represented by the BagBucket trait. A bucket is an iterable that contains only equivalent elements. It additionally exposes the multiplicities of elements inside it and a sentinel (or representative element) that is equivalent to all elements of that bucket. All implementations of Bags are collections of bucket where each bucket represents a different equivalency of elements.
+Groupings are represented by the `BagBucket` trait. A bucket is an iterable that contains only equivalent elements. It additionally exposes the multiplicities of elements inside it and a sentinel (or representative element) that is equivalent to all elements of that bucket. All implementations of Bags are collections of bucket where each bucket represents a different equivalency of elements.
 
 The operations on bags fall into the following categories:
 * **Lookup**: `multiplicity`, `multiplicities`. The `multiplicity` method returns the multiplicity of a given element. The `multiplicities` method returns a Map from elements to their multiplicity (0 if not contained).
@@ -18,8 +18,8 @@ The operations on bags fall into the following categories:
 * **Iterators**: `iterator`, `distinctIterator`, `bucketsIterator`. The iterator is the normal iterator from Iterable. The `distinctIterator` returns an iterator of distinct elements, where every element is not equal to the others. The bucketsIterator returns an iterator over buckets, where elements in different bucket are not equivalent.
 
 When a bag is mutable, it also offers side-effecting update methods:
-* **Additions**: `+=`, add. The `+=` methods adds an element to the bag. The add method adds a number of times some element.
-* **Removals**: `-=`, remove, removeAll. The `-=` method removes one instance of an element. The remove method removes a number of times some element. The `removeAll` removes all instances of some element.
+* **Additions**: `+=`, `add`. The `+=` methods adds an element to the bag. The add method adds a number of times some element.
+* **Removals**: `-=`, `remove`, `removeAll`. The `-=` method removes one instance of an element. The remove method removes a number of times some element. The `removeAll` removes all instances of some element.
 * **Updates**: `setMultiplicity`. The `setMultiplicity` method sets the multiplicity of some element  to match some specified value.
 
 How to use Bag (HashBag/TreeBag)
@@ -152,40 +152,41 @@ Bag Configurations
 ------------------
 Any `Bag` implementation is able to handle different bucket implementations and different equivalence groupings.
 ### Equivalence
-Custom equivalences are defined using instances that implement the method equiv(x,y) of the Equiv[T] trait. Equivalence groupings represent equivalence relations, thus the relation must satisfy:
-reflexive: equiv(x,x) == true  for any x
-symmetric: equiv(x,y) == equiv(y,x) for any x and any y
-transitive: if equiv(x,y) == true && equiv(y,z) == true then equiv(x,z) == true
+Custom equivalences are defined using instances that implement the method `equiv(x,y)` of the `Equiv[T]` trait. Equivalence groupings represent equivalence relations, thus the relation must satisfy:
+* reflexive: ``equiv(x,x) == true`  for any `x`
+* symmetric: `equiv(x,y) == equiv(y,x)` for any `x` and any `y`
+* transitive: if `equiv(x,y) == true && equiv(y,z) == true` then `equiv(x,z) == true`
 
-For both bag implementations (HashBag and TreeBag) it is necessary to add other traits. The HashBag requires a hashing function (hashed equivalence) and the TreeBag requires an ordering (ordered equivalence). It is possible to have Bags that only depend on equivalence but none has been implemented.
+For both bag implementations (`HashBag` and `TreeBag`) it is necessary to add other traits. The HashBag requires a hashing function (hashed equivalence) and the TreeBag requires an ordering (ordered equivalence). It is possible to have Bags that only depend on equivalence but none has been implemented.
+
 ### Bucket representation
 There are three basic of representations of bag buckets: MultiplicityBucket, BagOfMultiplicities and ListBucket. The first two are compact representations and the last is a full representation. The full representation keeps all the references to the objects inside. The compact representation only keeps one reference to one of the objects and the multiplicity of that object in the bag. The compact representation provides faster implementations of methods involving querying and transformation.
 
-MultiplicityBucket is an implementation of buckets that retain one reference to one of the elements that were added to the bag and it’s multiplicity. This is the most compact representation available for bags and it works only on bags with grouping on equality. For example a the bag Bag(‘a’,’a’,’a’;’b’;’c’,’c’) would have three MultiplicityBuckets: one that contains the char ‘a’ as sentinel and the Int 3 as multiplicity MultiplicityBucket(‘a’->3), one with MultiplicityBucket(‘b’->1) and one with MultiplicityBucket(‘c’->2).
+`MultiplicityBucket` is an implementation of buckets that retain one reference to one of the elements that were added to the bag and it’s multiplicity. This is the most compact representation available for bags and it works only on bags with grouping on equality. For example a the bag `Bag(1, 1, 1; 2; 3, 3)` would have three `MultiplicityBuckets`: one that contains the integer 1 as sentinel and the integer 3 as multiplicity `MultiplicityBucket(1->3)`, one with `MultiplicityBucket(2->1)` and one with `MultiplicityBucket(3->2)`.
 
-BagOfMultiplicities is an implementation of buckets that allows custom equivalences while being a compact representation. It is actually a bag that contains only equivalent elements. The bag has a compact representation on equality using MultiplicityBucket internally. For example the bag Bag(‘A’,’A’,’a’;’B’,’b’;’c’) where upper and lower cases are defined as equivalent, the bag would contain one BagOfMultiplicities for {‘A’,’A’,’a’}, one for {’B’,’b’} and one for {‘c’}. And,  the one that contains {‘A’,’A’,’a’} will be a bag with the buckets MultiplicityBucket(‘A’->2) and MultiplicityBucket(‘a’->1).
+`BagOfMultiplicities` is an implementation of buckets that allows custom equivalences while being a compact representation. It is actually a bag that contains only equivalent elements. The bag has a compact representation on equality using `MultiplicityBucket` internally. For example the bag `Bag(‘A’,’A’,’a’;’B’,’b’;’c’)` where upper and lower cases are defined as equivalent, the bag would contain one `BagOfMultiplicities` for {`"A"`,`"A"`,`"a"`}, one for {’B’,’b’} and one for {`"c"`}. And,  the one that contains {`"A"`,`"A"`,`"a"`} will be a bag with the buckets `MultiplicityBucket("A"->2)` and `MultiplicityBucket("a"->1)`.
 
-ListBucket is an implementation of buckets that keeps all the references of the elements of the bag in a List. Hence it is a full representation where there is one list for each equivalency grouping. For example the bag Bag(‘A’,’A’,’a’;’B’,’b’;’c’) will contain the three buckets where each contains one of the following lists: List(‘A’,’A’,’a’), List(’B’) or List(’c’).
+`ListBucket` is an implementation of buckets that keeps all the references of the elements of the bag in a List. Hence it is a full representation where there is one list for each equivalency grouping. For example the bag `Bag("A", "A", "a", "B", "b"; "c")` will contain the three buckets where each contains one of the following lists: `List("A","A","a")`, `List("B")` or `List("c")`.
 
-* Bag configurations are instances of some implementation of the BagConfiguration trait. Each bag companion object exposes three methods that create bag configurations for it. Those methods are compact, compactWithEquiv and keepAll. Their signature varies depending on the kind of equivalence that is expected (hashed or sorted).
-* Bag.configuration.compact: configuration for bags with MultiplicityBucket.
-* Bag.configuration.compactWithEquiv: configuration for bags with BagOfMultiplicities.
-* Bag.configuration.keepAll: configuration for bags with ListBucket.
+* Bag configurations are instances of some implementation of the BagConfiguration trait. Each bag companion object exposes three methods that create bag configurations for it. Those methods are `compact`, `compactWithEquiv` and `keepAll`. Their signature varies depending on the kind of equivalence that is expected (hashed or sorted).
+* `Bag.configuration.compact`: configuration for bags with `MultiplicityBucket`.
+* `Bag.configuration.compactWithEquiv`: configuration for bags with `BagOfMultiplicities`.
+* `Bag.configuration.keepAll`: configuration for bags with `ListBucket`.
 
 
 ### Hashed equivalence
 
-Usually hash table use the hash code and the equality function of an object to place and find it. In Bags object are placed using an equivalence that does not necessarily correspond to equality. In such a case the default hash function will almost certainly not be coherent with the equivalence. Therefore a Bag to define the custom equivalence it is also necessary to define it along a coherent hashing function. A coherent hashing function is one that will have the same value for two elements that are equivalent (if equiv(x,y) == true then hash(x)==hash(y)). To pack the two properties (or functions) together these equivalences are represented with an instance of Equiv[T] with Hashing[T].
+Usually hash table use the hash code and the equality function of an object to place and find it. In Bags object are placed using an equivalence that does not necessarily correspond to equality. In such a case the default hash function will almost certainly not be coherent with the equivalence. Therefore to define the custom equivalence it is also necessary to define it along a coherent hashing function. A coherent hashing function is one that will have the same value for two elements that are equivalent (if `equiv(x,y) == true` then `hash(x)==hash(y)`). To pack the two properties (or functions) together these equivalences are represented with an instance of `Equiv[T] with Hashing[T]`.
 
 
-For example the case insensitive equivalence on stings, where "Cat", "cat" and "CaT" are equivalent, can be defined with:
+For example the case insensitive equivalence on stings, where `"Cat"`, `"cat"` and `"CaT"` are equivalent, can be defined with:
 ```scala
 val stringEquiv =   new Equiv[String] with Hashing[String] {
    def equiv(x: String, y: String): Boolean = x.toLowerCase == y.toLowerCase
    def hash(x: String): Int = x.toLowerCase.hashCode
 }
 ```
-A simple way to make sure that the hashing is coherent with the equivalence is to have a representative element function rep(e), such that all elements that are equivalent are mapped to the same element. Then the equiv(x,y) function simply returns rep(x)==rep(y) and the hash(x) returns rep(x).hashCode. In the example above the string representation function is the toLowerCase method.
+A simple way to make sure that the hashing is coherent with the equivalence is to have a representative element function `rep(e)`, such that all elements that are equivalent are mapped to the same element. Then the `equiv(x,y)` function simply returns `rep(x)==rep(y)` and the `hash(x)` returns `rep(x).hashCode`. In the example above the string representation function is the toLowerCase method.
 
 To create configurations for bags with elements of type T with hashed equivalences the signatures are as follows:
 * `compact[T]`: Creates a configuration with equivalence defined as equality. The hashing used is the object's hash code. The buckets will be instances of `MultiplicityBucket`.
@@ -206,10 +207,10 @@ val stringEquiv =   new Ordering[String] {
 
 To implement this function correctly for some equivalence just make sure the for equivalent elements the compare function is reflexive, symmetric, and transitive.
 
-To create configurations for bags with elements of type T with ordered equivalences the signatures are as follows:
-* `compact[A](implicit equivClass: Ordering[A])`: Creates a configuration with a equivalence/ordering defined on equality. If it is used without the parameters it will try to find an implicit Ordering of for that class,  this ordering must define the equivalence as equality. The buckets will be instances of MultiplicityBucket.
-* `compactWithEquiv[A](equivClass: Ordering[A])(implicit innerOrdering: Ordering[A])`: Creates a configuration with a custom equivalence/ordering equivClass. The buckets will be instances of BagOfMultiplicities. It receives an implicit Ordering that is used as ordering of the buckets, this ordering must define the equivalence as equality.
-* `keepAll[A](implicit equivClass: Ordering[A])`: Creates a configuration with a custom equivalence/ordering equivClass. The buckets will be instances of ListBucket.
+To create configurations for bags with elements of type `T` with ordered equivalences the signatures are as follows:
+* `compact[A](implicit equivClass: Ordering[T])`: Creates a configuration with a equivalence/ordering defined on equality. If it is used without the parameters it will try to find an implicit `Ordering[T]` of for that class,  this ordering must define the equivalence as equality. The buckets will be instances of `MultiplicityBucket`.
+* `compactWithEquiv[A](equivClass: Ordering[T])(implicit innerOrdering: Ordering[T])`: Creates a configuration with a custom equivalence/ordering equivClass. The buckets will be instances of `BagOfMultiplicities`. It receives an implicit `Ordering[T]` that is used as ordering of the buckets, this ordering must define the equivalence as equality.
+* `keepAll[A](implicit equivClass: Ordering[T])`: Creates a configuration with a custom equivalence/ordering `equivClass`. The buckets will be instances of `ListBucket`.
 
 How to use Bag (HashBag/TreeBag) with custom equivalences
 ---------------------------------------------------------
