@@ -22,28 +22,28 @@ The type of bucket that the bucket will have is defined at the construction of t
 The code of bags looks like (input `-->` output):
 ------------------------------------------------------------------------
 ```scala
-implicit val m1 = SortedBagBucketFactory.ofMultiplicities[Int] // define compact representation for Int
-implicit val m2 = SortedBagBucketFactory.ofMultiplicities[Char] // define compact representation for Char
-Bag('c'->2, 'd'->3)              --> Bag('c', 'c', 'd', 'd', 'd')
-Bag(1,2,2,3,3)                   --> Bag(1,2,2,3,3)
-Bag(1,1) union Bag(1,2)          --> Bag(1,1,1,2)
+implicit val m1 = Bag.configuration.compact[Int] // define compact representation for Int
+implicit val m2 = Bag.configuration.compact[Char] // define compact representation for Char
+Bag.from('c'->2, 'd'->3)              --> Bag('c', 'c'; 'd', 'd', 'd')
+Bag(1,2,2,3,3)                   --> Bag(1;2,2;3,3)
+Bag(1,1) union Bag(1,2)          --> Bag(1,1,1;2)
 Bag(1,2,2,3,3).multiplicity(2)   --> 2
 Bag(1,2,2,3,3).multiplicity(5)   --> 0
-Bag(1,2,2,3,3)(2)                --> Iterable(2,2) // Return equivalent elements (still not sure about return type)
+Bag(1,2,2,3,3)(2)                --> Bag(2,2) // Return equivalent elements
 ```
 ------------------------------------------------------------------------
 ```scala
-implicit val mod3Equiv = new Ordering[Int] { // define that buckets will group Int that are equivalent modulo 3
+val mod3Equiv = new Ordering[Int] { // define that buckets will group Int that are equivalent modulo 3
    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
 }
 
-implicit val intVectorBucket = SortedBagBucketFactory.ofVectors[Int] // receives implicitly mod3Equiv
+implicit val intVectorBucket = immutable.TreeBag.configuration.keepAll[Int](mod3Equiv)
 
 val bag = immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1, 7 -> 1, 8 -> 1)
 
-bag(0)    --> Iterable(6, 3, 3, 3) // equivalent modulo 0
-bag(1)    --> Iterable(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
-bag(2)    --> Iterable(8, 5, 2) // equivalent modulo 2
+bag(0)    --> Bag(6, 3, 3, 3) // equivalent modulo 0
+bag(1)    --> Bag(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
+bag(2)    --> Bag(8, 5, 2) // equivalent modulo 2
 ```
 ----------------------------------------------
 

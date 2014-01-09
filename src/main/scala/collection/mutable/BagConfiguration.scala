@@ -65,7 +65,6 @@ object SortedBagConfiguration {
 
   def keepAll[A](implicit equivClass: Ordering[A]): mutable.SortedBagConfiguration[A] = new SortedVectorBagConfiguration(equivClass)
 
-
 }
 
 
