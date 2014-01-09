@@ -68,7 +68,7 @@ Note that a semi-colon separates the buckets and commas separate the elements in
 Here are some simple examples of how the Bag operations are used and their results:
 ```scala
 // The apply method returns a bag with all equivalent elements,
-// this is more useful when using a custom equivalence (refer to ‘How to use Bag API with different equivalence classes’)
+// this is more useful when using a custom equivalence (refer to ‘How to use Bag with custom equivalences’)
 bag("dog") >>> Bag(dog, dog, dog)
 
 bag.multiplicity("cat")  >>> 1
@@ -113,7 +113,7 @@ for (animal <- bag) { ... }
 
 Example: Histogram
 ------------------
-This example shows how to use a Bag to build a histogram. Specifically a histogram of the `Math.random()` function called a number of times.
+This example shows how to use a `Bag` to build a histogram. Specifically a histogram of the `Math.random()` function called a number of times.
 
 ```scala
 import scala.collection.mutable.HashBag
@@ -212,7 +212,7 @@ To create configurations for bags with elements of type `T` with ordered equival
 * `compactWithEquiv[A](equivClass: Ordering[T])(implicit innerOrdering: Ordering[T])`: Creates a configuration with a custom equivalence/ordering equivClass. The buckets will be instances of `BagOfMultiplicities`. It receives an implicit `Ordering[T]` that is used as ordering of the buckets, this ordering must define the equivalence as equality.
 * `keepAll[A](implicit equivClass: Ordering[T])`: Creates a configuration with a custom equivalence/ordering `equivClass`. The buckets will be instances of `ListBucket`.
 
-How to use Bag (HashBag/TreeBag) with custom equivalences
+How to use Bag with custom equivalences
 ---------------------------------------------------------
 
 Custom equivalences on bags are exposed on the `apply`, `mostCommon`, `leastCommon`, `bucketsIterator` and `toString` methods. The other methods yield the same results with any equivalence defined on it, but the execution times may vary with different configurations.
