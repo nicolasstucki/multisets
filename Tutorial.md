@@ -3,7 +3,7 @@ Tutorial
 
 Trait Bag
 ---------
-The `scala Bag` trait represents multisets. A bag is a kind of `Iterable` that groups elements together. The goal is to take advantage of these groupings to compact the space required to keep elements in the data structure and/or make some methods execute faster.
+The `Bag` trait represents multisets. A bag is a kind of `Iterable` that groups elements together. The goal is to take advantage of these groupings to compact the space required to keep elements in the data structure and/or make some methods execute faster.
 
 Groupings are represented by the `BagBucket` trait. A bucket is an iterable that contains only equivalent elements. It additionally exposes the multiplicities of elements inside it and a sentinel (or representative element) that is equivalent to all elements of that bucket. All implementations of `Bag` are collections of bucket where each bucket represents a different equivalency of elements.
 
