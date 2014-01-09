@@ -1,6 +1,7 @@
 package scala.collection
 
 import scala.collection
+import scala.collection.immutable.{Nil, List}
 
 
 trait BagBucket[A]
@@ -161,15 +162,31 @@ trait BagOfMultiplicitiesBagBucket[A] extends BagBucket[A] {
 }
 
 
-trait VectorBagBucket[A] extends BagBucket[A] {
+trait ListBagBucket[A] extends BagBucket[A] {
 
-  def vector: Vector[A]
+  def list: List[A]
 
-  def multiplicity(elem: A): Int = vector.count(_ == elem)
+  def multiplicity(elem: A): Int = list.count(_ == elem)
 
-  override def sum[B >: A](implicit num: Numeric[B]): B = distinctIterator.map(elem => num.times(elem, num.fromInt(multiplicity(elem)))).sum
+  def iterator: Iterator[A] = list.iterator
 
-  def iterator: Iterator[A] = vector.iterator
+  def distinctIterator: Iterator[A] = {
+    val seen = mutable.Set.empty[A]
+    for (elem <- list.iterator if !seen(elem)) yield {
+      seen += elem
+      elem
+    }
+  }
 
-  def distinctIterator: Iterator[A] = vector.distinct.iterator
+  protected def removedFromList(elem: A, list: List[A], count: Int): List[A] = {
+    def removedRec(l: List[A], c: Int): List[A] = {
+      if (c > 0) l match {
+        case `elem` :: tail => removedRec(tail, c - 1)
+        case hd :: tail => hd :: removedRec(tail, c)
+        case Nil => Nil
+      }
+      else l
+    }
+    removedRec(list, count)
+  }
 }

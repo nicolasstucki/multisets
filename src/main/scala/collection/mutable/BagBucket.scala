@@ -3,7 +3,7 @@ package scala.collection.mutable
 import scala.collection._
 import scala.collection.generic.GrowableBag
 import scala.collection
-import scala.collection.immutable.Vector
+import scala.collection.immutable.{List, Nil}
 
 trait BagBucket[A]
   extends scala.collection.BagBucket[A]
@@ -136,93 +136,57 @@ final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Ba
 }
 
 
-final class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
-  extends scala.collection.VectorBagBucket[A]
+final class ListBagBucket[A](val sentinel: A, initialList: immutable.List[A])
+  extends scala.collection.ListBagBucket[A]
   with mutable.BagBucket[A] {
 
-  var vec: Vector[A] = initialVector
+  var list: List[A] = initialList
 
-  def vector: Vector[A] = vec
+  override def toList: List[A] = list
 
-  def clear(): Unit = {
-    vec = immutable.Vector.empty[A]
-  }
+  def clear(): Unit = list = Nil
 
-  def result(): mutable.VectorBagBucket[A] = new mutable.VectorBagBucket[A](sentinel, vec)
+
+  def result(): mutable.ListBagBucket[A] = new mutable.ListBagBucket[A](sentinel, list)
 
 
   override def +=(elem: A) = {
-    vec = vec :+ elem
+    list = elem :: list
     this
   }
-
-  override def -=(elem: A) = {
-    vec = vec.init
-    this
-  }
-
 
   def remove(elem: A, count: Int): this.type = {
-    val b = Vector.newBuilder[A]
-    var i = count
-    for (e <- vec) {
-      if (i >= 0 && e == elem) i -= 1
-      else b += e
-    }
-    vec = b.result()
+    list = removedFromList(elem, list, count)
     this
   }
 
-  def added(elem: A, count: Int): mutable.VectorBagBucket[A] = {
-    new mutable.VectorBagBucket[A](sentinel, vec ++ Iterator.fill(count)(elem))
+  def added(elem: A, count: Int): mutable.ListBagBucket[A] = {
+    new mutable.ListBagBucket[A](sentinel, Iterator.fill(count)(elem) ++: list)
   }
 
 
   def add(elem: A, count: Int) = {
-    vec = vec ++ Iterator.fill(count)(elem)
+    list = Iterator.fill(count)(elem) ++: list
     this
   }
 
   def addBucket(bucket: collection.BagBucket[A]) = {
-    vec = vec ++ bucket
+    list = bucket ++: list
     this
   }
 
-  def addedBucket(bucket: collection.BagBucket[A]): mutable.VectorBagBucket[A] = {
-    new mutable.VectorBagBucket[A](sentinel, vec ++ bucket)
+  def addedBucket(bucket: collection.BagBucket[A]): mutable.ListBagBucket[A] = {
+    new mutable.ListBagBucket[A](sentinel, bucket ++: list)
   }
 
-  override def -(elem: A): mutable.VectorBagBucket[A] = {
-    if (vec.isEmpty) this
-    else new mutable.VectorBagBucket(sentinel, vec.tail)
-  }
+  def intersect(that: collection.BagBucket[A]): BagBucket = new mutable.ListBagBucket[A](sentinel, list.intersect(that.toList))
 
-  def intersect(that: collection.BagBucket[A]): BagBucket = new mutable.VectorBagBucket[A](sentinel, this.toList.intersect(that.toSeq).toVector)
+  def diff(that: collection.BagBucket[A]): BagBucket = new mutable.ListBagBucket[A](sentinel, list.diff(that.toList))
 
-  def diff(that: collection.BagBucket[A]): BagBucket = new mutable.VectorBagBucket[A](sentinel, this.toList.diff(that.toSeq).toVector)
-
-  def removed(elem: A, count: Int): BagBucket = {
-    var c = count
-    var b = Vector.newBuilder[A]
-    for (e <- iterator) {
-      if (e == elem) {
-        if (c > 0) {
-          b += elem
-          c -= 1
-        }
-      } else {
-        b += elem
-      }
-
-    }
-    new mutable.VectorBagBucket[A](sentinel, b.result())
-  }
+  def removed(elem: A, count: Int): BagBucket = new mutable.ListBagBucket[A](sentinel, removedFromList(elem, list, count))
 
   override def removeAll(elem: A): this.type = {
-    var b = Vector.newBuilder[A]
-    for (e <- vec)
-      b += e
-    vec = b.result()
+    list = removedFromList(elem, list, list.length)
     this
   }
 }

@@ -2,6 +2,7 @@ package scala.collection.immutable
 
 import scala.collection.immutable
 import scala.collection
+import scala.annotation.tailrec
 
 trait BagBucket[A] extends scala.collection.BagBucket[A] {
 
@@ -65,48 +66,27 @@ class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: immutable.Bag[A]
   def removed(elem: A, count: Int): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.removed(elem, count))
 }
 
-class VectorBagBucket[A](val sentinel: A, val vector: Vector[A])
-  extends scala.collection.VectorBagBucket[A]
+class ListBagBucket[A](val sentinel: A, val list: List[A])
+  extends scala.collection.ListBagBucket[A]
   with immutable.BagBucket[A] {
 
+
+  override def toList: scala.List[A] = list
+
   def added(elem: A, count: Int) = {
-    if (count > 0)
-      new immutable.VectorBagBucket[A](elem, vector ++ Iterator.fill(count)(elem))
-    else
-      this
+    if (count > 0) new immutable.ListBagBucket[A](elem, Iterator.fill(count)(elem) ++: list)
+    else this
   }
 
   def addedBucket(bucket: collection.BagBucket[A]): immutable.BagBucket[A] = {
-    new immutable.VectorBagBucket[A](sentinel, this.vector ++ bucket)
+    new immutable.ListBagBucket[A](sentinel, bucket ++: this.list)
   }
 
-  override def -(elem: A): VectorBagBucket[A] = {
-    if (vector.isEmpty)
-      new VectorBagBucket(sentinel, Vector.empty[A])
-    else
-      new VectorBagBucket(sentinel, vector.tail)
-  }
+  def intersect(that: collection.BagBucket[A]): BagBucket = new immutable.ListBagBucket[A](sentinel, list.intersect(that.toList))
 
-  def intersect(that: collection.BagBucket[A]): BagBucket = new immutable.VectorBagBucket[A](sentinel, this.toList.intersect(that.toSeq).toVector)
+  def diff(that: collection.BagBucket[A]): BagBucket = new immutable.ListBagBucket[A](sentinel, list.diff(that.toList))
 
-  def diff(that: collection.BagBucket[A]): BagBucket = new immutable.VectorBagBucket[A](sentinel, this.toList.diff(that.toSeq).toVector)
-
-  def removed(elem: A, count: Int): BagBucket = {
-    var c = count
-    var v = Vector.empty[A]
-    for (e <- iterator) {
-      if (e == elem) {
-        if (c > 0) {
-          v = v :+ elem
-          c -= 1
-        }
-      } else {
-        v = v :+ elem
-      }
-
-    }
-    new immutable.VectorBagBucket[A](sentinel, v)
-  }
+  def removed(elem: A, count: Int): BagBucket = new immutable.ListBagBucket[A](sentinel, removedFromList(elem, list, count))
 }
 
 

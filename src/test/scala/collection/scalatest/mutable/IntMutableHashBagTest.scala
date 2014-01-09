@@ -26,7 +26,7 @@ class IntMutableTreeBagOnBagOfMultiplicitiesWithMod3EquivTest extends IntBagTest
   override def emptyBag = mutable.HashBag.empty[Int]
 }
 
-class IntMutableTreeBagOnVectorBucketsWithMod3EquivTest extends IntBagTest {
+class IntMutableTreeBagOnKeepAllBucketsWithMod3EquivTest extends IntBagTest {
   implicit def bagBucketConfiguration = mutable.HashBag.configuration.keepAll(Mod3)
 
   override def emptyBag = mutable.HashBag.empty[Int]

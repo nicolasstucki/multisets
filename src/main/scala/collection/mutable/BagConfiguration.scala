@@ -24,7 +24,7 @@ object HashedBagConfiguration {
 
   private class HashedVectorBagConfiguration[A](protected val equivClass: Equiv[A] with Hashing[A])
     extends mutable.HashedBagConfiguration[A] {
-    def empty(sentinel: A): mutable.VectorBagBucket[A] = new mutable.VectorBagBucket(sentinel, immutable.Vector.empty[A])
+    def empty(sentinel: A): mutable.ListBagBucket[A] = new mutable.ListBagBucket(sentinel, immutable.List.empty[A])
   }
 
 
@@ -54,7 +54,7 @@ object SortedBagConfiguration {
 
 
   private class SortedVectorBagConfiguration[A](protected val equivClass: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
-    def empty(sentinel: A): mutable.VectorBagBucket[A] = new mutable.VectorBagBucket(sentinel, immutable.Vector.empty[A])
+    def empty(sentinel: A): mutable.ListBagBucket[A] = new mutable.ListBagBucket(sentinel, immutable.List.empty[A])
 
   }
 
