@@ -72,7 +72,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
   // Added elements
-  def +(elem: A): This = this added(elem, 1)
+  def +(elem: A): This = this.added(elem, 1)
 
 
   def added(elem: A, count: Int): This = this.addedBucket(bagConfiguration.bucketFrom(elem, count))

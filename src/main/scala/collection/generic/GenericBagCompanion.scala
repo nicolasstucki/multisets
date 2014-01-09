@@ -18,11 +18,7 @@ trait GenericBagCompanion[CC[X] <: collection.Bag[X], BB[X] <: collection.BagBuc
 
   def apply[A](elems: A*)(implicit bagConfiguration: BC[A]): CC[A] = {
     if (elems.isEmpty) empty[A]
-    else {
-      val b = newBuilder[A]
-      b ++= elems
-      b.result()
-    }
+    else (newBuilder[A] ++= elems).result()
   }
 
   def from[A](elemCounts: (A, Int)*)(implicit bagConfiguration: BC[A]): CC[A] = {

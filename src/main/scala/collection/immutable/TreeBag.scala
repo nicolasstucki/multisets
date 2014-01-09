@@ -10,12 +10,9 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
-  implicit lazy val bucketOrdering = new Ordering[BagBucket] {
-    def compare(x: BagBucket, y: BagBucket): Int = bagConfiguration.compare(x.sentinel, y.sentinel)
-  }
-
   override protected[this] def newBuilder: mutable.BagBuilder[A, immutable.TreeBag[A]] = immutable.TreeBag.newBuilder
 
+  override def size: Int = bucketsIterator.map(_.size).sum
 
   def rangeImpl(from: Option[A], until: Option[A]): TreeBag[A] = new TreeBag[A](RB.rangeImpl(tree, from, until))
 
@@ -32,7 +29,6 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
 
   def lastKey = RB.greatest(tree).key
 
-  def compare(k0: A, k1: A): Int = bagConfiguration.compare(k0, k1)
 
   override def head = {
     val smallest = RB.smallest(tree)

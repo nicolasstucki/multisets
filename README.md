@@ -20,7 +20,7 @@ Bag delegates subtasks of the Iterable methods to the underlying BagBucket. Ther
 The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a BagBucketFactory that is implicitly taken into every constructor (ideally some default ones should be defined).
 
 The code of bags looks like (input `-->` output):
-------------------------------------------------------------------------
+
 ```scala
 implicit val m1 = Bag.configuration.compact[Int] // define compact representation for Int
 implicit val m2 = Bag.configuration.compact[Char] // define compact representation for Char
@@ -31,13 +31,14 @@ Bag(1,2,2,3,3).multiplicity(2)   --> 2
 Bag(1,2,2,3,3).multiplicity(5)   --> 0
 Bag(1,2,2,3,3)(2)                --> Bag(2,2) // Return equivalent elements
 ```
-------------------------------------------------------------------------
+
 ```scala
-val mod3Equiv = new Ordering[Int] { // define that buckets will group Int that are equivalent modulo 3
+// buckets will group Int that are equivalent modulo 3
+val mod3Equiv = new Ordering[Int] {
    def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
 }
 
-implicit val intVectorBucket = immutable.TreeBag.configuration.keepAll[Int](mod3Equiv)
+implicit val m = immutable.TreeBag.configuration.keepAll[Int](mod3Equiv)
 
 val bag = immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1, 7 -> 1, 8 -> 1)
 
@@ -45,6 +46,5 @@ bag(0)    --> Bag(6, 3, 3, 3) // equivalent modulo 0
 bag(1)    --> Bag(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
 bag(2)    --> Bag(8, 5, 2) // equivalent modulo 2
 ```
-----------------------------------------------
 
 
