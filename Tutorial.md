@@ -300,3 +300,9 @@ bag.leastCommon >>> Bag( "mouse", "elephant")
 // List with the sizes of the strings in the bag
 bag.bucketsIterator.map(_.sentinel.size).toList >>> List(3, 4, 5, 8)
 ```
+
+Examples
+--------
+Complete examples of simple aplications that use bags are avalible at:
+[https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps]
+
