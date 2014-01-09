@@ -303,6 +303,6 @@ bag.bucketsIterator.map(_.sentinel.size).toList >>> List(3, 4, 5, 8)
 
 Examples
 --------
-Complete examples of simple aplications that use bags are avalible at:
-[https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps]
+Complete examples of simple applications that use bags are available at:
+https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps
 
