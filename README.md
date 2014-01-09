@@ -24,7 +24,7 @@ The code of bags looks like (input `-->` output):
 ```scala
 implicit val m1 = Bag.configuration.compact[Int] // define compact representation for Int
 implicit val m2 = Bag.configuration.compact[Char] // define compact representation for Char
-Bag.from("c"->2, "d"->3)              --> Bag("c", "c"; "d", "d", "d")
+Bag.from("c"->2, "d"->3)         --> Bag("c", "c"; "d", "d", "d")
 Bag(1,2,2,3,3)                   --> Bag(1;2,2;3,3)
 Bag(1,1) union Bag(1,2)          --> Bag(1,1,1;2)
 Bag(1,2,2,3,3).multiplicity(2)   --> 2
