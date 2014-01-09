@@ -237,7 +237,8 @@ object StringEquiv extends Equiv[String] with Hashing[String] {
 // Configuration of that keeps one reference to the element and it’s multiplicity and
 // puts elements that are not equivalent with respect of StringEquiv in different subbags.
 implicit val config = Bag.configuration.compactWithEquiv(StringEquiv)
-// or a configuration of that keeps all references to the elements into lists. Where each list contains only equivalent elements with respect to StringEquiv.
+// or a configuration of that keeps all references to the elements into lists. 
+// Where each list contains only equivalent elements with respect to StringEquiv.
 implicit config = Bag.configuration.keepAll(StringEquiv)
 
 val bag = Bag("cat", "dog", "Mouse", "Cat", "Dog", "Cat" )
@@ -276,9 +277,13 @@ object StringOrdering extends Ordering[String] {
    def compare(x: String, y: String): Int = x.size compare y.size
 }
 
-// Configuration of that keeps one reference to the element and it’s multiplicity and puts elements that are not equivalent with respect of StringOrdering in different sub-bags. Buckets are in the order defined in StringOrdering
+// Configuration of that keeps one reference to the element and it’s multiplicity 
+// and puts elements that are not equivalent with respect of StringOrdering in different sub-bags. 
+// Buckets are in the order defined in StringOrdering
 implicit val config = Bag.configuration.compactWithEquiv(StringOrdering)
-// or a configuration of that keeps all references to the elements into lists. Where each list contains only equivalent elements with respect to StringOrdering. Buckets are in the order defined in StringOrdering.
+// or a configuration of that keeps all references to the elements into lists. 
+// Where each list contains only equivalent elements with respect to StringOrdering. 
+// Buckets are in the order defined in StringOrdering.
 implicit config = Bag.configuration.keepAll(StringOrdering).
 
 val bag = Bag("cat", "mouse","fish", "elephant", "dog", "bear" )
