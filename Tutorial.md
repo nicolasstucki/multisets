@@ -42,9 +42,9 @@ It is also necessary to have an implicit `BagConfiguration`. The configurations 
 
 ```scala
 // Configuration of that keeps one reference to the element and it’s multiplicity
-implicit config = Bag.configuration.compact[String]
+implicit val config = Bag.configuration.compact[String]
 // or a configuration of that keeps all references to the elements
-implicit config = Bag.configuration.keepAll[String]
+implicit val config = Bag.configuration.keepAll[String]
 ```
 
 Now it is possible to create instances of `Bag`. For this example the bag will contain one cat, three dogs and two mice. The following are equivalent statements:
@@ -239,7 +239,7 @@ object StringEquiv extends Equiv[String] with Hashing[String] {
 implicit val config = Bag.configuration.compactWithEquiv(StringEquiv)
 // or a configuration of that keeps all references to the elements into lists. 
 // Where each list contains only equivalent elements with respect to StringEquiv.
-implicit config = Bag.configuration.keepAll(StringEquiv)
+implicit val config = Bag.configuration.keepAll(StringEquiv)
 
 val bag = Bag("cat", "dog", "Mouse", "Cat", "Dog", "Cat" )
 
@@ -284,7 +284,7 @@ implicit val config = Bag.configuration.compactWithEquiv(StringOrdering)
 // or a configuration of that keeps all references to the elements into lists. 
 // Where each list contains only equivalent elements with respect to StringOrdering. 
 // Buckets are in the order defined in StringOrdering.
-implicit config = Bag.configuration.keepAll(StringOrdering).
+implicit val config = Bag.configuration.keepAll(StringOrdering).
 
 val bag = Bag("cat", "mouse","fish", "elephant", "dog", "bear" )
 
