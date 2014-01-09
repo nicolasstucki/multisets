@@ -9,7 +9,7 @@ The multiset operations consist of: union, intresect, diff, maxUnion (a variant 
 
 In Scala, the finite Seq can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. Bag is not subtype (or supertype) of Set mainly because of incoherences between the definition of union, intersect, and diff. Bag is a subtype of Iterable.
 
-Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it's elements to the multiplicity of that element.
+Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it"s elements to the multiplicity of that element.
 
 The implementation of Bag differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.
 
@@ -24,7 +24,7 @@ The code of bags looks like (input `-->` output):
 ```scala
 implicit val m1 = Bag.configuration.compact[Int] // define compact representation for Int
 implicit val m2 = Bag.configuration.compact[Char] // define compact representation for Char
-Bag.from('c'->2, 'd'->3)              --> Bag('c', 'c'; 'd', 'd', 'd')
+Bag.from("c"->2, "d"->3)              --> Bag("c", "c"; "d", "d", "d")
 Bag(1,2,2,3,3)                   --> Bag(1;2,2;3,3)
 Bag(1,1) union Bag(1,2)          --> Bag(1,1,1;2)
 Bag(1,2,2,3,3).multiplicity(2)   --> 2
