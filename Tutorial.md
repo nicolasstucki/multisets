@@ -168,7 +168,7 @@ There are three basic of representations of bag buckets: `MultiplicityBucket`, `
 
 `ListBucket` is an implementation of buckets that keeps all the references of the elements of the bag in a List. Hence it is a full representation where there is one list for each equivalency grouping. For example the bag `Bag("A", "A", "a", "B", "b"; "c")` will contain the three buckets where each contains one of the following lists: `List("A","A","a")`, `List("B")` or `List("c")`.
 
-* Bag configurations are instances of some implementation of the BagConfiguration trait. Each bag companion object exposes three methods that create bag configurations for it. Those methods are `compact`, `compactWithEquiv` and `keepAll`. Their signature varies depending on the kind of equivalence that is expected (hashed or sorted).
+Bag configurations are instances of some implementation of the BagConfiguration trait. Each bag companion object exposes three methods that create bag configurations for it. Those methods are `compact`, `compactWithEquiv` and `keepAll`. Their signature varies depending on the kind of equivalence that is expected (hashed or sorted).
 * `Bag.configuration.compact`: configuration for bags with `MultiplicityBucket`.
 * `Bag.configuration.compactWithEquiv`: configuration for bags with `BagOfMultiplicities`.
 * `Bag.configuration.keepAll`: configuration for bags with `ListBucket`.
