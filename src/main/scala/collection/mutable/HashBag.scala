@@ -25,14 +25,14 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
 
   override protected def elemHashCode(key: A): Int = bagConfiguration.hash(key)
 
-  def getBucket(elem: A): Option[BagBucket] = {
+  override def getBucket(elem: A): Option[BagBucket] = {
     val e = findEntry(elem)
     if (e eq null) None
     else Some(e.value)
   }
 
 
-  def updateBucket(bucket: mutable.BagBucket[A]): this.type = {
+  protected def updateBucket(bucket: mutable.BagBucket[A]): this.type = {
     removeEntry(bucket.sentinel)
     addEntry(createNewEntry(bucket.sentinel, bucket))
     this

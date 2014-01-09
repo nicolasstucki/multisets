@@ -19,9 +19,9 @@ trait BigIntHashedBagBenchmark extends BigIntBagBenchmark {
 
   def equivClass: Equiv[BigInt] with Hashing[BigInt] = collection.HashedBagConfiguration.defaultHashedEquiv[BigInt]
 
-  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.ofMultiplicities
+  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.compact
 
-  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.ofBagOfMultiplicities(equivClass)
+  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.compactWithEquiv(equivClass)
 
   def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = mutable.HashedBagConfiguration.keepAll
 }

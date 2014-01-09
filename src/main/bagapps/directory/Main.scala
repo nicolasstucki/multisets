@@ -39,8 +39,8 @@ object Main {
          |.sbt         ${filesByExtension(File.withExtension("sbt")).size}
          |.properties  ${filesByExtension(File.withExtension("properties")).size}
          |*other       ${
-        (filesByExtension -* File.withExtension("scala") -* File.withExtension("xml") -* File.withExtension("class")
-          -* File.withExtension("jar") -* File.withExtension("sbt") -* File.withExtension("properties")).size
+        (filesByExtension removedAll File.withExtension("scala") removedAll File.withExtension("xml") removedAll File.withExtension("class")
+          removedAll File.withExtension("jar") removedAll File.withExtension("sbt") removedAll File.withExtension("properties")).size
       }
          |========================
          |List of .scala files

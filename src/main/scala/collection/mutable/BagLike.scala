@@ -13,4 +13,5 @@ trait BagLike[A, +This <: mutable.Bag[A] with mutable.BagLike[A, This]]
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, This] = new mutable.GrowingBagBuilder[A, This](empty)
 
+
 }

@@ -4,7 +4,7 @@ import scala.collection.scalatest._
 import scala.collection.immutable
 
 class IntImmutableTreeBagOnMultiplicitiesTest extends IntBagTest {
-  implicit lazy val bagBucketConfiguration = immutable.SortedBagConfiguration.ofMultiplicities[Int]
+  implicit lazy val bagBucketConfiguration = immutable.SortedBagConfiguration.compact[Int]
 
   override def emptyBag = immutable.TreeBag.empty[Int]
 }
@@ -16,7 +16,7 @@ class IntImmutableTreeBagOnKeepAllBucketsBucketTest extends IntBagTest {
 }
 
 class IntImmutableTreeBagOnBagOfMultiplicitiesWithMod3EquivTest extends IntBagTest {
-  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.ofBagOfMultiplicities(Mod3)
+  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.compactWithEquiv(Mod3)
 
   override def emptyBag = immutable.TreeBag.empty[Int]
 }
@@ -29,7 +29,7 @@ class IntImmutableTreeBagOnKeepAllBucketsBucketsWithMod3EquivTest extends IntBag
 
 
 class StringImmutableTreeBagOnMultiplicitiesTest extends StringBagTest {
-  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.ofMultiplicities[String]
+  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.compact[String]
 
   override def emptyBag = immutable.TreeBag.empty[String]
 }
@@ -41,7 +41,7 @@ class StringImmutableTreeBagOnKeepAllBucketsBucketTest extends StringBagTest {
 }
 
 class StringImmutableTreeBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
-  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.ofBagOfMultiplicities(StrSize)
+  implicit def bagBucketConfiguration = immutable.TreeBag.configuration.compactWithEquiv(StrSize)
 
   override def emptyBag = immutable.TreeBag.empty[String]
 }

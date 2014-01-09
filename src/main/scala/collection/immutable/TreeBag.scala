@@ -95,7 +95,7 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
 
   def bucketsIterator: Iterator[BagBucket] = RB.valuesIterator(tree)
 
-  def getBucket(elem: A): Option[BagBucket] = RB.get(tree, elem)
+  override def getBucket(elem: A): Option[BagBucket] = RB.get(tree, elem)
 
   override protected def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 

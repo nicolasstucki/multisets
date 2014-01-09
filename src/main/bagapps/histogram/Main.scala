@@ -6,13 +6,13 @@ object Main {
   def main(args: Array[String]) {
 
     // Import HashBag and rename it to Histogram
-    import scala.collection.mutable.{HashBag => Histogram}
+    import scala.collection.mutable.{HashBag => Bag}
 
     // Configuration for the bag using multiplicities of Int elements on default equivalence
-    implicit val bagConfiguration = Histogram.configuration.ofMultiplicities[Int]
+    implicit val bagConfiguration = Bag.configuration.compact[Int]
 
     // Create empty histogram
-    val histogram = Histogram.empty[Int]
+    val histogram = Bag.empty[Int]
 
     val LIMIT = 50
 
@@ -28,15 +28,14 @@ object Main {
         |=================================================================
         | maximum occurrences: ${histogram.maxMultiplicity}
         | minimum occurrences: ${histogram.minMultiplicity}
-        |=================================================================
-        |${
-        for (i <- 0 until LIMIT) yield {
-          val occurrences = histogram.multiplicity(i)
-          s"$i:".padTo(4, ' ') + "".padTo(occurrences, '|') + s"  $occurrences"
-        }.mkString("\n")
-      }
-        |================================================================
-        """.stripMargin)
+        |=================================================================""".stripMargin)
+
+    for (i <- 0 until LIMIT) {
+      val occurrences = histogram.multiplicity(i)
+      println(s"${i.toString.padTo(4, ' ')}:  ${"".padTo(occurrences, '|')} $occurrences")
+    }
+
+    println("=================================================================")
   }
 
 }

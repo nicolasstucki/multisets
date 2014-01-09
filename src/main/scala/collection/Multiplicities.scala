@@ -9,6 +9,6 @@ class Multiplicities[A](bag: Bag[A]) extends Map[A, Int] {
 
   def +[B1 >: Int](kv: (A, B1)): Map[A, B1] = Map.empty[A, B1] ++ this + kv
 
-  def -(key: A): Multiplicities[A] = new Multiplicities(bag -* key)
+  def -(key: A): Multiplicities[A] = new Multiplicities(bag removedAll key)
 
 }

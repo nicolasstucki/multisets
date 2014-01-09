@@ -47,4 +47,11 @@ trait SortedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends B
   protected def equivClass: Ordering[A]
 
   def compare(x: A, y: A): Int = equivClass.compare(x, y)
+
+  new Equiv[String] with Hashing[String] {
+    def hash(x: String): Int = x.toLowerCase.hashCode
+
+    def equiv(x: String, y: String): Boolean = (x compareToIgnoreCase y) == 0
+  }
+
 }

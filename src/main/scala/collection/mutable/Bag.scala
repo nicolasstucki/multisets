@@ -10,14 +10,16 @@ trait Bag[A]
   with generic.GrowableBag[A] {
 
 
-  def update(elem: A, count: Int): this.type = {
+  def update(elem: A, count: Int): this.type = setMultiplicity(elem, count)
+
+  def setMultiplicity(elem: A, count: Int): this.type = {
     val b = bagConfiguration.newBuilder(elem)
     b.add(elem, count)
     updateBucket(b.result())
     this
   }
 
-  def updateBucket(bucket: mutable.BagBucket[A]): this.type
+  protected def updateBucket(bucket: mutable.BagBucket[A]): this.type
 
 
   def add(elem: A, count: Int): this.type = {
@@ -38,11 +40,25 @@ trait Bag[A]
 
   def -=(elem: A): this.type = this -= (elem -> 1)
 
-  def -=(elemCount: (A, Int)): this.type = {
-    val (elem, count) = elemCount
-    update(elem, Math.max(this.multiplicity(elem) - count, 0))
+  def -=(elemCount: (A, Int)): this.type = remove(elemCount._1, elemCount._2)
+
+  def remove(elem: A, count: Int): this.type = {
+    val amount = Math.max(this.multiplicity(elem) - count, 0)
+    if (amount > 0)
+      this.getBucket(elem) match {
+        case Some(b) => b.remove(elem, amount)
+        case None => updateBucket((bagConfiguration.newBuilder(elem) add(elem, count)).result())
+      }
+    this
   }
 
+  def removeAll(elem: A): this.type = {
+    this.getBucket(elem) match {
+      case Some(b) => b.removeAll(elem)
+      case None =>
+    }
+    this
+  }
 }
 
 

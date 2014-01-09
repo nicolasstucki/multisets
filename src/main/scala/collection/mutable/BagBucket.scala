@@ -11,10 +11,15 @@ trait BagBucket[A]
 
   final protected override type BagBucket = mutable.BagBucket[A]
 
+  def -=(elem: A): this.type = remove(elem, 1)
+
+  def remove(elem: A, count: Int): this.type
+
+  def removeAll(elem: A): this.type = remove(elem, multiplicity(elem))
 }
 
 
-class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
+final class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
   extends scala.collection.MultiplicityBagBucket[A]
   with mutable.BagBucket[A] {
 
@@ -32,8 +37,9 @@ class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
     this
   }
 
-  def -=(elem: A): this.type = {
-    multiplicity = Math.max(0, multiplicity - 1)
+  override def -=(elem: A): this.type = {
+    if (multiplicity > 0)
+      multiplicity = multiplicity - 1
     this
   }
 
@@ -44,6 +50,21 @@ class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
 
   def add(elem: A, count: Int): this.type = {
     this.multiplicity += Math.max(count, 0)
+    this
+  }
+
+
+  def remove(elem: A, count: Int): this.type = {
+    if (multiplicity > count)
+      multiplicity = multiplicity - count
+    else
+      multiplicity = 0
+    this
+  }
+
+
+  override def removeAll(elem: A): this.type = {
+    multiplicity = 0
     this
   }
 
@@ -68,7 +89,7 @@ class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
 
 }
 
-class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
+final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
   extends scala.collection.BagOfMultiplicitiesBagBucket[A]
   with mutable.BagBucket[A] {
 
@@ -81,6 +102,17 @@ class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
 
   def add(elem: A, count: Int): this.type = {
     bag.add(elem, count)
+    this
+  }
+
+  def remove(elem: A, count: Int): this.type = {
+    bag.remove(elem, count)
+    this
+  }
+
+
+  override def removeAll(elem: A): this.type = {
+    bag.removeAll(elem)
     this
   }
 
@@ -104,7 +136,7 @@ class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
 }
 
 
-class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
+final class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
   extends scala.collection.VectorBagBucket[A]
   with mutable.BagBucket[A] {
 
@@ -124,11 +156,22 @@ class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
     this
   }
 
-  def -=(elem: A) = {
+  override def -=(elem: A) = {
     vec = vec.init
     this
   }
 
+
+  def remove(elem: A, count: Int): this.type = {
+    val b = Vector.newBuilder[A]
+    var i = count
+    for (e <- vec) {
+      if (i >= 0 && e == elem) i -= 1
+      else b += e
+    }
+    vec = b.result()
+    this
+  }
 
   def added(elem: A, count: Int): mutable.VectorBagBucket[A] = {
     new mutable.VectorBagBucket[A](sentinel, vec ++ Iterator.fill(count)(elem))
@@ -160,19 +203,27 @@ class VectorBagBucket[A](val sentinel: A, initialVector: immutable.Vector[A])
 
   def removed(elem: A, count: Int): BagBucket = {
     var c = count
-    var v = Vector.empty[A]
+    var b = Vector.newBuilder[A]
     for (e <- iterator) {
       if (e == elem) {
         if (c > 0) {
-          v = v :+ elem
+          b += elem
           c -= 1
         }
       } else {
-        v = v :+ elem
+        b += elem
       }
 
     }
-    new mutable.VectorBagBucket[A](sentinel, v)
+    new mutable.VectorBagBucket[A](sentinel, b.result())
+  }
+
+  override def removeAll(elem: A): this.type = {
+    var b = Vector.newBuilder[A]
+    for (e <- vec)
+      b += e
+    vec = b.result()
+    this
   }
 }
 

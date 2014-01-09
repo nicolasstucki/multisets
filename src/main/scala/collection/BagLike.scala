@@ -5,6 +5,18 @@ import scala.collection.generic.{CanBuildFrom, Subtractable}
 import scala.collection.immutable.RedBlackTree
 
 
+/** A template trait for bag collections of type `Bag[A]`.
+  *
+  * Note: This trait replaces every method that uses `break` in
+  * `TraversableLike` by an iterator version.
+  *
+  * @author Nicolas Stucki
+  * @tparam A    the element type of the collection
+  * @tparam This the type of the actual collection containing the elements.
+  *
+  * @define Coll Bag
+  * @define coll bag collection
+  */
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
   with GenBagLike[A, This]
@@ -16,7 +28,6 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   override protected[this] def newBuilder: mutable.BagBuilder[A, This] = mutable.BagBuilder(empty)
 
-
   def apply(elem: A): This = getBucket(elem) match {
     case Some(bucket) => (newBuilder addBucket bucket).result()
     case None => empty
@@ -25,17 +36,23 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def contains(elem: A): Boolean = repr.multiplicity(elem) > 0
 
+  /** Returns a Bag with the most common elements up to the equivalence defined in the `BagConfiguration`
+    * @return An bag with the most common elements up to equivalence
+    */
   def mostCommon: This = {
     if (isEmpty) return empty
 
-    val maxM = bucketsIterator.map(_.size).max
+    val maxSize = bucketsIterator.map(_.size).max
     val b = newBuilder
-    for (bucket <- bucketsIterator if maxM == bucket.size) {
+    for (bucket <- bucketsIterator if maxSize == bucket.size) {
       b addBucket bucket
     }
     b.result()
   }
 
+  /** Returns a Bag with the least common elements up to the equivalence defined in the `BagConfiguration`
+    * @return An bag with the least common elements up to equivalence
+    */
   override def leastCommon: This = {
     if (isEmpty) return empty
 
@@ -73,21 +90,40 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   // Added Bucket
 
 
+  def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(bucket => bagConfiguration.equiv(elem, bucket.sentinel))
+
   def addedBucket(bucket: collection.BagBucket[A]): This = getBucket(bucket.sentinel) match {
     case Some(bucket2) => updatedBucket(bagConfiguration.bucketFrom(bucket, bucket2))
     case None => updatedBucket(bagConfiguration.bucketFrom(bucket))
   }
 
+  /**
+   * Put or replace the bucket associated with the new bucket
+   * @param bucket  new bucket
+   * @return the bag with the new bucket in place
+   */
   protected def updatedBucket(bucket: BagBucket): This
 
-  // Multiset operations
-  override def union(that: GenBag[A]): This = {
+  /**
+   * Returns a bag containing the multi-set union of this `bag` and `that` bag
+   * @param that the other bag
+   * @return bag containing the multi-set union of this `bag` and `that` bag
+   */
+  def union(that: GenBag[A]): This = {
     val b = newBuilder
     this.bucketsIterator.foreach(b addBucket _)
     that.bucketsIterator.foreach(b addBucket _)
     b.result()
   }
 
+  def ++(that: GenBag[A]) = this union that
+
+
+  /**
+   * Returns a bag containing the multi-set difference of this `bag` with `that` bag
+   * @param that the other bag
+   * @return bag containing the multi-set difference of this `bag` and `that` bag
+   */
   def diff(that: GenBag[A]): This = {
     val b = newBuilder
     for (bucket <- bucketsIterator) {
@@ -103,7 +139,15 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
-  override def maxUnion(that: GenBag[A]): This = {
+  def --(that: GenBag[A]): This = this diff that
+
+
+  /**
+   * Returns a bag containing the multi-set max union (or generalized set union) of this `bag` and `that` bag
+   * @param that the other bag
+   * @return bag containing the multi-set max union of this `bag` and `that` bag
+   */
+  def maxUnion(that: GenBag[A]): This = {
     val b = newBuilder
     val seen = mutable.Set.empty[A]
 
@@ -121,6 +165,12 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
+
+  /**
+   * Returns a bag containing the multi-set intersection of this `bag` and `that` bag
+   * @param that the other bag
+   * @return bag containing the multi-set intersection of this `bag` and `that` bag
+   */
   override def intersect(that: GenBag[A]): This = {
     val b = newBuilder
     for (bucket <- bucketsIterator) {
@@ -159,8 +209,6 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def removedAll(elem: A): This = removedBucket(elem)
 
-  def -*(elem: A): This = removedAll(elem)
-
   def removedBucket(elem: A): This = {
     val b = newBuilder
     for (bucket <- bucketsIterator if !bagConfiguration.equiv(bucket.sentinel, elem)) {
@@ -169,9 +217,19 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
     b.result()
   }
 
+  /**
+   * Returns a mapping of the multiplicities of the bag
+   * @return map containing the mapping of multiplicities of the of the bag 
+   */
   def multiplicities: Map[A, Int] = new Multiplicities(repr)
 
-  def setMultiplicity(elem: A, count: Int): This = (this removedAll elem).added(elem, count)
+  /**
+   * Returns a bag with an updated multiplicity of some element
+   * @param elem element that will have it's multiplicity changed
+   * @param count number of times the element will be repeated in the bag
+   * @return bag with the new multiplicity
+   */
+  def withMultiplicity(elem: A, count: Int): This = (this removedAll elem).added(elem, count)
 
   override def forall(p: (A) => Boolean): Boolean = bucketsIterator.forall(_.forall(p))
 

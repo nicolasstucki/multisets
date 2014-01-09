@@ -25,7 +25,7 @@ class HashBag[A] private[collection](contents: mutable.HashTable.Contents[A, mut
 
   override protected def elemHashCode(key: A): Int = bagConfiguration.hash(key)
 
-  def getBucket(elem: A): Option[BagBucket] = {
+  override def getBucket(elem: A): Option[BagBucket] = {
     val e = findEntry(elem)
     if (e eq null) None
     else Some(e.value)

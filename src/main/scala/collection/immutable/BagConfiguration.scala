@@ -25,17 +25,16 @@ object HashedBagConfiguration {
   }
 
   private class HashedBagOfMultiplicitiesBagBucketConfiguration[A](protected val equivClass: Equiv[A] with Hashing[A]) extends immutable.HashedBagConfiguration[A] {
-    def empty(sentinel: A): immutable.BagOfMultiplicitiesBagBucket[A] = new immutable.BagOfMultiplicitiesBagBucket(sentinel, immutable.HashBag.empty[A](ofMultiplicities[A]))
+    def empty(sentinel: A): immutable.BagOfMultiplicitiesBagBucket[A] = new immutable.BagOfMultiplicitiesBagBucket(sentinel, immutable.HashBag.empty[A](compact[A]))
   }
 
   private class HashedVectorBagConfiguration[A](protected val equivClass: Equiv[A] with Hashing[A]) extends immutable.HashedBagConfiguration[A] {
     def empty(sentinel: A): immutable.VectorBagBucket[A] = new immutable.VectorBagBucket(sentinel, immutable.Vector.empty[A])
   }
 
+  def compact[A]: immutable.HashedBagConfiguration[A] = new immutable.HashedBagConfiguration.HashedMultiplicityBagConfiguration(collection.HashedBagConfiguration.defaultHashedEquiv[A])
 
-  def ofMultiplicities[A]: immutable.HashedBagConfiguration[A] = new immutable.HashedBagConfiguration.HashedMultiplicityBagConfiguration(collection.HashedBagConfiguration.defaultHashedEquiv[A])
-
-  def ofBagOfMultiplicities[A](equivClass: Equiv[A] with Hashing[A]): immutable.HashedBagConfiguration[A] = new HashedBagOfMultiplicitiesBagBucketConfiguration(equivClass)
+  def compactWithEquiv[A](equivClass: Equiv[A] with Hashing[A]): immutable.HashedBagConfiguration[A] = new HashedBagOfMultiplicitiesBagBucketConfiguration(equivClass)
 
   def keepAll[A]: immutable.HashedBagConfiguration[A] = new HashedVectorBagConfiguration(collection.HashedBagConfiguration.defaultHashedEquiv[A])
 
@@ -52,7 +51,7 @@ object SortedBagConfiguration {
   }
 
   private class SortedBagOfMultiplicitiesBagBucketConfiguration[A](protected val equivClass: Ordering[A], innerOrdering: Ordering[A]) extends SortedBagConfiguration[A] {
-    def empty(sentinel: A): immutable.BagOfMultiplicitiesBagBucket[A] = new immutable.BagOfMultiplicitiesBagBucket(sentinel, immutable.TreeBag.empty[A](ofMultiplicities[A](innerOrdering)))
+    def empty(sentinel: A): immutable.BagOfMultiplicitiesBagBucket[A] = new immutable.BagOfMultiplicitiesBagBucket(sentinel, immutable.TreeBag.empty[A](compact[A](innerOrdering)))
   }
 
   private class SortedVectorBagConfiguration[A](protected val equivClass: Ordering[A]) extends SortedBagConfiguration[A] {
@@ -60,9 +59,9 @@ object SortedBagConfiguration {
   }
 
 
-  def ofMultiplicities[A](implicit equivClass: Ordering[A]): immutable.SortedBagConfiguration[A] = new SortedMultiplicityBagConfiguration(equivClass)
+  def compact[A](implicit equivClass: Ordering[A]): immutable.SortedBagConfiguration[A] = new SortedMultiplicityBagConfiguration(equivClass)
 
-  def ofBagOfMultiplicities[A](equivClass: Ordering[A])(implicit innerOrdering: Ordering[A]): immutable.SortedBagConfiguration[A] = new SortedBagOfMultiplicitiesBagBucketConfiguration(equivClass, innerOrdering)
+  def compactWithEquiv[A](equivClass: Ordering[A])(implicit innerOrdering: Ordering[A]): immutable.SortedBagConfiguration[A] = new SortedBagOfMultiplicitiesBagBucketConfiguration(equivClass, innerOrdering)
 
   def keepAll[A](implicit equivClass: Ordering[A]): immutable.SortedBagConfiguration[A] = new SortedVectorBagConfiguration(equivClass)
 

@@ -35,6 +35,11 @@ case class File(directory: String, name: String, ext: String) {
 
   override def toString: String = s"$directory/$name.$ext"
 
+
+  override def hashCode(): Int = toString.hashCode
+
+  override def equals(obj: scala.Any): Boolean = toString.equals(obj)
+
   def fileName = s"$name.$ext"
 }
 

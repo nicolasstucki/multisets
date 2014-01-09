@@ -18,9 +18,9 @@ trait BigIntSortedBagBenchmark extends BigIntBagBenchmark {
 
   def equivClass: Ordering[BigInt] = implicitly[Ordering[BigInt]]
 
-  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.ofMultiplicities
+  def bagBucketFactoryOfMultiplicities: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.compact
 
-  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.ofBagOfMultiplicities(equivClass)
+  def bagBucketFactoryOfBagBucketBag: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.compactWithEquiv(equivClass)
 
   def bagBucketFactoryOfVectors: BagConfiguration[BigInt] = immutable.SortedBagConfiguration.keepAll
 }
