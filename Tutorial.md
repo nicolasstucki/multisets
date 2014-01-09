@@ -5,10 +5,10 @@ Trait Bag
 ---------
 The `Bag` trait represents multisets. A bag is a kind of iterable that groups elements together. The goal is to take advantage of these groupings to compact the space required to keep elements in the data structure and/or make some methods execute faster.
 
-Groupings are represented by the `BagBucket` trait. A bucket is an iterable that contains only equivalent elements. It additionally exposes the multiplicities of elements inside it and a sentinel (or representative element) that is equivalent to all elements of that bucket. All implementations of Bags are collections of bucket where each bucket represents a different equivalency of elements.
+Groupings are represented by the `BagBucket` trait. A bucket is an iterable that contains only equivalent elements. It additionally exposes the multiplicities of elements inside it and a sentinel (or representative element) that is equivalent to all elements of that bucket. All implementations of `Bag` are collections of bucket where each bucket represents a different equivalency of elements.
 
 The operations on bags fall into the following categories:
-* **Lookup**: `multiplicity`, `multiplicities`. The `multiplicity` method returns the multiplicity of a given element. The `multiplicities` method returns a Map from elements to their multiplicity (0 if not contained).
+* **Lookup**: `multiplicity`, `multiplicities`. The `multiplicity` method returns the multiplicity of a given element. The `multiplicities` method returns a `Map` from elements to their multiplicity (0 if not contained).
 * **Tests**: `contains`, `subsetOf`. The `contains` method asks if some element is contained in the multiset. The `subsetOf` is the musliset subset operation in relation to the other bag (`A` subsetOf `B` is equivalent to `A.forall(e=>A.multiplicity(e)<=B.multiplicity(e))`).
 * **Equivalences**: `apply`, `mostCommon`, `leastCommon`. The `apply` receives an element and return a bag with all equivalent elements. The `mostCommon`/`leastCommon` method returns a bag with all the elements for which the number of equivalent elements is maximized/minimized. The `mostCommon`/`leastCommon` method may return a bag with several groupings.
 * **Additions**: `+`, `added`. The `+` method adds the element to the bag. The `added` method adds some number of times the same element.
