@@ -294,8 +294,9 @@ bag("cat") >>> Bag("cat", "dog")
 bag("ooo") >>> Bag("cat", "dog")
 bag("xxxx") >>> Bag("fish", "bear")
 
-bag.mostCommon >>>  Bag("cat", "dog", "fish", "bear") // bucket that contains "cat", "dog" with bucket that contains "fish", "bear". Both have size 2
-bag.leastCommon >>> Bag( "mouse", "elephant") // bucket that contains "mouse" with bucket that contains "elephant". Both have size 1.
+bag.mostCommon >>>  Bag("cat", "dog", "fish", "bear") 
+bag.leastCommon >>> Bag( "mouse", "elephant") 
+
 // List with the sizes of the strings in the bag
 bag.bucketsIterator.map(_.sentinel.size).toList >>> List(3, 4, 5, 8)
 ```
