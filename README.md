@@ -1,9 +1,7 @@
-multisets
+Scala Multisets collection
 =========
 
-Multi-sets for Scala collection
-
-Multi-sets API is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multi-sets are represented as: scala.collection.Bag
+Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multi-sets are represented as: scala.collection.Bag
 
 The multiset operations consist of: union, intresect, diff, maxUnion (a variant of union that represents the generalised set union), contains, multiplicity, mostCommon, leastCommon, ...
 
