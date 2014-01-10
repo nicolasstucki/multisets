@@ -303,6 +303,9 @@ bag.bucketsIterator.map(_.sentinel.size).toList >>> List(3, 4, 5, 8)
 
 Examples
 --------
-Complete examples of simple applications that use bags are available at:
-https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps
+Complete examples of simple applications that use bags are available:
+* The complete histogram example at https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps/histogram.
+* Implementation of a generic genetic algorithm using bags. With to simple applications that use it: simple bit accumulation and Traveling Salesman. At https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps/genetic_algorithm.
+* Directory analyser: uses different equivalences to classify keep track and classify files. At https://github.com/nicolasstucki/multisets/tree/master/src/main/bagapps/directory.
+
 
