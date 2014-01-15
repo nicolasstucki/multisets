@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Multisets API for Scala Collections by nicolasstucki</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Multisets API for Scala Collections</h1>
+        <p class="header">Multisets API for Scala Collections</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/nicolasstucki/multisets/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/nicolasstucki/multisets/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/nicolasstucki/multisets">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/nicolasstucki">nicolasstucki</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="scala-multisets-collection" class="anchor" href="#scala-multisets-collection"><span class="octicon octicon-link"></span></a>Scala Multisets collection</h1>
+
+<p>Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: scala.collection.Bag</p>
+
+<p>The multiset operations consist of: union, intresect, diff, maxUnion (a variant of union that represents the generalised set union), contains, multiplicity, mostCommon, leastCommon, ...</p>
+
+<p>In Scala, the finite Seq can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. Bag is not subtype (or supertype) of Set mainly because of incoherences between the definition of union, intersect, and diff. Bag is a subtype of Iterable.</p>
+
+<p>Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it"s elements to the multiplicity of that element.</p>
+
+<p>The implementation of Bag differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.</p>
+
+<p>The key difference with other implementations is that buckets contain elements that are equivalent to each other but not necessarily equal. This give the user the possibility of grouping elements in a way that suits different needs.</p>
+
+<p>Bag delegates subtasks of the Iterable methods to the underlying BagBucket. Therefore optimizations on buckets are reflected on the overall performance. For example if we take the compact representation it is possible to optimize filter (forall, exists, contains,...) to do only one check on the predicate.</p>
+
+<p>The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a BagBucketFactory that is implicitly taken into every constructor (ideally some default ones should be defined).</p>
+
+<p>The code of bags looks like (input <code>--&gt;</code> output):</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">implicit</span> <span class="k">val</span> <span class="n">m1</span> <span class="k">=</span> <span class="nc">Bag</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">compact</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="c1">// define compact representation for Int</span>
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">m2</span> <span class="k">=</span> <span class="nc">Bag</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">compact</span><span class="o">[</span><span class="kt">Char</span><span class="o">]</span> <span class="c1">// define compact representation for Char</span>
+<span class="nc">Bag</span><span class="o">.</span><span class="n">from</span><span class="o">(</span><span class="s">"c"</span><span class="o">-&gt;</span><span class="mi">2</span><span class="o">,</span> <span class="s">"d"</span><span class="o">-&gt;</span><span class="mi">3</span><span class="o">)</span>         <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="s">"c"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">;</span> <span class="s">"d"</span><span class="o">,</span> <span class="s">"d"</span><span class="o">,</span> <span class="s">"d"</span><span class="o">)</span>
+<span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">3</span><span class="o">)</span>                   <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">;</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">;</span><span class="mi">3</span><span class="o">,</span><span class="mi">3</span><span class="o">)</span>
+<span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">1</span><span class="o">)</span> <span class="n">union</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">)</span>          <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">1</span><span class="o">,</span><span class="mi">1</span><span class="o">;</span><span class="mi">2</span><span class="o">)</span>
+<span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">3</span><span class="o">).</span><span class="n">multiplicity</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>   <span class="o">--&gt;</span> <span class="mi">2</span>
+<span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">3</span><span class="o">).</span><span class="n">multiplicity</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>   <span class="o">--&gt;</span> <span class="mi">0</span>
+<span class="nc">Bag</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">3</span><span class="o">)(</span><span class="mi">2</span><span class="o">)</span>                <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span><span class="mi">2</span><span class="o">)</span> <span class="c1">// Return equivalent elements</span>
+</pre></div>
+
+<div class="highlight highlight-scala"><pre><span class="c1">// buckets will group Int that are equivalent modulo 3</span>
+<span class="k">val</span> <span class="n">mod3Equiv</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Ordering</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">{</span>
+   <span class="k">def</span> <span class="n">compare</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">(</span><span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="o">)</span> <span class="o">-</span> <span class="o">(</span><span class="n">y</span> <span class="o">%</span> <span class="mi">3</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="k">implicit</span> <span class="k">val</span> <span class="n">m</span> <span class="k">=</span> <span class="n">immutable</span><span class="o">.</span><span class="nc">TreeBag</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">keepAll</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="n">mod3Equiv</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="n">bag</span> <span class="k">=</span> <span class="n">immutable</span><span class="o">.</span><span class="nc">TreeBag</span><span class="o">.</span><span class="n">from</span><span class="o">(</span><span class="mi">1</span> <span class="o">-&gt;</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">2</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">4</span> <span class="o">-&gt;</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">6</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">7</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">8</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">)</span>
+
+<span class="n">bag</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>    <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">6</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">3</span><span class="o">)</span> <span class="c1">// equivalent modulo 0</span>
+<span class="n">bag</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>    <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">7</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span> <span class="c1">// equivalent modulo 1</span>
+<span class="n">bag</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>    <span class="o">--&gt;</span> <span class="nc">Bag</span><span class="o">(</span><span class="mi">8</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span> <span class="c1">// equivalent modulo 2</span>
+</pre></div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
