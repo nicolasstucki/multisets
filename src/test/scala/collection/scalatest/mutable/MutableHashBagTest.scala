@@ -20,13 +20,13 @@ class IntMutableHashBagOnKeepAllBucketsTest extends IntBagTest {
 
 }
 
-class IntMutableTreeBagOnBagOfMultiplicitiesWithMod3EquivTest extends IntBagTest {
+class IntMutableHashBagOnBagOfMultiplicitiesWithMod3EquivTest extends IntBagTest {
   implicit def bagBucketConfiguration = mutable.HashBag.configuration.compactWithEquiv(Mod3)
 
   override def emptyBag = mutable.HashBag.empty[Int]
 }
 
-class IntMutableTreeBagOnKeepAllBucketsWithMod3EquivTest extends IntBagTest {
+class IntMutableHashBagOnKeepAllBucketsWithMod3EquivTest extends IntBagTest {
   implicit def bagBucketConfiguration = mutable.HashBag.configuration.keepAll(Mod3)
 
   override def emptyBag = mutable.HashBag.empty[Int]
@@ -49,13 +49,13 @@ class StringMutableHashBagOnKeepAllBucketsBucketTest extends StringBagTest {
 
 }
 
-class StringMutableTreeBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
+class StringMutableHashBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
   implicit def bagBucketConfiguration = mutable.HashBag.configuration.compactWithEquiv(StrSize)
 
   override def emptyBag = mutable.HashBag.empty[String]
 }
 
-class StringMutableTreeBagOnKeepAllBucketsWithStrSizeEquivTest extends StringBagTest {
+class StringMutableHashBagOnKeepAllBucketsWithStrSizeEquivTest extends StringBagTest {
   implicit def bagBucketConfiguration = mutable.HashBag.configuration.keepAll(StrSize)
 
   override def emptyBag = mutable.HashBag.empty[String]

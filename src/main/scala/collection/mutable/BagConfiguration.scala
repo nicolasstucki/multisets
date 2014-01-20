@@ -43,19 +43,18 @@ trait SortedBagConfiguration[A] extends mutable.BagConfiguration[A] with collect
 
 object SortedBagConfiguration {
 
-  private class SortedMultiplicityBagConfiguration[A](protected val equivClass: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
+  private[collection] class SortedMultiplicityBagConfiguration[A](protected val equivClass: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
     def empty(sentinel: A): mutable.MultiplicityBagBucket[A] = new mutable.MultiplicityBagBucket(sentinel, 0)
 
   }
 
-  private class SortedBagOfMultiplicitiesBagBucketConfiguration[A](protected val equivClass: Ordering[A], innerOrdering: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
-    def empty(sentinel: A): mutable.BagOfMultiplicitiesBagBucket[A] = ??? // new mutable.BagBucketBag(sentinel, mutable.TreeBag.empty[A](ofMultiplicities[A](innerOrdering)))
+  private[collection] class SortedBagOfMultiplicitiesBagBucketConfiguration[A](protected val equivClass: Ordering[A], protected[collection] val innerOrdering: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
+    def empty(sentinel: A): mutable.BagOfMultiplicitiesBagBucket[A] = new mutable.BagOfMultiplicitiesBagBucket[A](sentinel, mutable.TreeBag.empty[A](compact[A](innerOrdering)))
   }
 
 
-  private class SortedVectorBagConfiguration[A](protected val equivClass: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
+  private[collection] class SortedVectorBagConfiguration[A](protected val equivClass: Ordering[A]) extends mutable.SortedBagConfiguration[A] {
     def empty(sentinel: A): mutable.ListBagBucket[A] = new mutable.ListBagBucket(sentinel, immutable.List.empty[A])
-
   }
 
 

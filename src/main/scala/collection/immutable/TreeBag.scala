@@ -5,7 +5,7 @@ import scala.collection.immutable.{RedBlackTree => RB}
 import scala.collection.generic.CanBuildFrom
 
 
-final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfiguration: immutable.SortedBagConfiguration[A])
+class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfiguration: immutable.SortedBagConfiguration[A])
   extends Bag[A]
   with BagLike[A, TreeBag[A]]
   with Serializable {
@@ -93,7 +93,7 @@ final class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagC
 
   override def getBucket(elem: A): Option[BagBucket] = RB.get(tree, elem)
 
-  override protected def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
+  override protected[collection] def updatedBucket(bucket: BagBucket): TreeBag[A] = new TreeBag(RB.update(tree, bucket.sentinel, bucket, overwrite = true))
 
 }
 
