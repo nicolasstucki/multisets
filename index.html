@@ -31,23 +31,23 @@
       </header>
       <section>
         <h1>
-<a name="scala-multisets-collection" class="anchor" href="#scala-multisets-collection"><span class="octicon octicon-link"></span></a>Scala Multisets collection</h1>
+<a name="multisets-api-for-scala-collections-bag-trait" class="anchor" href="#multisets-api-for-scala-collections-bag-trait"><span class="octicon octicon-link"></span></a>Multisets API for Scala collections (<code>Bag</code> trait)</h1>
 
-<p>Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: scala.collection.Bag</p>
+<p>Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: <code>scala.collection.Bag</code></p>
 
-<p>The multiset operations consist of: union, intresect, diff, maxUnion (a variant of union that represents the generalised set union), contains, multiplicity, mostCommon, leastCommon, ...</p>
+<p>The multiset operations consist of: <code>union</code>, <code>intresect</code>, <code>diff</code>, <code>maxUnion</code> (a variant of union that represents the generalised set union), <code>contains</code>, <code>multiplicity</code>, <code>mostCommon</code>, <code>leastCommon</code>, ...</p>
 
-<p>In Scala, the finite Seq can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. Bag is not subtype (or supertype) of Set mainly because of incoherences between the definition of union, intersect, and diff. Bag is a subtype of Iterable.</p>
+<p>In Scala, the finite <code>Seq</code> can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. <code>Bag</code> is not subtype (or supertype) of Set mainly because of incoherences between the definition of <code>union</code>, <code>intersect</code>, and <code>diff</code>. <code>Bag</code> is a subtype of <code>Iterable</code>.</p>
 
-<p>Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it"s elements to the multiplicity of that element.</p>
+<p>Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it's elements to the multiplicity of that element.</p>
 
-<p>The implementation of Bag differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.</p>
+<p>The implementation of <code>Bag</code> differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.</p>
 
 <p>The key difference with other implementations is that buckets contain elements that are equivalent to each other but not necessarily equal. This give the user the possibility of grouping elements in a way that suits different needs.</p>
 
-<p>Bag delegates subtasks of the Iterable methods to the underlying BagBucket. Therefore optimizations on buckets are reflected on the overall performance. For example if we take the compact representation it is possible to optimize filter (forall, exists, contains,...) to do only one check on the predicate.</p>
+<p>Bag delegates subtasks of the Iterable methods to the underlying <code>BagBucket</code>. Therefore optimizations on buckets are reflected on the overall performance. For example if we take the compact representation it is possible to optimize filter (<code>forall</code>, <code>exists</code>, <code>contains</code>,...) to do only one check on the predicate.</p>
 
-<p>The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a BagBucketFactory that is implicitly taken into every constructor (ideally some default ones should be defined).</p>
+<p>The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a <code>BagBucketFactory</code> that is implicitly taken into every constructor (ideally some default ones should be defined).</p>
 
 <p>The code of bags looks like (input <code>--&gt;</code> output):</p>
 
