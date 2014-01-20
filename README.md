@@ -1,21 +1,21 @@
-Scala Multisets collection
+Multisets API for Scala collections (`Bag` trait)
 =========
 
-Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multi-sets are represented as: scala.collection.Bag
+Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: `scala.collection.Bag`
 
-The multiset operations consist of: union, intresect, diff, maxUnion (a variant of union that represents the generalised set union), contains, multiplicity, mostCommon, leastCommon, ...
+The multiset operations consist of: `union`, `intresect`, `diff`, `maxUnion` (a variant of union that represents the generalised set union), `contains`, `multiplicity`, `mostCommon`, `leastCommon`, ...
 
-In Scala, the finite Seq can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. Bag is not subtype (or supertype) of Set mainly because of incoherences between the definition of union, intersect, and diff. Bag is a subtype of Iterable.
+In Scala, the finite `Seq` can be used to represent multisets but are not optimized for their uses cases. Bag is not a subtype of Seq mainly because it has no indexing. `Bag` is not subtype (or supertype) of Set mainly because of incoherences between the definition of `union`, `intersect`, and `diff`. `Bag` is a subtype of `Iterable`.
 
-Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it"s elements to the multiplicity of that element.
+Other languages usually use a compact representation of multisets where the data structure keeps a mapping from it's elements to the multiplicity of that element.
 
-The implementation of Bag differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.
+The implementation of `Bag` differs from those implementations by making the representation of elements more generic. Bag are mappings from elements to a BagBucket. This gives the possibility of implementing the bucket just like it is implemented in other languages or implementing custom buckets that fit some more specific purpose.
 
 The key difference with other implementations is that buckets contain elements that are equivalent to each other but not necessarily equal. This give the user the possibility of grouping elements in a way that suits different needs.
 
-Bag delegates subtasks of the Iterable methods to the underlying BagBucket. Therefore optimizations on buckets are reflected on the overall performance. For example if we take the compact representation it is possible to optimize filter (forall, exists, contains,...) to do only one check on the predicate.
+Bag delegates subtasks of the Iterable methods to the underlying `BagBucket`. Therefore optimizations on buckets are reflected on the overall performance. For example if we take the compact representation it is possible to optimize filter (`forall`, `exists`, `contains`,...) to do only one check on the predicate.
 
-The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a BagBucketFactory that is implicitly taken into every constructor (ideally some default ones should be defined).
+The type of bucket that the bucket will have is defined at the construction of that bucket. It is defined using a `BagBucketFactory` that is implicitly taken into every constructor (ideally some default ones should be defined).
 
 The code of bags looks like (input `-->` output):
 
