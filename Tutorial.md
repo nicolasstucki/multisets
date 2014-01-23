@@ -1,5 +1,8 @@
 Tutorial
 ========
+Maven repository
+----------------
+Download Scala multisets from Maven Central: https://github.com/nicolasstucki/multisets/blob/master/MavenRepository.md
 
 Trait Bag
 ---------
