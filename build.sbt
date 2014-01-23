@@ -4,6 +4,8 @@ version := "0.1"
 
 scalaVersion := "2.10.2"
 
+organization := "io.github.nicolasstucki"
+
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies ++= Seq(
@@ -15,14 +17,12 @@ testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
 
 EclipseKeys.withSource := true
 
-
-
-publishTo <<= isSnapshot apply { value =>
+publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (value)
+  if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
 publishMavenStyle := true
@@ -48,6 +48,7 @@ pomExtra := (
     <developer>
       <id>nicolas.stucki</id>
       <name>Nicolas Stucki</name>
+      <url>http://io.github.nicolasstucki</url>
     </developer>
   </developers>
 )
