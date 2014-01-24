@@ -1,6 +1,7 @@
 *.class
 *.log
 *.history
+*.iml
 
 # sbt specific
 dist/*
