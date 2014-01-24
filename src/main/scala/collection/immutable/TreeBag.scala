@@ -10,6 +10,8 @@ class TreeBag[A] private(tree: RB.Tree[A, BagBucket[A]])(implicit val bagConfigu
   with BagLike[A, TreeBag[A]]
   with Serializable {
 
+  implicit val ord: Ordering[A] = bagConfiguration.equivClass
+
   override protected[this] def newBuilder: mutable.BagBuilder[A, immutable.TreeBag[A]] = immutable.TreeBag.newBuilder
 
   override def size: Int = bucketsIterator.map(_.size).sum

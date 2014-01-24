@@ -23,7 +23,7 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
     clearTable()
   }
 
-  override protected def elemHashCode(key: A): Int = bagConfiguration.hash(key)
+  override protected def elemHashCode(key: A): Int = bagConfiguration.equivClass.hash(key)
 
   override def getBucket(elem: A): Option[BagBucket] = {
     val e = findEntry(elem)

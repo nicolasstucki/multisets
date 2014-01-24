@@ -21,7 +21,6 @@ class TreeBag[A](initialContents: immutable.TreeBag[A])(implicit protected val b
 
   def bucketsIterator: Iterator[BagBucket] = contents.bucketsIterator.map(bagConfiguration.bucketFrom(_))
 
-
   override def addedBucket(bucket: collection.BagBucket[A]): mutable.TreeBag[A] = new mutable.TreeBag(contents.addedBucket(immutableBagConfiguration.bucketFrom(bucket)))
 
   override def getBucket(elem: A): Option[mutable.TreeBag[A]#BagBucket] = contents.getBucket(elem).map(bagConfiguration.bucketFrom)
@@ -38,9 +37,9 @@ object TreeBag extends generic.MutableSortedBagFactory[mutable.TreeBag] {
 
   def empty[A](implicit bagConfiguration: mutable.SortedBagConfiguration[A]): mutable.TreeBag[A] = {
     implicit val config = bagConfiguration match {
-      case conf: SortedBagOfMultiplicitiesBagBucketConfiguration[A] => immutable.TreeBag.configuration.compactWithEquiv(conf)(conf.innerOrdering)
-      case conf: SortedVectorBagConfiguration[A] => immutable.TreeBag.configuration.keepAll
-      case _ => immutable.TreeBag.configuration.compact
+      case conf: SortedBagOfMultiplicitiesBagBucketConfiguration[A] => immutable.TreeBag.configuration.compactWithEquiv[A](conf.equivClass)(conf.innerOrdering)
+      case conf: SortedVectorBagConfiguration[A] => immutable.TreeBag.configuration.keepAll[A](conf.equivClass)
+      case conf => immutable.TreeBag.configuration.compact[A](conf.equivClass)
     }
     new mutable.TreeBag(immutable.TreeBag.empty[A](config))
   }
