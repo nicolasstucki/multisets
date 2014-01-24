@@ -6,15 +6,26 @@ trait GenBagLike[A, +Repr]
   extends GenIterableLike[A, Repr]
   with Equals {
 
-
   protected type BagBucket <: collection.BagBucket[A]
 
+  /**
+   *
+   * @return
+   */
   protected def bagConfiguration: collection.BagConfiguration[A, BagBucket]
 
+  /**
+   * Iterator over buckets
+   * @return
+   */
   def bucketsIterator: Iterator[BagBucket]
 
   def iterator: Iterator[A] = bucketsIterator.flatMap(_.iterator)
 
+  /**
+   * Iterator over distinct elements
+   * @return
+   */
   def distinctIterator: Iterator[A] = bucketsIterator.flatMap(_.distinctIterator)
 
   def multiplicity(elem: A): Int = getBucket(elem) match {

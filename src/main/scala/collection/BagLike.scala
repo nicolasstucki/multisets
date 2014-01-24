@@ -84,7 +84,6 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   }
 
 
-  // Added Bucket
   def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(bucket => bagConfiguration.equiv(elem, bucket.sentinel))
 
   def addedBucket(bucket: collection.BagBucket[A]): This = getBucket(bucket.sentinel) match {
@@ -242,6 +241,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
         b.addBucket(bucket)
         taken += m
       } else {
+        // TODO implement BagBucketLike to have bucket.take and use it here
         bucket.take(n - taken).foreach(b += _)
         taken = n
       }

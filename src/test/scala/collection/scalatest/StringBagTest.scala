@@ -18,11 +18,11 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
 
   def bagWithCat = emptyBag + "Cat"
 
-  def bagWithCatCatCat = emptyBag added ("Cat" -> 3)
+  def bagWithCatCatCat = emptyBag + ("Cat" -> 3)
 
   def bagWithCatDogMouse = emptyBag + "Cat" + "Dog" + "Mouse"
 
-  def bagWithCatCatDogMouseMouseMouse = emptyBag added ("Cat" -> 2) added ("Dog" -> 1) added ("Mouse" -> 3)
+  def bagWithCatCatDogMouseMouseMouse = emptyBag + ("Cat" -> 2) + ("Dog" -> 1) + ("Mouse" -> 3)
 
   def bags = Seq(bagWithCat, bagWithCatCatCat, bagWithCatDogMouse, bagWithCatCatDogMouseMouseMouse)
 

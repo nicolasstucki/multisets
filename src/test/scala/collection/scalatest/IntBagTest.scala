@@ -19,11 +19,11 @@ abstract class IntBagTest extends FlatSpec with IntBagBehaviors {
 
   def bagWithOne = emptyBag + 1
 
-  def bagWithOneOneOne = emptyBag added (1 -> 3)
+  def bagWithOneOneOne = emptyBag + (1 -> 3)
 
   def bagWithOneTwoThree = emptyBag + 1 + 2 + 3
 
-  def bagWithOneOneTwoThreeThreeThree = emptyBag added (1 -> 2) added (2 -> 1) added (3 -> 3)
+  def bagWithOneOneTwoThreeThreeThree = emptyBag + (1 -> 2) + (2 -> 1) + (3 -> 3)
 
   def bags = Seq(bagWithOne, bagWithOneOneOne, bagWithOneTwoThree, bagWithOneOneTwoThreeThreeThree)
 

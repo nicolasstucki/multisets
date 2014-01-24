@@ -25,16 +25,16 @@ trait StringBagBehaviors extends BagBehaviors with Matchers {
 
     it should "grow by m with +(elem->m) operation" in {
       assertResult(bag.size + 4) {
-        (bag added ("cat" -> 4)).size
+        (bag + ("cat" -> 4)).size
       }
       assertResult(bag.size + 1) {
-        (bag added ("dog" -> 1)).size
+        (bag + ("dog" -> 1)).size
       }
       assertResult(bag.size) {
-        (bag added ("fish" -> 0)).size
+        (bag + ("fish" -> 0)).size
       }
       assertResult(bag.size) {
-        (bag added ("fish" -> -3)).size
+        (bag + ("fish" -> -3)).size
       }
     }
 
