@@ -6,7 +6,7 @@ import org.scalatest._
 import scala.collection
 import scala.util.hashing.Hashing
 
-abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
+abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
 
   object StrSize extends Ordering[String] with Hashing[String] {
     def hash(x: String): Int = x.size.hashCode()
@@ -27,8 +27,8 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
   def bags = Seq(bagWithCat, bagWithCatCatCat, bagWithCatDogMouse, bagWithCatCatDogMouseMouseMouse)
 
 
-  "An empty Bag" should behave like emptyBagBehavior(emptyBag, bags)
-  it should behave like stringBagBehavior(emptyBag)
+  "An empty Bag" should behave like emptyBagBehaviour(emptyBag, bags)
+  it should behave like stringBagBehaviour(emptyBag)
 
   """Bag {"Cat"}""" should """have the same content as List("Cat")""" in {
     assert(bagWithCat.iterator.toList.sorted == List("Cat"))
@@ -47,8 +47,8 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
       bagWithCat multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehavior(bagWithCat, bags)
-  it should behave like stringBagBehavior(bagWithCat)
+  it should behave like nonEmptyBagBehaviour(bagWithCat, bags)
+  it should behave like stringBagBehaviour(bagWithCat)
 
 
   """Bag {"Cat","Cat","Cat"}""" should """have the same content as List("Cat","Cat","Cat")""" in {
@@ -68,8 +68,8 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
       bagWithCatCatCat multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehavior(bagWithCatCatCat, bags)
-  it should behave like stringBagBehavior(bagWithCatCatCat)
+  it should behave like nonEmptyBagBehaviour(bagWithCatCatCat, bags)
+  it should behave like stringBagBehaviour(bagWithCatCatCat)
 
 
   """Bag {"Cat","Dog","Mouse"}""" should """have the same content as List("Cat","Dog","Mouse")""" in {
@@ -89,8 +89,8 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
       bagWithCatDogMouse multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehavior(bagWithCatDogMouse, bags)
-  it should behave like stringBagBehavior(bagWithCatDogMouse)
+  it should behave like nonEmptyBagBehaviour(bagWithCatDogMouse, bags)
+  it should behave like stringBagBehaviour(bagWithCatDogMouse)
 
 
   """Bag {"Cat","Cat","Dog","Mouse","Mouse","Mouse"}""" should """have the same content as List("Cat","Cat","Dog","Mouse","Mouse","Mouse")""" in {
@@ -110,8 +110,8 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviors {
       bagWithCatCatDogMouseMouseMouse multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehavior(bagWithCatCatDogMouseMouseMouse, bags)
-  it should behave like stringBagBehavior(bagWithCatCatDogMouseMouseMouse)
+  it should behave like nonEmptyBagBehaviour(bagWithCatCatDogMouseMouseMouse, bags)
+  it should behave like stringBagBehaviour(bagWithCatCatDogMouseMouseMouse)
 
 
 }

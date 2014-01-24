@@ -87,6 +87,10 @@ final class MultiplicityBagBucket[A](val sentinel: A, var multiplicity: Int)
 
   def removed(elem: A, count: Int): BagBucket = new mutable.MultiplicityBagBucket(sentinel, Math.max(0, multiplicity - count))
 
+  def distinct: BagBucket = {
+    if (multiplicity >= 1) new mutable.MultiplicityBagBucket(sentinel, 1)
+    else new mutable.MultiplicityBagBucket(sentinel, 0)
+  }
 }
 
 final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Bag[A])
@@ -133,6 +137,8 @@ final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Ba
     case bagBucketBag: collection.BagOfMultiplicitiesBagBucket[A] => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag intersect bagBucketBag.bag)
     case _ => new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.intersect(bag.empty ++ that))
   }
+
+  def distinct: mutable.BagOfMultiplicitiesBagBucket[A]#BagBucket = new mutable.BagOfMultiplicitiesBagBucket(sentinel, bag.distinct)
 }
 
 
@@ -189,6 +195,8 @@ final class ListBagBucket[A](val sentinel: A, initialList: immutable.List[A])
     list = removedFromList(elem, list, list.length)
     this
   }
+
+  def distinct: mutable.ListBagBucket[A]#BagBucket = new mutable.ListBagBucket[A](sentinel, list.distinct)
 }
 
 

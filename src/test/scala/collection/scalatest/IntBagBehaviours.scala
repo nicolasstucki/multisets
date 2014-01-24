@@ -2,11 +2,11 @@ package scala.collection.scalatest
 
 import org.scalatest._
 
-trait IntBagBehaviors extends BagBehaviors with Matchers {
+trait IntBagBehaviours extends BagBehaviours with Matchers {
   this: FlatSpec =>
 
 
-  def intBagBehavior(bag: => collection.Bag[Int]) {
+  def intBagBehaviour(bag: => collection.Bag[Int]) {
 
     it should "grow by 1 with +(elem) operation" in {
       assertResult(bag.size + 1) {

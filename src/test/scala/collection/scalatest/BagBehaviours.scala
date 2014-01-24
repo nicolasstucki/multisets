@@ -3,10 +3,10 @@ package scala.collection.scalatest
 import org.scalatest._
 import java.lang.UnsupportedOperationException
 
-trait BagBehaviors {
+trait BagBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBehavior[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
+  def emptyBagBehaviour[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
     it should "be empty" in {
       assert(bag.isEmpty, s"bag = $bag")
     }
@@ -35,13 +35,13 @@ trait BagBehaviors {
       assert(bag.leastCommon.isEmpty, s"bag = $bag")
     }
 
-    it should behave like bagBehavior(bag)
+    it should behave like bagBehaviour(bag)
 
-    it should behave like multisetBehavior(bag, bags)
+    it should behave like multisetBehaviour(bag, bags)
 
   }
 
-  def nonEmptyBagBehavior[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
+  def nonEmptyBagBehaviour[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
     it should "not be empty" in {
       assert(!bag.isEmpty, s"bag = $bag")
     }
@@ -93,12 +93,12 @@ trait BagBehaviors {
       }
     }
 
-    it should behave like bagBehavior(bag)
+    it should behave like bagBehaviour(bag)
 
-    it should behave like multisetBehavior(bag, bags)
+    it should behave like multisetBehaviour(bag, bags)
   }
 
-  private def multisetBehavior[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
+  private def multisetBehaviour[A](bag: => collection.Bag[A], bags: => Seq[collection.Bag[A]]) {
 
     it should "implement [union] as a multiset union" in {
       for (bag2 <- bags) {
@@ -168,7 +168,7 @@ trait BagBehaviors {
 
   }
 
-  private def bagBehavior[A](bag: => collection.Bag[A]) {
+  private def bagBehaviour[A](bag: => collection.Bag[A]) {
 
     it should "have non negative size" in {
       assert(bag.size >= 0, s"bag = $bag")

@@ -41,6 +41,10 @@ class MultiplicityBagBucket[A](val sentinel: A, val multiplicity: Int)
   def diff(that: collection.BagBucket[A]): BagBucket =
     new immutable.MultiplicityBagBucket(sentinel, Math.max(this.multiplicity - that.multiplicity(sentinel), 0))
 
+  def distinct: BagOfMultiplicitiesBagBucket[A]#BagBucket = {
+    if (multiplicity <= 1) this
+    else new immutable.MultiplicityBagBucket(sentinel, 1)
+  }
 }
 
 class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: immutable.Bag[A])
@@ -64,6 +68,8 @@ class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: immutable.Bag[A]
   override def -(elem: A): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag - elem)
 
   def removed(elem: A, count: Int): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.removed(elem, count))
+
+  def distinct: BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.distinct)
 }
 
 class ListBagBucket[A](val sentinel: A, val list: List[A])
@@ -87,6 +93,8 @@ class ListBagBucket[A](val sentinel: A, val list: List[A])
   def diff(that: collection.BagBucket[A]): BagBucket = new immutable.ListBagBucket[A](sentinel, list.diff(that.toList))
 
   def removed(elem: A, count: Int): BagBucket = new immutable.ListBagBucket[A](sentinel, removedFromList(elem, list, count))
+
+  def distinct: ListBagBucket[A]#BagBucket = new immutable.ListBagBucket[A](sentinel, list.distinct)
 }
 
 

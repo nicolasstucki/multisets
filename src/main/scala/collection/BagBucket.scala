@@ -37,6 +37,8 @@ trait BagBucket[A]
 
   def +(elem: A): BagBucket = added(elem, 1)
 
+  def +(elemCount: (A, Int)): BagBucket = added(elemCount._1, elemCount._2)
+
   def added(elem: A, count: Int): BagBucket
 
   def addedBucket(bucket: collection.BagBucket[A]): BagBucket
@@ -44,6 +46,8 @@ trait BagBucket[A]
   def -(elem: A): BagBucket = removed(elem, 1)
 
   def removed(elem: A, count: Int): BagBucket
+
+  def distinct: BagBucket
 
   def distinctIterator: Iterator[A]
 }
@@ -56,9 +60,19 @@ trait MultiplicityBagBucket[A] extends BagBucket[A] {
   def multiplicity(elem: A): Int = if (elem == sentinel) multiplicity else 0
 
 
-  override def maxMultiplicity: Int = multiplicity
+  override def maxMultiplicity: Int = {
+    if (multiplicity == 0)
+      throw new UnsupportedOperationException("empty.maxMultiplicity")
 
-  override def minMultiplicity: Int = multiplicity
+    multiplicity
+  }
+
+  override def minMultiplicity: Int = {
+    if (multiplicity == 0)
+      throw new UnsupportedOperationException("empty.minMultiplicity")
+
+    multiplicity
+  }
 
   override def subsetOf(that: collection.BagBucket[A]): Boolean = multiplicity <= that.multiplicity(sentinel)
 
