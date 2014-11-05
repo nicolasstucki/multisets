@@ -1,5 +1,4 @@
-package scala
-package collection
+package scala.collection
 
 
 import generic._

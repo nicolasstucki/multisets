@@ -6,7 +6,7 @@ import java.lang.UnsupportedOperationException
 trait BagBucketBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBucketBehaviour[A](bagBucket: => collection.BagBucket[A], bagBuckets: => Seq[collection.BagBucket[A]]) {
+  def emptyBagBucketBehaviour[A](bagBucket: => scala.collection.BagBucket[A], bagBuckets: => Seq[scala.collection.BagBucket[A]]) {
     it should "be empty" in {
       assert(bagBucket.isEmpty, s"bagBucket = $bagBucket")
     }
@@ -36,7 +36,7 @@ trait BagBucketBehaviours {
 
   }
 
-  def nonEmptyBagBucketBehaviour[A](bagBucket: => collection.BagBucket[A], bagBuckets: => Seq[collection.BagBucket[A]]) {
+  def nonEmptyBagBucketBehaviour[A](bagBucket: => scala.collection.BagBucket[A], bagBuckets: => Seq[scala.collection.BagBucket[A]]) {
     it should "not be empty" in {
       assert(!bagBucket.isEmpty, s"bagBucket = $bagBucket")
     }
@@ -66,7 +66,7 @@ trait BagBucketBehaviours {
     it should behave like multisetBehaviour(bagBucket, bagBuckets)
   }
 
-  private def multisetBehaviour[A](bagBucket: => collection.BagBucket[A], bagBuckets: => Seq[collection.BagBucket[A]]) {
+  private def multisetBehaviour[A](bagBucket: => scala.collection.BagBucket[A], bagBuckets: => Seq[scala.collection.BagBucket[A]]) {
 
 //    it should "implement [union] as a multiset union" in {
 //      for (bagBucket2 <- bagBuckets) {
@@ -135,7 +135,7 @@ trait BagBucketBehaviours {
 //    }
   }
 
-  private def bagBucketBehaviour[A](bagBucket: => collection.BagBucket[A]) {
+  private def bagBucketBehaviour[A](bagBucket: => scala.collection.BagBucket[A]) {
 
     it should "have non negative size" in {
       assert(bagBucket.size >= 0, s"bagBucket = $bagBucket")

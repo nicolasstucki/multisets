@@ -4,7 +4,7 @@ import scala.collection._
 import scala.collection.generic._
 
 trait Bag[A]
-  extends collection.Bag[A]
+  extends scala.collection.Bag[A]
   with immutable.BagLike[A, immutable.Bag[A]] {
 
 

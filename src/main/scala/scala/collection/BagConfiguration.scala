@@ -3,7 +3,7 @@ package scala.collection
 import scala.util.hashing.Hashing
 
 
-trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] {
+trait BagConfiguration[A, +BagBucket <: scala.collection.BagBucket[A]] {
 
   /**
    *
@@ -43,7 +43,7 @@ trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] {
    * @param bucket
    * @return
    */
-  def bucketFrom(bucket: collection.BagBucket[A]): BagBucket = (newBuilder(bucket.sentinel) addBucket bucket).result()
+  def bucketFrom(bucket: scala.collection.BagBucket[A]): BagBucket = (newBuilder(bucket.sentinel) addBucket bucket).result()
 
   /**
    *
@@ -51,7 +51,7 @@ trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] {
    * @param otherBucket
    * @return
    */
-  def bucketFrom(bucket: collection.BagBucket[A], otherBucket: collection.BagBucket[A]): BagBucket =
+  def bucketFrom(bucket: scala.collection.BagBucket[A], otherBucket: scala.collection.BagBucket[A]): BagBucket =
     (newBuilder(bucket.sentinel) addBucket bucket addBucket otherBucket).result()
 
   /**
@@ -63,7 +63,7 @@ trait BagConfiguration[A, +BagBucket <: collection.BagBucket[A]] {
 
 }
 
-trait HashedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] {
+trait HashedBagConfiguration[A, +BagBucket <: scala.collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] {
   def equivClass: Equiv[A] with Hashing[A]
 }
 
@@ -79,6 +79,6 @@ object HashedBagConfiguration {
 
 }
 
-trait SortedBagConfiguration[A, +BagBucket <: collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] {
+trait SortedBagConfiguration[A, +BagBucket <: scala.collection.BagBucket[A]] extends BagConfiguration[A, BagBucket] {
   def equivClass: Ordering[A]
 }

@@ -3,7 +3,7 @@ package scala.collection
 object TestBagFactory {
 
 
-  def squareBag[A, Bag <: collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
+  def squareBag[A, Bag <: scala.collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
     val sqrt = Math.sqrt(size).toInt
 
     for (n <- 1 to sqrt) {
@@ -14,7 +14,7 @@ object TestBagFactory {
     builder.result()
   }
 
-  def stepsBag[A, Bag <: collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
+  def stepsBag[A, Bag <: scala.collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
     var i = 1
     var n = 0
     while (n < size) {
@@ -25,7 +25,7 @@ object TestBagFactory {
     builder.result()
   }
 
-  def setBag[A, Bag <: collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
+  def setBag[A, Bag <: scala.collection.Bag[A]](size: Int, builder: mutable.BagBuilder[A, Bag], tab: Int => A): Bag = {
     for (n <- 1 to size) {
       builder += tab(n)
     }

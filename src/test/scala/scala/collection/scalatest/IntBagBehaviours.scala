@@ -2,39 +2,39 @@ package scala.collection.scalatest
 
 import org.scalatest._
 
-trait StringBagBucketBehaviours extends BagBucketBehaviours with Matchers {
+trait IntBagBehaviours extends BagBehaviours with Matchers {
   this: FlatSpec =>
 
 
-  def stringBagBucketBehaviour(bag: => collection.BagBucket[String]) {
+  def intBagBehaviour(bag: => scala.collection.Bag[Int]) {
 
     it should "grow by 1 with +(elem) operation" in {
       assertResult(bag.size + 1) {
-        val newBagBucket = bag + "cat"
-        newBagBucket.size
+        val newBag = bag + 1
+        newBag.size
       }
       assertResult(bag.size + 1) {
-        val newBagBucket = bag + "dog"
-        newBagBucket.size
+        val newBag = bag + 2
+        newBag.size
       }
       assertResult(bag.size + 1) {
-        val newBagBucket = bag + "mouse"
-        newBagBucket.size
+        val newBag = bag + 10
+        newBag.size
       }
     }
 
     it should "grow by m with +(elem->m) operation" in {
       assertResult(bag.size + 4) {
-        (bag + ("cat" -> 4)).size
+        (bag + (1 -> 4)).size
       }
       assertResult(bag.size + 1) {
-        (bag + ("dog" -> 1)).size
+        (bag + (2 -> 1)).size
       }
       assertResult(bag.size) {
-        (bag + ("fish" -> 0)).size
+        (bag + (3 -> 0)).size
       }
       assertResult(bag.size) {
-        (bag + ("fish" -> -3)).size
+        (bag + (3 -> -3)).size
       }
     }
 
@@ -55,25 +55,20 @@ trait StringBagBucketBehaviours extends BagBucketBehaviours with Matchers {
       }
     }
 
-    it should "have the same size when mapped" in {
-      assertResult(bag.size) {
-        (bag map (s => s)).size
-      }
-      assertResult(bag.size) {
-        (bag map (s => s.toLowerCase)).size
-      }
-      assertResult(bag.size) {
-        (bag map (s => "cat")).size
+
+    it should "implement [sum]" in {
+      assertResult(bag.toList.sum) {
+        bag.sum
       }
     }
 
-    if (bag.nonEmpty) {
-      it should "implement reduce coherently" in {
-        assertResult(bag.toList.reduce(_ + _)) {
-          bag.reduce(_ + _)
-        }
+    it should "implement [product]" in {
+      assertResult(bag.toList.product) {
+        bag.product
       }
     }
+
+
   }
 
 

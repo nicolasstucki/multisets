@@ -5,7 +5,7 @@ package generic
 import scala.language.higherKinds
 
 
-trait GenericBagCompanion[CC[X] <: collection.Bag[X], BB[X] <: collection.BagBucket[X], BC[X] <: collection.BagConfiguration[X, BB[X]]] {
+trait GenericBagCompanion[CC[X] <: scala.collection.Bag[X], BB[X] <: scala.collection.BagBucket[X], BC[X] <: scala.collection.BagConfiguration[X, BB[X]]] {
 
   type Coll = CC[_]
 

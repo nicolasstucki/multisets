@@ -9,6 +9,6 @@ trait GrowableBag[A] extends Growable[A] {
 
   def add(elem: A, count: Int): this.type
 
-  def addBucket(bucket: collection.BagBucket[A]): this.type
+  def addBucket(bucket: scala.collection.BagBucket[A]): this.type
 
 }

@@ -4,13 +4,13 @@ import scala.collection.{immutable, mutable}
 import scala.util.hashing.Hashing
 
 trait BagConfiguration[A]
-  extends collection.BagConfiguration[A, mutable.BagBucket[A]] {
+  extends scala.collection.BagConfiguration[A, mutable.BagBucket[A]] {
 
   def newBuilder(sentinel: A) = new mutable.GrowingBagBucketBuilder[A](empty(sentinel))
 }
 
 
-trait HashedBagConfiguration[A] extends mutable.BagConfiguration[A] with collection.HashedBagConfiguration[A, mutable.BagBucket[A]]
+trait HashedBagConfiguration[A] extends mutable.BagConfiguration[A] with scala.collection.HashedBagConfiguration[A, mutable.BagBucket[A]]
 
 object HashedBagConfiguration {
 
@@ -39,7 +39,7 @@ object HashedBagConfiguration {
 }
 
 
-trait SortedBagConfiguration[A] extends mutable.BagConfiguration[A] with collection.SortedBagConfiguration[A, mutable.BagBucket[A]]
+trait SortedBagConfiguration[A] extends mutable.BagConfiguration[A] with scala.collection.SortedBagConfiguration[A, mutable.BagBucket[A]]
 
 object SortedBagConfiguration {
 

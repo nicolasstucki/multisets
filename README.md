@@ -1,7 +1,7 @@
 Multisets API for Scala collections (`Bag` trait)
 =========
 
-Multisets API for Scala is a new kind of collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: `scala.collection.Bag`
+Multisets API for Scala is a new kind of scala.collection (on scala) that is intended to have efficient implementations of multiset operations. Multisets are represented as: `scala.scala.collection.Bag`
 
 The multiset operations consist of: `union`, `intresect`, `diff`, `maxUnion` (a variant of union that represents the generalised set union), `contains`, `multiplicity`, `mostCommon`, `leastCommon`, ...
 

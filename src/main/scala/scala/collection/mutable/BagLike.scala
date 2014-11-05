@@ -4,7 +4,7 @@ import scala.collection._
 import scala.language.higherKinds
 
 trait BagLike[A, +This <: mutable.Bag[A] with mutable.BagLike[A, This]]
-  extends collection.BagLike[A, This]
+  extends scala.collection.BagLike[A, This]
   with generic.Subtractable[A, This]
   with generic.GrowableBag[A] {
   self =>

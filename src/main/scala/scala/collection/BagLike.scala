@@ -11,11 +11,11 @@ import scala.collection.immutable.RedBlackTree
   * `TraversableLike` by an iterator version.
   *
   * @author Nicolas Stucki
-  * @tparam A    the element type of the collection
-  * @tparam This the type of the actual collection containing the elements.
+  * @tparam A    the element type of the scala.collection
+  * @tparam This the type of the actual scala.collection containing the elements.
   *
   * @define Coll Bag
-  * @define coll bag collection
+  * @define coll bag scala.collection
   */
 trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
   extends IterableLike[A, This]
@@ -86,7 +86,7 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def getBucket(elem: A): Option[BagBucket] = bucketsIterator.find(bucket => bagConfiguration.equiv(elem, bucket.sentinel))
 
-  def addedBucket(bucket: collection.BagBucket[A]): This = getBucket(bucket.sentinel) match {
+  def addedBucket(bucket: scala.collection.BagBucket[A]): This = getBucket(bucket.sentinel) match {
     case Some(bucket2) => updatedBucket(bagConfiguration.bucketFrom(bucket, bucket2))
     case None => updatedBucket(bagConfiguration.bucketFrom(bucket))
   }
