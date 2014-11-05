@@ -47,6 +47,10 @@ bag(1)    --> Bag(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
 bag(2)    --> Bag(8, 5, 2) // equivalent modulo 2
 ```
 
+Tutorial
+--------
+[Complete tutorial](https://github.com/nicolasstucki/multisets/blob/2.11.x/Tutorial.md)
+
 Maven repository
 ----------------
 It is availabe on Maven Central [https://github.com/nicolasstucki/multisets/blob/master/MavenRepository.md]
