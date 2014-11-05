@@ -41,6 +41,7 @@ implicit val m = immutable.TreeBag.configuration.keepAll[Int](mod3Equiv)
 
 val bag = scala.collection.immutable.TreeBag.from(1 -> 2, 3 -> 3, 2 -> 1, 4 -> 4, 5 -> 1, 6 -> 1, 7 -> 1, 8 -> 1)
 
+bag       --> Bag(6, 3, 3, 3; 7, 4, 4, 4, 4, 1, 1; 8, 5, 2) // Groups of equivalent elements are separated by ';'
 bag(0)    --> Bag(6, 3, 3, 3) // equivalent modulo 0
 bag(1)    --> Bag(7, 4, 4, 4, 4, 1, 1) // equivalent modulo 1
 bag(2)    --> Bag(8, 5, 2) // equivalent modulo 2
