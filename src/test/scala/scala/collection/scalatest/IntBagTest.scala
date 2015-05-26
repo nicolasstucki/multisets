@@ -10,7 +10,7 @@ import scala.util.hashing.Hashing
 abstract class IntBagTest extends FlatSpec with IntBagBehaviours {
 
   object Mod3 extends Ordering[Int] with Hashing[Int] {
-    def hash(x: Int): Int = (x % 3).hashCode()
+    def hash(x: Int): Int = (x % 3)
 
     def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
   }

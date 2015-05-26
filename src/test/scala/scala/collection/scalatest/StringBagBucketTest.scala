@@ -9,7 +9,7 @@ import scala.util.hashing.Hashing
 abstract class StringBagBucketTest extends FlatSpec with StringBagBucketBehaviours {
 
   object StrSize extends Ordering[String] with Hashing[String] {
-    def hash(x: String): Int = x.size.hashCode()
+    def hash(x: String): Int = x.size
 
     def compare(x: String, y: String): Int = x.size compare y.size
   }
