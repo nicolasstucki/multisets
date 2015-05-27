@@ -4,24 +4,14 @@ import scala.collection._
 import scala.collection.generic.CanBuildFrom
 import scala.collection.generic
 
-private[immutable] final class ReHashBox[A](elem: A, hash: Int) {
-    override def hashCode() = hash
-    override def equals(o: Any) = o match {
-        case a: ReHashBox[_] =>
-            a.hashCode() == hashCode()
-        case _ => false
-    }
-    def getElem = elem
-}
 
-class HashBag[A] private[collection](contents: HashMap[ReHashBox[A], immutable.BagBucket[A]])(implicit protected  val bagConfiguration: immutable.HashedBagConfiguration[A])
+class HashBag[A] private[collection](contents: HashMap[Int, immutable.BagBucket[A]])(implicit protected  val bagConfiguration: immutable.HashedBagConfiguration[A])
   extends immutable.Bag[A]
   with immutable.BagLike[A, immutable.HashBag[A]]
   with Serializable {
     private val hash = bagConfiguration.equivClass.hash _
 
-    implicit def toBox(elem: A): ReHashBox[A] =
-        new ReHashBox(elem, hash(elem))
+    private def getKey(elem: A): Int = hash(elem)
 
     override protected[this] def newBuilder: mutable.BagBuilder[A, HashBag[A]] =
         HashBag.newBuilder
@@ -30,11 +20,11 @@ class HashBag[A] private[collection](contents: HashMap[ReHashBox[A], immutable.B
         immutable.HashBag.empty[A](bagConfiguration)
 
     override def getBucket(elem: A): Option[BagBucket] = {
-        contents.get(elem)
+        contents.get(getKey(elem))
     }
 
     protected def updatedBucket(bucket: BagBucket): HashBag[A] = {
-        new HashBag[A](contents.updated(bucket.sentinel, bucket))
+        new HashBag[A](contents.updated(getKey(bucket.sentinel), bucket))
     }
 
     def bucketsIterator: Iterator[BagBucket] = {
@@ -56,15 +46,14 @@ object HashBag extends generic.ImmutableHashedBagFactory[immutable.HashBag] {
       extends mutable.BagBuilder[A, HashBag[A]] {
         private val hash = bagConfiguration.equivClass.hash _
 
-        implicit def toBox(elem: A): ReHashBox[A] =
-            new ReHashBox(elem, hash(elem))
+        private def getKey(elem: A): Int = hash(elem)
 
-        private var hashMap = HashMap.empty[ReHashBox[A], immutable.BagBucket[A]]
+        private var hashMap = HashMap.empty[Int, immutable.BagBucket[A]]
 
         def +=(elem: A): this.type = add(elem, 1)
 
         def clear(): Unit =
-            hashMap = HashMap.empty[ReHashBox[A], immutable.BagBucket[A]]
+            hashMap = HashMap.empty[Int, immutable.BagBucket[A]]
 
         def result(): HashBag[A] =
             new HashBag[A](hashMap)
@@ -74,14 +63,14 @@ object HashBag extends generic.ImmutableHashedBagFactory[immutable.HashBag] {
         }
 
         def addBucket(bucket: collection.BagBucket[A]): this.type = {
-            hashMap.get(bucket.sentinel) match {
+            hashMap.get(getKey(bucket.sentinel)) match {
                 case Some(bucket2) => updateBucket(bagConfiguration.bucketFrom(bucket, bucket2))
                 case None => updateBucket(bagConfiguration.bucketFrom(bucket))
             }
         }
 
         def updateBucket(bucket: immutable.BagBucket[A]): this.type = {
-            hashMap = hashMap.updated(bucket.sentinel, bucket)
+            hashMap = hashMap.updated(getKey(bucket.sentinel), bucket)
             this
         }
     }
