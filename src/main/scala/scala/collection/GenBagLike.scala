@@ -163,8 +163,12 @@ trait GenBagLike[A, +Repr]
         case that: GenBag[_] =>
             (this eq that) ||
               (that canEqual this) && (this.size == that.size) &&
-                (try this subsetOf that.asInstanceOf[GenBag[A]] catch {
-                    case ex: ClassCastException => false
+                (try {
+                  (this subsetOf that.asInstanceOf[GenBag[A]]) &&
+                    (that.asInstanceOf[GenBag[A]] subsetOf this.asInstanceOf[GenBag[A]])
+                }
+                catch {
+                  case ex: ClassCastException => false
                 })
         case _ =>
             false
