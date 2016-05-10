@@ -2,7 +2,6 @@ package scala.collection.mutable
 
 import scala.collection._
 import scala.collection.generic.GrowableBag
-import scala.collection
 import scala.collection.immutable.{List, Nil}
 
 trait BagBucket[A]
