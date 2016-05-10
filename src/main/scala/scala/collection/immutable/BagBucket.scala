@@ -1,8 +1,6 @@
 package scala.collection.immutable
 
 import scala.collection.immutable
-import scala.collection
-import scala.annotation.tailrec
 
 trait BagBucket[A] extends scala.collection.BagBucket[A] {
 
@@ -63,7 +61,7 @@ class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: immutable.Bag[A]
 
   def added(elem: A, count: Int): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.added(elem, count))
 
-  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag.addedBucket(bucket))
+  def addedBucket(bucket: collection.BagBucket[A]): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag ++ bucket)
 
   override def -(elem: A): BagBucket = new BagOfMultiplicitiesBagBucket(sentinel, bag - elem)
 

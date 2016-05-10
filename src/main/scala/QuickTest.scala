@@ -1,18 +1,31 @@
+import scala.collection.mutable
+import scala.util.hashing.Hashing
+import mutable.{BagOfMultiplicitiesBagBucket, TreeBag}
+
 /**
   * Created by Gerard on 10/05/2016.
   */
 
 
-import scala.collection.mutable
-
-
 
 
 object QuickTest extends App {
-  implicit val ttbConfig = mutable.SortedBagConfiguration.keepAll[Int]
-  val ttb = mutable.TreeBag.empty[Int]
-  ttb += 2 -> 3
-  ttb += 2 -> 78
-  println(ttb.bucketsIterator.toList)
-  println(ttb)
+  object StrSize extends Ordering[String] with Hashing[String] {
+    def hash(x: String): Int = x.size
+
+    def compare(x: String, y: String): Int = x.size compare y.size
+  }
+
+  implicit val config = TreeBag.configuration.compactWithEquiv(StrSize)
+
+  val emptyBag = TreeBag.empty[String]
+
+  val catInBag = emptyBag + "Cat"
+
+  val bag = catInBag + "Cat" + "Cam" + "Mouse"
+
+  println((bag.bucketsIterator map (_.asInstanceOf[BagOfMultiplicitiesBagBucket[String]].bag.bucketsIterator.toList)).toList)
+
+  println(bag.multiplicities.toList)
+
 }

@@ -1,7 +1,6 @@
 package scala.collection.scalatest
 
 import org.scalatest._
-import java.lang.UnsupportedOperationException
 
 trait BagBehaviours {
   this: FlatSpec =>
