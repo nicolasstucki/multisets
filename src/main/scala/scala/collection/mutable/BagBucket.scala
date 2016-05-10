@@ -99,7 +99,7 @@ final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Ba
   def clear(): Unit = bag.clear()
 
   def addBucket(bucket: collection.BagBucket[A]): this.type = {
-    bag.addBucket(bucket)
+    bag ++= bucket
     this
   }
 

@@ -1,9 +1,8 @@
 package scala.collection.mutable
 
-import scala.collection.{mutable, immutable, generic}
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable.SortedBagConfiguration._
-import scala.collection
+import scala.collection.{generic, immutable, mutable}
 
 
 // This implementation is a dummy. Need Scala 2.11 to have access to immutable.RedBlackTree from mutable package.

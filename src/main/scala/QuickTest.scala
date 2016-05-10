@@ -21,8 +21,10 @@ object QuickTest extends App {
   val emptyBag = TreeBag.empty[String]
 
   val catInBag = emptyBag + "Cat"
+  val twoCatsInBag = catInBag + "Cat"
+  val twoCatsAndAnEnginePartInBag = twoCatsInBag + "Cam"
 
-  val bag = catInBag + "Cat" + "Cam" + "Mouse"
+  val bag = twoCatsAndAnEnginePartInBag + "Mouse"
 
   println((bag.bucketsIterator map (_.asInstanceOf[BagOfMultiplicitiesBagBucket[String]].bag.bucketsIterator.toList)).toList)
 
