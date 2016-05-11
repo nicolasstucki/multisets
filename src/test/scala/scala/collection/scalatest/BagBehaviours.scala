@@ -92,6 +92,27 @@ trait BagBehaviours {
       }
     }
 
+    it should "split into parts which when recombined yield the original" in {
+      def validateSplitAt(indexOfSplit: Int): Unit = {
+        {
+          val (firstPart, secondPart) = bag.splitAt(indexOfSplit)
+          assertResult(bag, s"bag = $bag, indexOfSplit = $indexOfSplit, firstPart = $firstPart, secondPart = $secondPart") {
+            firstPart union secondPart
+          }
+        }
+
+        {
+          val firstPart = bag.take(indexOfSplit)
+          val secondPart = bag.drop(indexOfSplit)
+          assertResult(bag, s"bag = $bag, indexOfSplit = $indexOfSplit, firstPart = $firstPart, secondPart = $secondPart") {
+            firstPart union secondPart
+          }
+        }
+      }
+
+      0 until bag.size foreach (validateSplitAt(_))
+    }
+
     it should behave like bagBehaviour(bag)
 
     it should behave like multisetBehaviour(bag, bags)
