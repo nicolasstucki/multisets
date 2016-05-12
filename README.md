@@ -53,5 +53,5 @@ Tutorial
 
 Maven repository
 ----------------
-It is availabe on [Maven Central](https://github.com/nicolasstucki/multisets/blob/2.11.x/MavenRepository.md)
+It is available on [Maven Central](https://github.com/nicolasstucki/multisets/blob/2.11.x/MavenRepository.md)
 

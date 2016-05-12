@@ -2,7 +2,6 @@ package scala.collection.mutable
 
 import scala.collection._
 import scala.collection.generic.GrowableBag
-import scala.collection
 import scala.collection.immutable.{List, Nil}
 
 trait BagBucket[A]
@@ -100,7 +99,7 @@ final class BagOfMultiplicitiesBagBucket[A](val sentinel: A, val bag: mutable.Ba
   def clear(): Unit = bag.clear()
 
   def addBucket(bucket: collection.BagBucket[A]): this.type = {
-    bag.addBucket(bucket)
+    bag ++= bucket
     this
   }
 

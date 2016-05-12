@@ -1,8 +1,7 @@
 package scala.collection.scalatest.immutable
 
-import scala.collection.scalatest._
 import scala.collection.immutable
-import scala.util.hashing.Hashing
+import scala.collection.scalatest._
 
 class IntImmutableHashBagOnMultiplicitiesTest extends IntBagTest {
   implicit def bagConfiguration = immutable.HashBag.configuration.compact[Int]
@@ -42,7 +41,7 @@ class StringImmutableHashBagOnKeepAllBucketsBucketTest extends StringBagTest {
   override def emptyBag = immutable.HashBag.empty[String]
 }
 
-class StringImmutableHasBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
+class StringImmutableHashBagOnBagOfMultiplicitiesWithStrSizeEquivTest extends StringBagTest {
   implicit def bagConfiguration = immutable.HashBag.configuration.compactWithEquiv(StrSize)
 
   override def emptyBag = immutable.HashBag.empty[String]

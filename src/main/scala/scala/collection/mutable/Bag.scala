@@ -24,7 +24,7 @@ trait Bag[A]
 
   def add(elem: A, count: Int): this.type = {
     this.getBucket(elem) match {
-      case Some(b) => b add(elem, count)
+      case Some(b) => updateBucket(b add(elem, count))
       case None => updateBucket((bagConfiguration.newBuilder(elem) add(elem, count)).result())
     }
     this
@@ -32,7 +32,7 @@ trait Bag[A]
 
   def addBucket(bucket: scala.collection.BagBucket[A]): this.type = {
     this.getBucket(bucket.sentinel) match {
-      case Some(b) => b addBucket bucket
+      case Some(b) => updateBucket(b addBucket bucket)
       case None => updateBucket((bagConfiguration.newBuilder(bucket.sentinel) addBucket bucket).result())
     }
     this
