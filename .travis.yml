@@ -1,0 +1,9 @@
+sudo: true
+language: scala
+script:
+  - sbt 'testOnly scala.collection.scalatest.*'
+scala:
+  - 2.11.8
+jdk:
+  - oraclejdk8
+
