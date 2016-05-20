@@ -9,8 +9,9 @@ organization := "io.github.nicolasstucki"
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases"
 
 libraryDependencies ++= Seq(
-	"com.storm-enroute" %% "scalameter" % "0.6",
-    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test")
+    "com.storm-enroute" %% "scalameter" % "0.6" % "test",
+    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+)
 
 testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
 
