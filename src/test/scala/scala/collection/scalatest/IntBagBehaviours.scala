@@ -23,6 +23,14 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
       }
     }
 
+    it should "not grow when +(elem) operation is applied" in {
+      assertResult(bag.size) {
+        val eagerBag = bag
+        val newBag = eagerBag + 1
+        eagerBag.size
+      }
+    }
+
     it should "grow by m with +(elem->m) operation" in {
       assertResult(bag.size + 4) {
         (bag + (1 -> 4)).size
