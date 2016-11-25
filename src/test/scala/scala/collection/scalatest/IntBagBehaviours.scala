@@ -55,6 +55,25 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
       }
     }
 
+    it should "have the same size when mapped" in {
+      assertResult(bag.size) {
+        (bag map identity).size
+      }
+      assertResult(bag.size) {
+        (bag map (s => -s)).size
+      }
+      assertResult(bag.size) {
+        (bag map (s => 28918265)).size
+      }
+    }
+
+    if (bag.nonEmpty) {
+      it should "implement reduce coherently" in {
+        assertResult(bag.toList.reduce(_ + _)) {
+          bag.reduce(_ + _)
+        }
+      }
+    }
 
     it should "implement [sum]" in {
       assertResult(bag.toList.sum) {
@@ -67,8 +86,6 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
         bag.product
       }
     }
-
-
   }
 
 
