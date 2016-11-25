@@ -6,7 +6,7 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
   this: FlatSpec =>
 
 
-  def intBagBehaviour(bag: => scala.collection.Bag[Int]) {
+  def intBagBehaviour(bag: scala.collection.Bag[Int]) {
 
     it should "grow by 1 with +(elem) operation" in {
       assertResult(bag.size + 1) {
@@ -20,14 +20,6 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
       assertResult(bag.size + 1) {
         val newBag = bag + 10
         newBag.size
-      }
-    }
-
-    it should "not grow when +(elem) operation is applied" in {
-      assertResult(bag.size) {
-        val eagerBag = bag
-        val newBag = eagerBag + 1
-        eagerBag.size
       }
     }
 

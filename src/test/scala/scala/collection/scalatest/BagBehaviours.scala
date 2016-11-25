@@ -5,7 +5,7 @@ import org.scalatest._
 trait BagBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBehaviour[A](bag: => scala.collection.Bag[A], bags: => Seq[scala.collection.Bag[A]]) {
+  def emptyBagBehaviour[A](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
     it should "be empty" in {
       assert(bag.isEmpty, s"bag = $bag")
     }
@@ -40,7 +40,7 @@ trait BagBehaviours {
 
   }
 
-  def nonEmptyBagBehaviour[A](bag: => scala.collection.Bag[A], bags: => Seq[scala.collection.Bag[A]]) {
+  def nonEmptyBagBehaviour[A](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
     it should "not be empty" in {
       assert(!bag.isEmpty, s"bag = $bag")
     }
@@ -118,7 +118,7 @@ trait BagBehaviours {
     it should behave like multisetBehaviour(bag, bags)
   }
 
-  private def multisetBehaviour[A](bag: => scala.collection.Bag[A], bags: => Seq[scala.collection.Bag[A]]) {
+  private def multisetBehaviour[A](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
 
     it should "implement [union] as a multiset union" in {
       for (bag2 <- bags) {
@@ -185,10 +185,9 @@ trait BagBehaviours {
         }
       }
     }
-
   }
 
-  private def bagBehaviour[A](bag: => scala.collection.Bag[A]) {
+  private def bagBehaviour[A](bag: scala.collection.Bag[A]) {
 
     it should "have non negative size" in {
       assert(bag.size >= 0, s"bag = $bag")

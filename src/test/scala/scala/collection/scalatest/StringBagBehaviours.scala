@@ -6,7 +6,7 @@ trait StringBagBehaviours extends BagBehaviours with Matchers {
   this: FlatSpec =>
 
 
-  def stringBagBehaviour(bag: => scala.collection.Bag[String]) {
+  def stringBagBehaviour(bag: scala.collection.Bag[String]) {
 
     it should "grow by 1 with +(elem) operation" in {
       assertResult(bag.size + 1) {
