@@ -110,7 +110,7 @@ trait BagBehaviours {
         }
       }
 
-      0 until bag.size foreach (validateSplitAt(_))
+      0 to bag.size foreach (validateSplitAt(_))
     }
 
     it should behave like bagBehaviour(bag)
