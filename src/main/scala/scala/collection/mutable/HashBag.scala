@@ -38,7 +38,11 @@ final class HashBag[A] private[collection](contents: mutable.HashTable.Contents[
     this
   }
 
-  protected def updatedBucket(bucket: BagBucket): mutable.HashBag[A] = new mutable.HashBag[A](hashTableContents) updateBucket bucket
+  protected def updatedBucket(bucket: BagBucket): mutable.HashBag[A] = {
+    val result = empty
+    this.bucketsIterator foreach (result.addBucket(_))
+    result updateBucket bucket
+  }
 
   def bucketsIterator: Iterator[BagBucket] = entriesIterator.map(_.value)
 
