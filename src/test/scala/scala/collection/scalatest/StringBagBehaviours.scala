@@ -57,7 +57,7 @@ trait StringBagBehaviours extends BagBehaviours with Matchers {
 
     it should "have the same size when mapped" in {
       assertResult(bag.size) {
-        (bag map (s => s)).size
+        (bag map identity).size
       }
       assertResult(bag.size) {
         (bag map (s => s.toLowerCase)).size
