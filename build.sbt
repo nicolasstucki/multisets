@@ -9,7 +9,7 @@ organization := "io.github.nicolasstucki"
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases"
 
 libraryDependencies ++= Seq(
-  "com.storm-enroute" %% "scalameter" % "0.8.2",
+  "com.storm-enroute" %% "scalameter" % "0.8.2" % "test",
   "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
 
