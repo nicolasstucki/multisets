@@ -3,6 +3,7 @@ language: scala
 script:
   - sbt 'testOnly scala.collection.scalatest.*'
 scala:
+  - 2.11.8
   - 2.12.0
 jdk:
   - oraclejdk8
