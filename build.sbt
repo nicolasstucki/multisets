@@ -2,15 +2,15 @@ name := "multisets"
 
 version := "0.3"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.12.0"
 
 organization := "io.github.nicolasstucki"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases"
 
 libraryDependencies ++= Seq(
-    "com.storm-enroute" %% "scalameter" % "0.6" % "test",
-    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+  "com.storm-enroute" %% "scalameter" % "0.8.2" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
 
 testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
