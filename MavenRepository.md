@@ -7,7 +7,7 @@ Scala multisets can be downloaded from Maven Central.
 ```xml
 <dependency>
   <groupId>io.github.nicolasstucki</groupId>
-  <artifactId>multisets</artifactId>
+  <artifactId>multisets_2.12</artifactId>
   <version>0.4</version>
 </dependency>
 ```
@@ -15,5 +15,5 @@ Scala multisets can be downloaded from Maven Central.
 
 To use it with SBT, just add the following dependency to `build.sbt`:
 ```scala
-libraryDependencies ++= Seq("io.github.nicolasstucki" %% "multisets" % "0.4")
+libraryDependencies ++= Seq("io.github.nicolasstucki" %% "multisets_2.12" % "0.4")
 ```
