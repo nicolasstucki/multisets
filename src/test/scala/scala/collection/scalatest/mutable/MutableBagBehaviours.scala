@@ -7,7 +7,7 @@ trait MutableBagBehaviours {
 
   def mutableBagBehaviour[A](bag: => scala.collection.mutable.Bag[A]) {
 
-    "A mutable Bag" should "support removing single elements with -=" in {
+    it should "support removing single elements with -=" in {
       val b = bag
       var expectedSize = b.size
       for (elem <- bag) {
