@@ -43,18 +43,18 @@ trait Bag[A]
   def -=(elemCount: (A, Int)): this.type = remove(elemCount._1, elemCount._2)
 
   def remove(elem: A, count: Int): this.type = {
-    val amount = Math.max(this.multiplicity(elem) - count, 0)
+    val amount = Math.min(this.multiplicity(elem), count)
     if (amount > 0)
       this.getBucket(elem) match {
-        case Some(b) => b.remove(elem, amount)
-        case None => updateBucket((bagConfiguration.newBuilder(elem) add(elem, count)).result())
+        case Some(b) => updateBucket(b.remove(elem, amount))
+        case None =>
       }
     this
   }
 
   def removeAll(elem: A): this.type = {
     this.getBucket(elem) match {
-      case Some(b) => b.removeAll(elem)
+      case Some(b) => updateBucket(b.removeAll(elem))
       case None =>
     }
     this
