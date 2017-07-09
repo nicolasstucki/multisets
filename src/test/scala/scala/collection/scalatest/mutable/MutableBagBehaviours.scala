@@ -2,9 +2,6 @@ package scala.collection.scalatest.mutable
 
 import org.scalatest._
 
-/**
-  * @author Tom Warnke
-  */
 trait MutableBagBehaviours {
   this: FlatSpec =>
 
@@ -50,6 +47,21 @@ trait MutableBagBehaviours {
         assert(b.size == expectedSize)
         assert(!b.contains(elem))
       }
+    }
+
+    it should "be unchanged when removing elements that do not exist" in {
+      val b = bag
+      val elem = b.head
+      b.removeAll(elem)
+      val expectedSize = b.size
+      b -= elem
+      assert(b.size == expectedSize)
+      b -= (elem, 1)
+      assert(b.size == expectedSize)
+      b.remove(elem, 1)
+      assert(b.size == expectedSize)
+      b.removeAll(elem)
+      assert(b.size == expectedSize)
     }
   }
 }

@@ -47,7 +47,7 @@ trait Bag[A]
     if (amount > 0)
       this.getBucket(elem) match {
         case Some(b) => updateBucket(b.remove(elem, amount))
-        case None => updateBucket((bagConfiguration.newBuilder(elem) add(elem, count)).result())
+        case None =>
       }
     this
   }
