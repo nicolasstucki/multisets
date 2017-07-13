@@ -9,6 +9,10 @@ trait MutableStringBagTest extends StringBagTest with MutableBagBehaviours {
   override def bagWithCatCatDogMouseMouseMouse =
     emptyBag + ("Cat" -> 2) + ("Dog" -> 1) + ("Mouse" -> 3)
 
-  it should behave like mutableBagBehaviour[String](bagWithCatCatDogMouseMouseMouse)
+  def elem = "Horse"
+
+  it should behave like mutableBagBehaviour[String](bagWithCatCatDogMouseMouseMouse, elem)
+
+
 
 }

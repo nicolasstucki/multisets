@@ -5,7 +5,7 @@ import org.scalatest._
 trait MutableBagBehaviours {
   this: FlatSpec =>
 
-  def mutableBagBehaviour[A](bag: => scala.collection.mutable.Bag[A]) {
+  def mutableBagBehaviour[A](bag: => scala.collection.mutable.Bag[A], newElem: A) {
 
     it should "support removing single elements with -=" in {
       val b = bag
@@ -62,6 +62,60 @@ trait MutableBagBehaviours {
       assert(b.size == expectedSize)
       b.removeAll(elem)
       assert(b.size == expectedSize)
+    }
+
+    it should "support adding single elements with add" in {
+      val b = bag
+      b.add(newElem, 1)
+      val expectedSize = bag.size + 1
+      assert(b.contains(newElem))
+      assert(b.size == expectedSize)
+      assert(b.multiplicity(newElem) == 1)
+    }
+
+    it should "support adding multiple elements with add" in {
+      val b = bag
+      b.add(newElem, 3)
+      val expectedSize = bag.size + 3
+      assert(b.contains(newElem))
+      assert(b.size == expectedSize)
+      assert(b.multiplicity(newElem) == 3)
+    }
+
+    it should "support adding single elements with +=" in {
+      val b = bag
+      b += newElem
+      val expectedSize = bag.size + 1
+      assert(b.contains(newElem))
+      assert(b.size == expectedSize)
+      assert(b.multiplicity(newElem) == 1)
+    }
+
+    it should "support adding multiple elements with +=" in {
+      val b = bag
+      b.+=((newElem, 3))
+      val expectedSize = bag.size + 3
+      assert(b.contains(newElem))
+      assert(b.size == expectedSize)
+      assert(b.multiplicity(newElem) == 3)
+    }
+
+    it should "support changing the multiplicity with setMultiplicity" in {
+      val b = bag
+      val elem = b.head
+      b.setMultiplicity(elem, 3)
+      assert(b.multiplicity(elem) == 3)
+      b.setMultiplicity(elem, 5)
+      assert(b.multiplicity(elem) == 5)
+    }
+
+    it should "support changing the multiplicity with update" in {
+      val b = bag
+      val elem = b.head
+      b.update(elem, 3)
+      assert(b.multiplicity(elem) == 3)
+      b.update(elem, 5)
+      assert(b.multiplicity(elem) == 5)
     }
   }
 }
