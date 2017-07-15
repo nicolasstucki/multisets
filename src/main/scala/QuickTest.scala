@@ -36,4 +36,6 @@ object QuickTest extends App {
   println(roundtripped)
 
   println(shouldBeTheSameAsRoundtripped)
+
+  println(bag.removedAll("Cam"))
 }
