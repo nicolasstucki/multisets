@@ -5,7 +5,7 @@ import org.scalatest._
 trait BagBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBehaviour[A](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
+  def emptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
     it should "be empty" in {
       assert(bag.isEmpty, s"bag = $bag")
     }
@@ -40,7 +40,7 @@ trait BagBehaviours {
 
   }
 
-  def nonEmptyBagBehaviour[A](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
+  def nonEmptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
     it should "not be empty" in {
       assert(!bag.isEmpty, s"bag = $bag")
     }
@@ -187,7 +187,7 @@ trait BagBehaviours {
     }
   }
 
-  private def bagBehaviour[A](bag: scala.collection.Bag[A]) {
+  private def bagBehaviour[A: Ordering](bag: scala.collection.Bag[A]) {
 
     it should "have non negative size" in {
       assert(bag.size >= 0, s"bag = $bag")
@@ -196,6 +196,21 @@ trait BagBehaviours {
     it should "have only positive multiplicities (multiplicity>0)" in {
       assert(bag.forall(bag.multiplicity(_) > 0))
     }
-  }
 
+    val distinct = bag.distinct
+
+    it should "implement [distinct]: all multiplicities must be one" in {
+      for (elem <- distinct) {
+        assertResult(1) {
+          distinct.multiplicity(elem)
+        }
+      }
+    }
+
+    it should "implement [distinct]: all distinct element must be present" in {
+      assertResult(bag.toSet.toList.sorted) {
+        distinct.toList.sorted
+      }
+    }
+  }
 }
