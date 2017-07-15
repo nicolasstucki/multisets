@@ -18,14 +18,14 @@ class IntMutableHashBagOnKeepAllBucketsTest extends MutableIntBagTest {
 
 }
 
-class IntMutableHashBagOnBagOfMultiplicitiesWithMod3EquivTest extends MutableIntBagTest {
-  implicit def bagBucketConfiguration = mutable.HashBag.configuration.compactWithEquiv(Mod3)
+class IntMutableHashBagOnBagOfMultiplicitiesWithRem3EquivTest extends MutableIntBagTest {
+  implicit def bagBucketConfiguration = mutable.HashBag.configuration.compactWithEquiv(Rem3)
 
   override def emptyBag = mutable.HashBag.empty[Int]
 }
 
-class IntMutableHashBagOnKeepAllBucketsWithMod3EquivTest extends MutableIntBagTest {
-  implicit def bagBucketConfiguration = mutable.HashBag.configuration.keepAll(Mod3)
+class IntMutableHashBagOnKeepAllBucketsWithRem3EquivTest extends MutableIntBagTest {
+  implicit def bagBucketConfiguration = mutable.HashBag.configuration.keepAll(Rem3)
 
   override def emptyBag = mutable.HashBag.empty[Int]
 }

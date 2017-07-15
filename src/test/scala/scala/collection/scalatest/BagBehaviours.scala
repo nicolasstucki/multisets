@@ -5,7 +5,7 @@ import org.scalatest._
 trait BagBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
+  def emptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], notAlreadyPresentInBag: A) {
     it should "be empty" in {
       assert(bag.isEmpty, s"bag = $bag")
     }
@@ -34,13 +34,13 @@ trait BagBehaviours {
       assert(bag.leastCommon.isEmpty, s"bag = $bag")
     }
 
-    it should behave like bagBehaviour(bag)
+    it should behave like bagBehaviour(bag, notAlreadyPresentInBag)
 
     it should behave like multisetBehaviour(bag, bags)
 
   }
 
-  def nonEmptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]]) {
+  def nonEmptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], notAlreadyPresentInBag: A) {
     it should "not be empty" in {
       assert(!bag.isEmpty, s"bag = $bag")
     }
@@ -113,7 +113,49 @@ trait BagBehaviours {
       0 to bag.size foreach (validateSplitAt(_))
     }
 
-    it should behave like bagBehaviour(bag)
+    it should "roundtrip to itself when an element that is already contained is removed and then added back in again" in {
+      def validateRoundtrip(elementAlreadyPresentInBag: A) = {
+        assertResult(bag, s"bag = $bag, element = $elementAlreadyPresentInBag") {
+          bag - elementAlreadyPresentInBag + elementAlreadyPresentInBag
+        }
+
+        assertResult(bag, s"bag = $bag, element = $elementAlreadyPresentInBag") {
+          val multiplicity = bag.multiplicity(elementAlreadyPresentInBag)
+          bag - (elementAlreadyPresentInBag -> multiplicity) + (elementAlreadyPresentInBag -> multiplicity)
+        }
+
+        assertResult(bag, s"bag = $bag, element = $elementAlreadyPresentInBag") {
+          bag.removed(elementAlreadyPresentInBag, 1).added(elementAlreadyPresentInBag, 1)
+        }
+
+        assertResult(bag, s"bag = $bag, element = $elementAlreadyPresentInBag") {
+          val multiplicity = bag.multiplicity(elementAlreadyPresentInBag)
+          bag.removedAll(elementAlreadyPresentInBag).added(elementAlreadyPresentInBag, multiplicity)
+        }
+      }
+
+      for (elementAlreadyPresentInBag <- bag) {
+        validateRoundtrip(elementAlreadyPresentInBag)
+      }
+    }
+
+    it should "yield a changed value when an element that is already contained is removed" in {
+      def validateChange(elementAlreadyPresentInBag: A) = {
+        assert(bag - elementAlreadyPresentInBag != bag)
+
+        assert(bag - (elementAlreadyPresentInBag -> bag.multiplicity(elementAlreadyPresentInBag)) != bag)
+
+        assert(bag.removed(elementAlreadyPresentInBag, 1) != bag)
+
+        assert(bag.removedAll(elementAlreadyPresentInBag) != bag)
+      }
+
+      for (elementAlreadyPresentInBag <- bag) {
+        validateChange(elementAlreadyPresentInBag)
+      }
+    }
+
+    it should behave like bagBehaviour(bag, notAlreadyPresentInBag)
 
     it should behave like multisetBehaviour(bag, bags)
   }
@@ -187,7 +229,7 @@ trait BagBehaviours {
     }
   }
 
-  private def bagBehaviour[A: Ordering](bag: scala.collection.Bag[A]) {
+  private def bagBehaviour[A: Ordering](bag: scala.collection.Bag[A], notAlreadyPresentInBag: A) {
 
     it should "have non negative size" in {
       assert(bag.size >= 0, s"bag = $bag")
@@ -210,6 +252,38 @@ trait BagBehaviours {
     it should "implement [distinct]: all distinct element must be present" in {
       assertResult(bag.toSet.toList.sorted) {
         distinct.toList.sorted
+      }
+    }
+
+    it should "roundtrip to itself when an element is added and then removed" in {
+      def validateRoundtrip(element: A) = {
+        assertResult(bag, s"bag = $bag, element = $element") {
+          bag + element - element
+        }
+
+        assertResult(bag, s"bag = $bag, element = $element") {
+          bag + (element -> 2) - (element -> 2)
+        }
+
+        assertResult(bag, s"bag = $bag, element = $element"){
+          bag.added(element, 1).removed(element, 1)
+        }
+      }
+
+      validateRoundtrip(notAlreadyPresentInBag)
+
+      assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag"){
+        bag.added(notAlreadyPresentInBag, 10).removedAll(notAlreadyPresentInBag)
+      }
+
+      for (elementAlreadyPresentInBag <- bag) {
+        validateRoundtrip(elementAlreadyPresentInBag)
+      }
+    }
+
+    it should "treat the removal of an element that is not already contained as a no-operation" in {
+      assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag") {
+        bag - notAlreadyPresentInBag
       }
     }
   }
