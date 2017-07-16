@@ -187,8 +187,12 @@ trait BagLike[A, +This <: BagLike[A, This] with Bag[A]]
 
   def removedBucket(elem: A): This = {
     val b = newBuilder
-    for (bucket <- bucketsIterator if !bagConfiguration.equiv(bucket.sentinel, elem)) {
-      b addBucket bucket
+    for {
+      bucket <- bucketsIterator
+      bucketWithoutElement = if (bagConfiguration.equiv(bucket.sentinel, elem)) bucket.removed(elem, bucket.multiplicity(elem)) else bucket
+      if bucketWithoutElement.nonEmpty
+    } {
+      b addBucket bucketWithoutElement
     }
     b.result()
   }
