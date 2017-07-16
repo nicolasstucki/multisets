@@ -8,7 +8,8 @@ trait MutableIntBagTest extends IntBagTest with MutableBagBehaviours {
 
   override def bagWithOneOneTwoThreeThreeThree = emptyBag + (1 -> 2) + (2 -> 1) + (3 -> 3)
 
-  def elem: Int = 4
+  def elem = 4
 
-  it should behave like mutableBagBehaviour[Int](bagWithOneOneTwoThreeThreeThree, elem)
+  "A mutable non-empty Bag of Integers" should behave like nonEmptyMutableBagBehaviour[Int](bagWithOneOneTwoThreeThreeThree, elem)
+  "A mutable empty Bag of Integers" should behave like mutableBagBehaviour[Int](emptyBag, elem)
 }
