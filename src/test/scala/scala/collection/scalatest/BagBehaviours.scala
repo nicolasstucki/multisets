@@ -5,7 +5,7 @@ import org.scalatest._
 trait BagBehaviours {
   this: FlatSpec =>
 
-  def emptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], notAlreadyPresentInBag: A) {
+  def emptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], noneAlreadyPresentInBag: Seq[A]) {
     it should "be empty" in {
       assert(bag.isEmpty, s"bag = $bag")
     }
@@ -34,13 +34,13 @@ trait BagBehaviours {
       assert(bag.leastCommon.isEmpty, s"bag = $bag")
     }
 
-    it should behave like bagBehaviour(bag, notAlreadyPresentInBag)
+    it should behave like bagBehaviour(bag, noneAlreadyPresentInBag)
 
     it should behave like multisetBehaviour(bag, bags)
 
   }
 
-  def nonEmptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], notAlreadyPresentInBag: A) {
+  def nonEmptyBagBehaviour[A: Ordering](bag: scala.collection.Bag[A], bags: Seq[scala.collection.Bag[A]], noneAlreadyPresentInBag: Seq[A]) {
     it should "not be empty" in {
       assert(!bag.isEmpty, s"bag = $bag")
     }
@@ -155,7 +155,7 @@ trait BagBehaviours {
       }
     }
 
-    it should behave like bagBehaviour(bag, notAlreadyPresentInBag)
+    it should behave like bagBehaviour(bag, noneAlreadyPresentInBag)
 
     it should behave like multisetBehaviour(bag, bags)
   }
@@ -229,7 +229,7 @@ trait BagBehaviours {
     }
   }
 
-  private def bagBehaviour[A: Ordering](bag: scala.collection.Bag[A], notAlreadyPresentInBag: A) {
+  private def bagBehaviour[A: Ordering](bag: scala.collection.Bag[A], noneAlreadyPresentInBag: Seq[A]) {
 
     it should "have non negative size" in {
       assert(bag.size >= 0, s"bag = $bag")
@@ -270,10 +270,12 @@ trait BagBehaviours {
         }
       }
 
-      validateRoundtrip(notAlreadyPresentInBag)
+      for (notAlreadyPresentInBag <- noneAlreadyPresentInBag) {
+        validateRoundtrip(notAlreadyPresentInBag)
 
-      assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag"){
-        bag.added(notAlreadyPresentInBag, 10).removedAll(notAlreadyPresentInBag)
+        assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag") {
+          bag.added(notAlreadyPresentInBag, 10).removedAll(notAlreadyPresentInBag)
+        }
       }
 
       for (elementAlreadyPresentInBag <- bag) {
@@ -282,8 +284,10 @@ trait BagBehaviours {
     }
 
     it should "treat the removal of an element that is not already contained as a no-operation" in {
-      assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag") {
-        bag - notAlreadyPresentInBag
+      for (notAlreadyPresentInBag <- noneAlreadyPresentInBag) {
+        assertResult(bag, s"bag = $bag, notAlreadyPresentInBag = $notAlreadyPresentInBag") {
+          bag - notAlreadyPresentInBag
+        }
       }
     }
   }
