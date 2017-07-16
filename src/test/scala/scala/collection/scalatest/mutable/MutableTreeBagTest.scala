@@ -14,14 +14,14 @@ class IntMutableTreeBagOnKeepAllBucketsBucketTest extends MutableIntBagTest {
   override def emptyBag = mutable.TreeBag.empty[Int]
 }
 
-class IntMutableTreeBagOnBagOfMultiplicitiesWithRem3EquivTest extends MutableIntBagTest {
-  implicit def bagBucketConfiguration = mutable.TreeBag.configuration.compactWithEquiv(Rem3)
+class IntMutableTreeBagOnBagOfMultiplicitiesWithMod3EquivTest extends MutableIntBagTest {
+  implicit def bagBucketConfiguration = mutable.TreeBag.configuration.compactWithEquiv(Mod3)
 
   override def emptyBag = mutable.TreeBag.empty[Int]
 }
 
-class IntMutableTreeBagOnKeepAllBucketsBucketsWithRem3EquivTest extends MutableIntBagTest {
-  implicit def bagBucketConfiguration = mutable.TreeBag.configuration.keepAll[Int](Rem3)
+class IntMutableTreeBagOnKeepAllBucketsBucketsWithMod3EquivTest extends MutableIntBagTest {
+  implicit def bagBucketConfiguration = mutable.TreeBag.configuration.keepAll[Int](Mod3)
 
   override def emptyBag = mutable.TreeBag.empty[Int]
 }

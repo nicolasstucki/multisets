@@ -7,9 +7,11 @@ import scala.util.hashing.Hashing
 
 abstract class IntBagTest extends FlatSpec with IntBagBehaviours {
 
-  object Rem3 extends Ordering[Int] with Hashing[Int] {
+  object Mod3 extends Ordering[Int] with Hashing[Int] {
     // NOTE: this is based on a signed remainder operation, *not* the modulo operation.
-    // This is why 'notAlreadyPresentInAnyBag' below doesn't collide with any of the positive values.
+    // So 'notAlreadyPresentInBag' should be non-negative to ensure that its remainder
+    // can collide with an element already present in the bag - this is to exercise
+    // the 'compactWithEquiv' configuration cases.
     def hash(x: Int): Int = (x % 3)
 
     def compare(x: Int, y: Int): Int = (x % 3) - (y % 3)
@@ -27,7 +29,7 @@ abstract class IntBagTest extends FlatSpec with IntBagBehaviours {
 
   def bags = Seq(bagWithOne, bagWithOneOneOne, bagWithOneTwoThree, bagWithOneOneTwoThreeThreeThree)
 
-  val notAlreadyPresentInAnyBag = -1
+  val notAlreadyPresentInAnyBag = 73753
 
 
   "An empty Bag" should behave like emptyBagBehaviour(emptyBag, bags, notAlreadyPresentInAnyBag)
