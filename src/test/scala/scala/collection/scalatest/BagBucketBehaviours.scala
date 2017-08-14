@@ -49,11 +49,11 @@ trait BagBucketBehaviours {
       assert(bagBucket.size > 0, s"bagBucket = $bagBucket, bagBucket.size = ${bagBucket.size}")
     }
 
-    it should "have [minMultiplicity] grater than 0" in {
+    it should "have [minMultiplicity] greater than 0" in {
       assert(bagBucket.minMultiplicity > 0, s"bagBucket = $bagBucket, bagBucket.minMultiplicity = ${bagBucket.minMultiplicity}")
     }
 
-    it should "have [maxMultiplicity] grater than 0" in {
+    it should "have [maxMultiplicity] greater than 0" in {
       assert(bagBucket.maxMultiplicity > 0, s"bagBucket = $bagBucket, bagBucket.maxMultiplicity = ${bagBucket.maxMultiplicity}")
     }
 

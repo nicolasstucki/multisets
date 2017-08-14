@@ -3,7 +3,6 @@ package scala.collection.scalatest
 import scala.collection.immutable._
 
 import org.scalatest._
-import scala.collection
 import scala.util.hashing.Hashing
 
 abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
@@ -26,8 +25,10 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
 
   def bags = Seq(bagWithCat, bagWithCatCatCat, bagWithCatDogMouse, bagWithCatCatDogMouseMouseMouse)
 
+  val noneAlreadyPresentInAnyBag = Seq("Flea", "Bee")
 
-  "An empty Bag" should behave like emptyBagBehaviour(emptyBag, bags)
+
+  "An empty Bag" should behave like emptyBagBehaviour(emptyBag, bags, noneAlreadyPresentInAnyBag)
   it should behave like stringBagBehaviour(emptyBag)
 
   """Bag {"Cat"}""" should """have the same content as List("Cat")""" in {
@@ -47,7 +48,7 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
       bagWithCat multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehaviour(bagWithCat, bags)
+  it should behave like nonEmptyBagBehaviour(bagWithCat, bags, noneAlreadyPresentInAnyBag)
   it should behave like stringBagBehaviour(bagWithCat)
 
 
@@ -68,7 +69,7 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
       bagWithCatCatCat multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehaviour(bagWithCatCatCat, bags)
+  it should behave like nonEmptyBagBehaviour(bagWithCatCatCat, bags, noneAlreadyPresentInAnyBag)
   it should behave like stringBagBehaviour(bagWithCatCatCat)
 
 
@@ -89,7 +90,7 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
       bagWithCatDogMouse multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehaviour(bagWithCatDogMouse, bags)
+  it should behave like nonEmptyBagBehaviour(bagWithCatDogMouse, bags, noneAlreadyPresentInAnyBag)
   it should behave like stringBagBehaviour(bagWithCatDogMouse)
 
 
@@ -110,7 +111,7 @@ abstract class StringBagTest extends FlatSpec with StringBagBehaviours {
       bagWithCatCatDogMouseMouseMouse multiplicity "Fish"
     }
   }
-  it should behave like nonEmptyBagBehaviour(bagWithCatCatDogMouseMouseMouse, bags)
+  it should behave like nonEmptyBagBehaviour(bagWithCatCatDogMouseMouseMouse, bags, noneAlreadyPresentInAnyBag)
   it should behave like stringBagBehaviour(bagWithCatCatDogMouseMouseMouse)
 
 

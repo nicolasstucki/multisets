@@ -38,23 +38,6 @@ trait IntBagBehaviours extends BagBehaviours with Matchers {
       }
     }
 
-
-    val distinct = bag.distinct
-
-    it should "implement [distinct]: all multiplicities must be one" in {
-      for (elem <- distinct) {
-        assertResult(1) {
-          distinct.multiplicity(elem)
-        }
-      }
-    }
-
-    it should "implement [distinct]: all distinct element must be present" in {
-      assertResult(bag.toSet.toList.sorted) {
-        distinct.toList.sorted
-      }
-    }
-
     it should "have the same size when mapped" in {
       assertResult(bag.size) {
         (bag map identity).size

@@ -2,13 +2,6 @@ import scala.collection.mutable
 import scala.util.hashing.Hashing
 import mutable.{BagOfMultiplicitiesBagBucket, TreeBag}
 
-/**
-  * Created by Gerard on 10/05/2016.
-  */
-
-
-
-
 object QuickTest extends App {
   object StrSize extends Ordering[String] with Hashing[String] {
     def hash(x: String): Int = x.size
@@ -26,8 +19,23 @@ object QuickTest extends App {
 
   val bag = twoCatsAndAnEnginePartInBag + "Mouse"
 
-  println((bag.bucketsIterator map (_.asInstanceOf[BagOfMultiplicitiesBagBucket[String]].bag.bucketsIterator.toList)).toList)
+  bag += "Bat"
+
+  val roundtripped = bag - "Bat"
+
+  val shouldBeTheSameAsRoundtripped = roundtripped - "Quack"
+
+  bag += "Quack"
+
+  println(
+    (bag.bucketsIterator map (_.asInstanceOf[BagOfMultiplicitiesBagBucket[
+      String]].bag.bucketsIterator.toList)).toList)
 
   println(bag.multiplicities.toList)
 
+  println(roundtripped)
+
+  println(shouldBeTheSameAsRoundtripped)
+
+  println(bag.removedAll("Cam"))
 }
